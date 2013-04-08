@@ -1,0 +1,23 @@
+<table class="display" cellspacing="0" cellpadding="0">
+<thead>
+    <tr>
+        <% for columnKey, columnLabel of @columns: %>
+        <th><%- columnLabel %></th>
+        <% end %>
+    </tr>
+</thead>
+<tbody>
+    <% for row in @data: %>
+    <tr data-id="<%=row[ 'id' ]%>">
+        <% for columnKey, columName of@columns: %>
+            <%if columnKey == 'date': %>
+                <td><%= helper.formatDate row[ columnKey ] %></td>
+            <%else:%>
+                <td><%= row[ columnKey ]%></td>
+            <% end %>
+        <% end %>
+    </tr>
+    <% end %>
+<tbody>
+</tbody>
+</table>

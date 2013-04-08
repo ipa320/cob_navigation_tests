@@ -1,0 +1,23 @@
+<package>
+  <description brief="navigation_tests">
+
+     This package provides launch files for starting a simulated Care-O-bot.
+
+  </description>
+  <author>Simon Ebner</author>
+  <license>LGPL</license>
+  <review status="unreviewed" notes=""/>
+  <url></url>
+
+  <depend package="gazebo"/>
+  <!--<depend package="cob_gazebo"/>-->
+  <!--<depend package="cob_gazebo_worlds"/>-->
+  <depend package="cob_default_robot_config"/>
+  <depend package="cob_default_env_config"/>
+  <depend package="cob_default_env_config"/>
+  <depend package="cob_navigation_global"/>
+  <depend package="rostest" />
+  <depend package="cob_script_server" />
+  <depend package="cob_gazebo_worlds" />
+
+</package>

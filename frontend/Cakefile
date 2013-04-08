@@ -1,0 +1,27 @@
+{exec} = require 'child_process'
+fs = require 'fs'
+task 'watch', ->
+  coffee = exec 'coffee -o lib/ -cw src/', ( err, stdout, stderr ) ->
+    throw err if err
+  coffee.stdout.pipe process.stdout
+
+task 'eco', ->
+  files = fs.readdirSync './templates'
+  for file in files
+    matcher = file.match '(.*)\.eco'
+    continue if not matcher
+    filename = matcher[ 1 ]
+    source = "./templates/#{filename}.eco"
+    dest   = "./templates/#{filename}.js"
+
+    stream = fs.createWriteStream dest
+    writeModuleOpener = ( cb )->
+      stream.write "define( [ 'ecoHelper' ], function( helper ){", 'utf-8', cb
+    writeEcoFile = ( cb )->
+      eco = exec "eco -p #{source}", ( err, stdout ) -> throw err if err
+      eco.stdout.pipe stream, end: false
+      eco.stdout.on 'end', cb
+    writeModuleCloser = ( cb )->
+      stream.write "return this.ecoTemplates[ '#{filename}' ];});", 'utf-8', cb
+
+    writeModuleOpener writeEcoFile.bind null, writeModuleCloser
