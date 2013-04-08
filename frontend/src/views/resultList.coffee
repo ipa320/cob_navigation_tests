@@ -1,4 +1,4 @@
-define [ 'templates/resultList', 'collections/testSeriesList', 'jquery.dataTables' ], ( resultListTmpl, TestSeriesList, dataTables )->
+define [ 'templates/resultList', 'jquery.dataTables' ], ( resultListTmpl, dataTables )->
 
   ResultList  = Backbone.View.extend
     id: 'list',
@@ -19,21 +19,16 @@ define [ 'templates/resultList', 'collections/testSeriesList', 'jquery.dataTable
     render: ->
       table = $ resultListTmpl
         columns: @options.columns
-        data: do @options.collection.toAnalyzedJSON
+        data: do @model.toJSON
       table.dataTable().appendTo( this.$el )
       this
 
     initialize: ->
-      @selectedRows = new TestSeriesList
 
     selectRow: ( e ) ->
       current = $( e.currentTarget )
       current.toggleClass 'row_selected'
+      selected = current.hasClass 'row_selected'
       id = +current.data 'id'
-      model = @options.collection.get id
-      return if not model
-      if @selectedRows.get id
-        @selectedRows.remove id
-      else
-        @selectedRows.add model
-      console.log 'selected rows', @selectedRows
+      model = @collection.get id 
+      model?.trigger selected && 'select' || 'unselect', model 

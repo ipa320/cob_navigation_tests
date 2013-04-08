@@ -8,7 +8,7 @@
 </thead>
 <tbody>
     <% for row in @data: %>
-    <tr data-id="<%=row[ 'id' ]%>">
+    <tr data-id="<%=row.id%>">
         <% for columnKey, columName of@columns: %>
             <%if columnKey == 'date': %>
                 <td><%= helper.formatDate row[ columnKey ] %></td>

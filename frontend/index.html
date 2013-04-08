@@ -3,11 +3,13 @@
     <head>
         <link href="assets/css/jquery.dataTables.css" type="text/css" rel="stylesheet" />
         <link href="assets/css/demo_table.css" type="text/css" rel="stylesheet" />
+        <link href="assets/css/style.css" type="text/css" rel="stylesheet" />
         <script src="vendor/es5-shim.js"></script>
         <script src="vendor/requirejs.js"></script>
-        <script type="text/javascript"> var testData = [{"id": 0, "date": 1365419645530, "robot": "cob3-3", "algorithm": "2dnav_ros_dwa", "scenario": "ipa-kitchen two-point", testResults: [{ "duration": 22.221, "distance": 4.206267051237182, "rotation": 351.91562571942319, "filename": "2013-4-4_13-4-50.bag"},{"duration": 20.221, "distance": 3.206227021237182, "rotation": 351.91562571942319, "filename": "2013-4-4_13-4-50.bag"}]}];</script>
+        <script type="text/javascript"> var testData = [{"id": 0, "date": 1365419645530, "robot": "cob3-3", "algorithm": "2dnav_ros_dwa", "scenario": "ipa-kitchen two-point", "duration": 22.221, "distance": 4.206267051237182, "rotation": 351.91562571942319, "filename": "2013-4-4_13-4-50.bag"},{"id": 1, "date": 1365419645530, "robot": "cob3-3", "algorithm": "2dnav_ros_dwa", "scenario": "ipa-kitchen two-point", "duration": 20.221, "distance": 3.206227021237182, "rotation": 351.91562571942319, "filename": "2013-4-4_13-4-50.bag"},{"id": 2, "date": 1335419645530, "robot": "cob3-2", "algorithm": "2dnav_ros_tr", "scenario": "ipa-kitchen two-point", "duration": 2.221, "distance": 2.206267051237182, "rotation": 351.91562571942319, "filename": "2013-4-4_13-4-50.bag"},{ "id": 3, "date": 1335419645530, "robot": "cob3-2", "algorithm": "2dnav_ros_tr", "scenario": "ipa-kitchen two-point", "duration": 10.221, "distance": 2.206227021237182, "rotation": 351.91562571942319, "filename": "2013-4-4_13-4-50.bag"}]</script>
         <script type="text/javascript">
             require.config({ 
+                urlArgs: 'v=' + ( new Date() ).getTime(),
                 baseUrl: 'lib',
                 shim: {
                     'backbone': {
@@ -22,7 +24,11 @@
                     },
                     'jquery.dataTables': {
                         deps: [ 'jquery' ],
-                        exports: 'jQuery.fn.datatables' 
+                        exports: 'jQuery.fn.dataTable' 
+                    },
+                    'highcharts': {
+                        deps: [ 'jquery' ],
+                        exports: 'jQuery.fn.highcharts'
                     }
                 },
                 paths: { 
@@ -30,7 +36,8 @@
                     'backbone':          '../vendor/backbone',
                     'underscore':        '../vendor/underscore',
                     'jquery':            '../vendor/jquery-1.9.1',
-                    'jquery.dataTables': '../vendor/jquery.dataTables'
+                    'jquery.dataTables': '../vendor/jquery.dataTables',
+                    'highcharts':        '../vendor/highcharts'
                 }
             });
             require([ 'app', 'backbone' ], function(){ 
@@ -40,7 +47,10 @@
         </script>
     </head>
     <body>
-        <div id="app"></div>
+        <div id="app">
+            <div id="resultListView"></div>
+            <div id="developerCharts"></div>
+        </div>
     </body>
 </html>
 
