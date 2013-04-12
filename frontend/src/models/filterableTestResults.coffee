@@ -2,20 +2,20 @@ define [ 'backbone', 'collections/testSeries' ], ( Backbone, TestSeries )->
   TestSeriesFiltered = Backbone.Model.extend
     defaults:
       robots:         []
-      scecnarios:     []
+      scenarios:      []
       algorithms:     []
       robot:          'None'
       scenario:       'None'
       algorithm:      'None'
-      series:         null
       filteredSeries: null
 
     initialize: ( args, options )->
+      @_collection = @collection || new Backbone.Collection
       do @reset
       do @updateAttributes
 
     reset: ->
-      @attributes.filteredSeries = do @attributes.series.clone
+      @collection = do @_collection.clone
       do @updateAttributes
 
     updateAttributes: ->

@@ -1,4 +1,4 @@
-define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
+define [ 'backbone', 'highstock' ], ( Backbone, Highstock )->
   Backbone.View.extend
     tagName: 'div'
     className: 'developer-chart'
@@ -9,7 +9,7 @@ define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
       @chart = null
 
     addSeries: ( series )->
-      @chart?.addSeries series, redraw: true, animation: 1000
+      @chart?.addSeries series#, redraw: true, animation: 1000
 
     removeSeries: ( series )->
       do @chart.get( series.id ).remove
@@ -17,6 +17,6 @@ define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
     render: ->
       chartContainer = $( '<div class="chart" />' ).appendTo( this.$el )
         
-      chartContainer.highcharts do @model.highchartsConfig
+      chartContainer.highcharts 'StockChart', do @model.highchartsConfig
       @chart = do chartContainer.highcharts
       this

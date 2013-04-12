@@ -8,18 +8,17 @@ define [ 'templates/resultList', 'jquery.dataTables' ], ( resultListTmpl, dataTa
 
     options:
       columns:
-        'date':           'Date'
-        'robot':          'Roboter'
-        'algorithm':      'Alogrithm'
-        'scenario':       'Scenario'
-        'mean.duration':  'Duration (&empty; in s)'
-        'mean.distance':  'Distance (&empty; in m)'
-        'mean.rotation':  'Rotation (&empty; in deg)'
+        'robot':     'Roboter'
+        'algorithm': 'Alogrithm'
+        'scenario':  'Scenario'
+        'duration':  'Duration (&empty; in s)'
+        'distance':  'Distance (&empty; in m)'
+        'rotation':  'Rotation (&empty; in deg)'
 
     render: ->
       table = $ resultListTmpl
         columns: @options.columns
-        data: do @model.toJSON
+        data: do @options.testGroups.toJSON
       table.dataTable().appendTo( this.$el )
       this
 
@@ -29,6 +28,7 @@ define [ 'templates/resultList', 'jquery.dataTables' ], ( resultListTmpl, dataTa
       current = $( e.currentTarget )
       current.toggleClass 'row_selected'
       selected = current.hasClass 'row_selected'
-      id = +current.data 'id'
-      model = @collection.get id 
-      model?.trigger selected && 'select' || 'unselect', model 
+      id = current.data 'id'
+      model = @options.testGroups.get id
+      console.log model.attributes
+      model?.trigger selected && 'select' || 'unselect', model

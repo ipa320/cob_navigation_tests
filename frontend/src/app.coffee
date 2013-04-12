@@ -1,29 +1,32 @@
-define [ 'collections/testSeries', 'views/resultList', 'views/developerChart', 'models/chart', 'models/testSeriesFiltered' ], ( TestSeries, ResultList, DeveloperChart, Chart, TestSeriesFiltered )->
+define [ 'collections/tests', 'views/resultList', 'views/developerChart', 'models/chart', 'collections/testGroups' ], ( Tests, ResultList, DeveloperChart, Chart, TestGroups )->
 
-  testSeries = new TestSeries testData
+  tests = new Tests testData
+  groupedTests = tests.groupBy [ 'robot', 'algorithm', 'scenario' ]
+  testGroups = new TestGroups groupedTests
+
   $ ->
     devChartModels = [
-      new Chart 
+      new Chart
         key: 'duration', yAxisLabel: 'Duration in s', valueSuffix: 's'
-        title: 'Duration', series: testSeries
-      new Chart 
+        title: 'Duration', groups: testGroups
+      new Chart
         key: 'distance', yAxisLabel: 'Distance in m', valueSuffix: 'm'
-        title: 'Distance', series: testSeries
-      new Chart 
+        title: 'Distance', groups: testGroups
+      new Chart
         key: 'rotation', yAxisLabel: 'Rotation in deg', valueSuffix: 'deg'
-        title: 'Rotation', series: testSeries
+        title: 'Rotation', groups: testGroups
     ]
 
-    filtered = new TestSeriesFiltered series: testSeries
-    rows = new Backbone.Collection [ ]
-    rows.add filtered.filter robot: 'cob3-3'
+    #filtered = new TestSeriesFiltered series: testSeries
+    #rows = new Backbone.Collection [ ]
+    #rows.add filtered.filter robot: 'cob3-3'
 
-    console.log rows
-    resultListView = new ResultList model: rows
+    #console.log rows
+    resultListView = new ResultList testGroups: testGroups
 
-    #developerChartsContainer = $( '#developerCharts' )
-    #for chartModel in devChartModels
-      #chart = new DeveloperChart model: chartModel
-      #developerChartsContainer.append chart.render().el
+    developerChartsContainer = $( '#developerCharts' )
+    for chartModel in devChartModels
+      chart = new DeveloperChart model: chartModel
+      developerChartsContainer.append chart.render().el
 
     $( '#resultListView' ).html resultListView.render().el

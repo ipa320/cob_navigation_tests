@@ -1,11 +1,41 @@
 {exec} = require 'child_process'
+watchr = require 'watchr'
 fs = require 'fs'
-task 'watch', ->
-  coffee = exec 'coffee -o lib/ -cw src/', ( err, stdout, stderr ) ->
-    throw err if err
+
+task 'watch:build', ( options )->
+  options.dontThrowError = true
+  console.log 'Watching files for change'
+  watchr.watch
+    paths: [ 'src', 'templates' ]
+    duplicateDelay: 1200
+    ingoreCustomPatterns: '(.*)\\.js'
+    listener:
+      change: ( e, filename )->
+        try
+          process.stdout.write 'Changed: ' + filename + '  =>  '
+          if filename.indexOf( 'src' ) == 0
+            invoke 'build:coffee'
+          else if filename.match '(.*)\.eco'
+            invoke 'build:eco'
+          else
+            console.log 'Nothing to do'
+        catch err
+          console.log 'Error occured', err
+      watching: ->
+    next: ( err, w )->
+      throw err if err?
+
+
+task 'build:coffee', ( options )->
+  console.log 'Building coffee files...'
+  coffee = exec 'coffee -o lib/ -c src/', ( err, stdout, stderr ) ->
+    if err
+      throw err if !options.dontThrowError
+      return console.log err
   coffee.stdout.pipe process.stdout
 
-task 'eco', ->
+task 'build:eco', ( options )->
+  console.log 'Building eco files...'
   files = fs.readdirSync './templates'
   for file in files
     matcher = file.match '(.*)\.eco'
@@ -18,7 +48,10 @@ task 'eco', ->
     writeModuleOpener = ( cb )->
       stream.write "define( [ 'ecoHelper' ], function( helper ){", 'utf-8', cb
     writeEcoFile = ( cb )->
-      eco = exec "eco -p #{source}", ( err, stdout ) -> throw err if err
+      eco = exec "eco -p #{source}", ( err, stdout ) -> 
+        if err
+          throw err if !options.dontThrowError
+          return console.log err
       eco.stdout.pipe stream, end: false
       eco.stdout.on 'end', cb
     writeModuleCloser = ( cb )->
