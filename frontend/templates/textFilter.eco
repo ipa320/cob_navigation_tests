@@ -1,0 +1,7 @@
+<div class="text">
+    Filter by text
+    <%-@row%>
+</div>
+<div class="date">
+    Filter by date
+</div>

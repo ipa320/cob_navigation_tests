@@ -1,12 +1,22 @@
 define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )->
   TestGroup = Backbone.Model.extend
     defaults:
-      robot:      'None'
-      robots:     [],
-      scenario:   'None'
-      scenarios:  [],
-      algorithm:  'None'
-      algorithms: []
+      count:             0
+      empty:             false
+      robot:             'None'
+      robots:            [],
+      scenario:          'None'
+      scenarios:         [],
+      algorithm:         'None'
+      algorithms:        []
+      enabled:           true
+      selected:          false
+      'mean.duration':   'N/A'
+      'mean.distance':   'N/A'
+      'mean.rotation':   'N/A'
+      'stdDev.duration': 'N/A'
+      'stdDev.distance': 'N/A'
+      'stdDev.rotation': 'N/A'
 
     constructor: ( args, options )->
       if !(args?)
@@ -25,6 +35,22 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
 
     initialize: ->
       do @reset
+      @set 'originalTests', @get 'tests'
+      @set 'tests', @get( 'tests' ).clone()
+      @once 'change:textFilter', ->
+        do @setupTextFilter
+
+    setupTextFilter: ->
+      textFilter = @get 'textFilter'
+      textFilter.on 'change', =>
+        do @updateTestsLists
+        do @refreshAttributes
+
+    updateTestsLists: ->
+      textFilter   = @get 'textFilter'
+      newTests = @get( 'originalTests' ).textFilter textFilter
+      @set 'tests', newTests
+
 
     reset: ->
       do @refreshAttributes
@@ -34,6 +60,11 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
         @updateUniqAttribute attr
       for attr in [ 'duration', 'distance', 'rotation' ]
         @updateMedianAttribute attr
+        @updateStdDevAttribute attr
+
+      count = @get( 'tests' ).length
+      @set 'count', count
+      @set 'empty', count == 0
 
     updateUniqAttribute: ( attr )->
       uniqueValues = []
@@ -54,9 +85,22 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
         if !isNaN( value )
           num++
           sum += value
-      @set( attr, if num > 0 then sum/num else 'N/A' )
+      @set( 'mean.' + attr, if num > 0 then sum/num else 'N/A' )
   
+    updateStdDevAttribute: ( attr )->
+      mean = @get 'mean.' + attr
+      sum = num = 0
+      @get( 'tests' ).map ( model )=>
+        value = +model.get( attr )
+        if !isNaN( value )
+          num++
+          sum += Math.pow ( value - mean ), 2 
+        @set 'stdDev.' + attr, if sum > 0 then Math.sqrt sum/num else 'N/A'
 
     getDataPointsForKey: ( key )->
       return @get( 'tests' ).map ( model )->
         return model.get key
+
+    groupBy: ->
+      tests = @get 'tests'
+      return tests.groupBy.apply tests, arguments

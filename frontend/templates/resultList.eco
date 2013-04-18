@@ -1,19 +1,24 @@
-<table class="display" cellspacing="0" cellpadding="0">
-<thead>
-    <tr>
-        <% for columnKey, columnLabel of @columns: %>
-        <th><%- columnLabel %></th>
-        <% end %>
-    </tr>
-</thead>
-<tbody>
-    <% for row in @data: %>
-    <tr data-id="<%=row.id%>">
-        <% for columnKey, columName of@columns: %>
-            <td><%= row[ columnKey ]%></td>
-        <% end %>
-    </tr>
-    <% end %>
-<tbody>
-</tbody>
-</table>
+<div class="fixed-table-container">
+    <div class="header-background"></div>
+    <div class="table-inner">
+        <table class="display" cellspacing="0" cellpadding="0">
+        <thead>
+            <tr>
+                <% for columnKey, columnLabel of @columns: %>
+                <th><div><%- columnLabel %></div></th>
+                <% end %>
+            </tr>
+        </thead>
+        <tbody>
+            <% for row in @data: %>
+            <tr id="<%=row.id%>">
+                <% for columnKey, columName of@columns: %>
+                    <td><%= row[ columnKey ]%></td>
+                <% end %>
+            </tr>
+            <% end %>
+        <tbody>
+        </tbody>
+        </table>
+    </div>
+</div>

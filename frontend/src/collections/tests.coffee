@@ -1,5 +1,7 @@
 define [ 'underscore', 'backbone', 'models/test' ], ( _, Backbone, Test )->
   Tests = Backbone.Collection.extend
+    model: Test
+
     groupBy: ( groups )->
       groupedSiblings = {}
       groupKey = ( model )->
@@ -15,3 +17,10 @@ define [ 'underscore', 'backbone', 'models/test' ], ( _, Backbone, Test )->
 
       _( groupedSiblings ).values().map ( models )->
         new Tests models
+
+    textFilter: ( textFilter )->
+      filtered = new Tests
+      for model in @models
+        if model.complies textFilter
+          filtered.add model, silent: true
+      filtered

@@ -1,5 +1,71 @@
-#developerCharts .developer-chart{
+body{
+    font-family: Arial;
+    font-size: 13px;
+    margin: 0;
+    padding: 0;
+}
+table{
+    font-size: 14px;
+}
+table.display tr.disabled td{
+    color: #bbb !important;
+}
+table.display tr.disabled.odd td{
+    background-color: #efefef !important;
+}
+table.display tr.disabled.even td{
+    background-color: #fafafa !important;
+}
+table.display td{
+    padding: 6px 10px;
+    color: #222;
+    font-size: 13px;
+}
+table.display thead th div{
+    position: absolute;
+    top: 0;
+    padding: 4px 0 0 10px;
+}
+#applicationCharts{
+}
+
+#componentCharts{
+    clear: both;
+    /*display: none;*/
+    /*position: absolute;*/
+    /*width: 100%;*/
+    /*bottom: 0;*/
+}
+.chart-container{
     float: left;
     width: 33%;
     height: 400px;
+}
+
+#toolbar{
+    background-color: #ddd;
+    margin-top: 30px;
+    height: 50px;
+}
+
+table{
+    width: 100%;
+}
+.fixed-table-container{
+    height: 200px;
+    padding-top: 30px;
+    position: relative;
+}
+.header-background{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    background-color: white;
+    border-bottom: 1px solid black;
+    height: 29px
+}
+.table-inner{
+    height: 100%;
+    overflow-y: auto;
 }

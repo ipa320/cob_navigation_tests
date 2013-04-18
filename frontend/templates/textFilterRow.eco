@@ -1,0 +1,14 @@
+<select class="filterField">
+    <option value="any">Beliebiges Feld</option>
+    <option value="robot">Roboter</option>
+    <option value="alogrithm">Algorithmus</option>
+    <option value="scenario">Szenario</option>
+</select>
+<select class="filterType">
+    <option value="includes">enthält</option>
+    <option value="excludes">enthält nicht</option>
+</select>
+<input type="text" class="filterValue" />
+<input type="button" class="and" value="and" />
+<input type="button" class="or" value="or" />
+<span class="link"></span>
