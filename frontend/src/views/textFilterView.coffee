@@ -5,12 +5,27 @@ define [ 'backbone', 'views/textFilterRow', 'templates/textFilter', 'models/text
     events:
       'click .or, .and':  'addNewRow'
 
+    initialize: ->
+      console.log 'initialize', @options.textFilter
+      @options.textFilter.on 'change', ->
+        console.log 'changeee'
+
+    escape: ( row, criteria )->
+      console.log @options.textFilter.length
+      do row.remove
+      @options.textFilter.remove criteria
+      console.log criteria
+      console.log @options.textFilter.length
+
     render: ->
-      do @addNewRow
+      @addNewRow false
       this
 
-    addNewRow: ->
+    addNewRow: ( removable=true )->
       criteria = new TextFilterCriteria
       newRow = new TextFilterRow criteria: criteria
+      if removable
+        @listenTo newRow, 'escape', @escape.bind @, newRow, criteria
       @options.textFilter.add criteria
       @$el.append newRow.render().el
+      do newRow.focus

@@ -1,7 +1,8 @@
-define [ 'collections/tests', 'views/resultList', 'views/developerChart', 'views/applicationChart', 'models/lineChart', 'models/columnChart', 'models/testGroup', 'collections/testGroups', 'collections/textFilter', 'views/textFilterView' ], ( Tests, ResultList, DeveloperChart, ApplicationChart, LineChart, ColumnChart, TestGroup, TestGroups, TextFilter, TextFilterView)->
+define [ 'collections/tests', 'views/resultList', 'views/developerChart', 'views/applicationChart', 'models/lineChart', 'models/columnChart', 'models/testGroup', 'collections/testGroups', 'collections/textFilter', 'models/dateFilter', 'views/textFilterView' ], ( Tests, ResultList, DeveloperChart, ApplicationChart, LineChart, ColumnChart, TestGroup, TestGroups, TextFilter, DateFilter, TextFilterView)->
 
   tests = new TestGroup tests: new Tests testData
   textFilter = new TextFilter
+  dateFilter = new DateFilter
 
   #disableAllTestGroupsWithDifferentScenario = ( scenario )->
     #testGroups.forEach ( testGroup )->

@@ -42,7 +42,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
 
     setupTextFilter: ->
       textFilter = @get 'textFilter'
-      textFilter.on 'change', =>
+      textFilter.on 'change remove', =>
         do @updateTestsLists
         do @refreshAttributes
 
