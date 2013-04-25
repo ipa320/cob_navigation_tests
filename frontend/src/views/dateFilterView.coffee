@@ -4,27 +4,36 @@ define [ 'backbone', 'templates/dateFilter', 'jquery-ui' ], ( Backbone, dateFilt
     className:  'dateFilter'
     dateFormat: 'dd.mm.yy'
     events:
-      'click .clear': 'clear'
+      'click .start.clear': 'clearStart'
+      'click .end.clear':   'clearEnd'
 
     render: ->
       @$el.html dateFilterTmpl {}
-      @$( '.start' ).datepicker
+      @$( 'input.start' ).datepicker
         onClose: @startChanged.bind @
         dateFormat:  @dateFormat
-      @$( '.end' ).datepicker
+      @$( 'input.end' ).datepicker
         onClose: @endChanged.bind @
         dateFormat:  @dateFormat
       this
 
     startChanged: ( selectedDate )->
-      @$( '.end' ).datepicker 'option', 'minDate', selectedDate
+      @$( 'input.end' ).datepicker 'option', 'minDate', selectedDate
       @options.dateFilter.set 'start', @$( '.start' ).datepicker 'getDate'
 
     endChanged: ( selectedDate )->
-      @$( '.start' ).datepicker 'option', 'maxDate', selectedDate
+      @$( 'input.start' ).datepicker 'option', 'maxDate', selectedDate
       @options.dateFilter.set 'end', @$( '.end' ).datepicker 'getDate'
 
-    clear: ( e )->
-      input = $( e.currentTarget ).siblings( 'input' )
+    clearStart: ( e )->
+      @clearInput e.currentTarget
+      @$( 'input.end' ).datepicker 'option', 'minDate', ''
+
+    clearEnd: ( e ) ->
+      @clearInput e.currentTarget
+      @$( 'input.start' ).datepicker 'option', 'maxDate', ''
+
+    clearInput: ( input )->
+      input = $( input ).siblings( 'input' )
       input.val( '' )
       @options.dateFilter.set input.attr( 'name' ), null

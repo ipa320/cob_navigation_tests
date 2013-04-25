@@ -1,10 +1,10 @@
 <div class="date">
     <span class="label">From:</span>
     <input type="text" name="start" class="start" placeholder="any" />
-    <span class="clear ui-icon ui-icon-close"></span>
+    <span class="start clear ui-icon ui-icon-close"></span>
 </div>
 <div class="date">
     <span class="label">To:</span>
     <input type="text" name="end" class="end" placeholder="any" />
-    <span class="clear ui-icon ui-icon-close"></span>
+    <span class="end clear ui-icon ui-icon-close"></span>
 </div>

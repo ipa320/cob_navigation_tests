@@ -22,8 +22,13 @@ define [ 'underscore', 'backbone', 'models/test' ], ( _, Backbone, Test )->
       filtered      = new Tests
       compliedCount = 0
       for model in @models
-        model.set 'compliedCount', compliedCount
-        if model.complies filters
+        if @allFiltersComply compliedCount, model, filters
           filtered.add model, silent: true
           compliedCount++
       filtered
+
+    allFiltersComply: ( number, model, filters )->
+      for filter in filters
+        if !filter.complies number, model
+          return false
+      true

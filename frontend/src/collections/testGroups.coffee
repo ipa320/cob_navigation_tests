@@ -3,9 +3,8 @@ define [ 'backbone', 'models/testGroup' ], ( Backbone, TestGroup )->
     model: TestGroup
 
     constructor: ( models, options )->
-      Backbone.Collection.apply this, arguments
+      Backbone.Collection.apply @, arguments
+
       for model in @models
-        model.set 'textFilter',   options.textFilter
-        model.set 'dateFilter',   options.dateFilter
-        model.set 'numberFilter', options.numberFilter
+        model.set 'filters', options.filters
       this

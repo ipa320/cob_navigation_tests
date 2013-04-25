@@ -1,21 +1,20 @@
 define [ 'backbone', 'views/textFilterRow', 'templates/textFilter', 'models/textFilterCriteria' ], ( Backbone, TextFilterRow, textFilterTmpl, TextFilterCriteria )->
   TextFilterView = Backbone.View.extend
-    tagName: 'div'
+    tagName:   'div'
     className: 'textFilter'
     events:
       'click .or, .and':  'addNewRow'
 
     initialize: ->
-      console.log 'initialize', @options.textFilter
-      @options.textFilter.on 'change', ->
-        console.log 'changeee'
+      @rowViews = []
 
     escape: ( row, criteria )->
-      console.log @options.textFilter.length
       do row.remove
       @options.textFilter.remove criteria
-      console.log criteria
-      console.log @options.textFilter.length
+      do @removeLinkFromLastCriteria
+
+    removeLinkFromLastCriteria: ->
+      @options.textFilter.last().set 'link', ''
 
     render: ->
       @addNewRow false
@@ -23,7 +22,7 @@ define [ 'backbone', 'views/textFilterRow', 'templates/textFilter', 'models/text
 
     addNewRow: ( removable=true )->
       criteria = new TextFilterCriteria
-      newRow = new TextFilterRow criteria: criteria
+      newRow = new TextFilterRow model: criteria
       if removable
         @listenTo newRow, 'escape', @escape.bind @, newRow, criteria
       @options.textFilter.add criteria

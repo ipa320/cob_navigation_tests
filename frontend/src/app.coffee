@@ -4,11 +4,10 @@ define [ 'collections/tests', 'views/resultList', 'views/developerChart', 'views
   textFilter   = new TextFilter
   dateFilter   = new DateFilter
   numberFilter = new NumberFilter
+  filters = [ textFilter, dateFilter, numberFilter ]
 
   groupedTests = tests.groupBy [ 'robot', 'algorithm', 'scenario' ]
-  testGroups = new TestGroups \
-    groupedTests, \
-    textFilter: textFilter, dateFilter: dateFilter, numberFilter: numberFilter
+  testGroups = new TestGroups groupedTests, filters: filters
 
   #disableAllTestGroupsWithDifferentScenario = ( scenario )->
     #testGroups.forEach ( testGroup )->

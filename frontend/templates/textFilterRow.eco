@@ -1,7 +1,7 @@
 <select class="filterField">
     <option value="any">Beliebiges Feld</option>
     <option value="robot">Roboter</option>
-    <option value="alogrithm">Algorithmus</option>
+    <option value="algorithm">Algorithmus</option>
     <option value="scenario">Szenario</option>
 </select>
 <select class="filterType">
