@@ -37,18 +37,26 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       do @reset
       @set 'originalTests', @get 'tests'
       @set 'tests', @get( 'tests' ).clone()
-      @once 'change:textFilter', ->
-        do @setupTextFilter
+      @once 'change:textFilter', =>
+        @setupFilter @get 'textFilter'
+      @once 'change:dateFilter', =>
+        @setupFilter @get 'dateFilter'
+      @once 'change:numberFilter', =>
+        @setupFilter @get 'numberFilter'
 
-    setupTextFilter: ->
-      textFilter = @get 'textFilter'
-      textFilter.on 'change remove', =>
+    setupFilter: ( filter )->
+      filter.on 'change remove', =>
         do @updateTestsLists
         do @refreshAttributes
 
     updateTestsLists: ->
       textFilter   = @get 'textFilter'
-      newTests = @get( 'originalTests' ).textFilter textFilter
+      dateFilter   = @get 'dateFilter'
+      numberFilter = @get 'numberFilter'
+      newTests = @get( 'originalTests' ).filter
+        textFilter:   textFilter
+        dateFilter:   dateFilter
+        numberFilter: numberFilter
       @set 'tests', newTests
 
 
