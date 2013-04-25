@@ -69,3 +69,29 @@ table{
     height: 100%;
     overflow-y: auto;
 }
+
+.dateFilter .date{
+    position: relative;
+    width: 200px;
+    float: left;
+}
+.dateFilter .label{
+    display: block;
+    float: left;
+    padding-top: 3px;
+}
+.dateFilter input{
+    margin: 0 0 0 10px;
+    width: 150px;
+    float: left;
+}
+.dateFilter .clear{
+    position: absolute;
+    left: 179px;
+    top: 2px;
+    opacity: 0.5;
+    cursor: pointer;
+}
+.dateFilter .clear:hover{
+    opacity: 1;
+}

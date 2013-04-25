@@ -18,9 +18,12 @@ define [ 'underscore', 'backbone', 'models/test' ], ( _, Backbone, Test )->
       _( groupedSiblings ).values().map ( models )->
         new Tests models
 
-    textFilter: ( textFilter )->
-      filtered = new Tests
+    filter: ( filters )->
+      filtered      = new Tests
+      compliedCount = 0
       for model in @models
-        if model.complies textFilter
+        model.set 'compliedCount', compliedCount
+        if model.complies filters
           filtered.add model, silent: true
+          compliedCount++
       filtered

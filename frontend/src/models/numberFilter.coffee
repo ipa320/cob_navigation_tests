@@ -1,5 +1,4 @@
 define [ 'backbone' ], ( Backbone )->
   Backbone.Model.extend
     defaults:
-      start: ''
-      end:   ''
+      count: -1

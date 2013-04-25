@@ -39,10 +39,11 @@ testRequirejs [ 'models/testGroup' ], ( TestGroup )->
         expect( group.get( 'tests' ).toJSON() ).to.eql [ a: 1 ]
         checkDefaults group
 
-      it 'uses the args.tests if it\'s an instanceof Tests (not cloned)', ->
+      it 'uses the args.tests if it\'s an instanceof Tests (cloned)', ->
         tests = new MockTests [{ a: 1 }]
         group = new TestGroup tests: tests
-        expect( group.get 'tests' ).to.equal tests
+        expect( group.get 'tests' ).to.eql tests
+        expect( group.get 'tests' ).to.not.equal tests
         expect( group.get 'tests' ).to.have.length 1
         expect( group.get( 'tests' ).toJSON() ).to.eql [ a: 1 ]
         checkDefaults group
@@ -82,9 +83,9 @@ testRequirejs [ 'models/testGroup' ], ( TestGroup )->
           { duration: 1, distance: 2, rotation: 3 },
           { duration: 4, distance: 5, rotation: 6 }]
 
-        expect( result.get 'duration' ).to.equal 2.5
-        expect( result.get 'distance' ).to.equal 3.5
-        expect( result.get 'rotation' ).to.equal 4.5
+        expect( result.get 'mean.duration' ).to.equal 2.5
+        expect( result.get 'mean.distance' ).to.equal 3.5
+        expect( result.get 'mean.rotation' ).to.equal 4.5
 
     it 'getDataPointsForKeys returns test data', ->
       testsRaw = [

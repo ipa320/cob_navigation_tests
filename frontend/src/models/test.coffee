@@ -11,7 +11,19 @@ define [ 'backbone' ], ( Backbone )->
       distance:  null
       rotation:  null
 
-    complies: ( filter )->
+    initialize: ->
+      date = @get 'date'
+      if !( date instanceof Date )
+        @set 'date', new Date date
+
+    complies: ( filters )->
+      for name, filter of filters
+        methodName = 'complies' + name[ 0 ].toUpperCase() + name[ 1.. ]
+        if @[ methodName ]? and !@[ methodName ] filter
+          return false
+      return true
+
+    compliesTextFilter: ( textFilter )->
       robot     = @get 'robot'
       algorithm = @get 'algorithm'
       scenario  = @get 'scenario'
@@ -42,7 +54,7 @@ define [ 'backbone' ], ( Backbone )->
           when 'algorithm' then [ algorithm ]
           when 'scenario'  then [ scenario ]
 
-      criterias = filter.models
+      criterias = textFilter.models
 
       evaluate = ( index )->
         criteria = criterias[ index ]
@@ -68,3 +80,14 @@ define [ 'backbone' ], ( Backbone )->
 
       result = evaluate 0
       return if result or result == null then true else false
+
+    compliesDateFilter: ( dateFilter )->
+      date  = @get 'date'
+      start = dateFilter.get 'start'
+      end   = dateFilter.get 'end'
+      return ( !start || start <= date ) && ( !end || end >= date )
+
+    compliesNumberFilter: ( numberFilter )->
+      count = numberFilter.get 'count'
+      compliedCount = @get 'compliedCount'
+      return !compliedCount || !count || compliedCount < count

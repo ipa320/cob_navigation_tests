@@ -4,11 +4,12 @@
         <link href="assets/css/jquery.dataTables.css" type="text/css" rel="stylesheet" />
         <link href="assets/css/style.css" type="text/css" rel="stylesheet" />
         <link href="assets/css/chosen.css" type="text/css" rel="stylesheet" />
+        <link href="assets/css/jquery-ui-1.10.2.custom.css" type="text/css" rel="stylesheet" />
         <script src="vendor/es5-shim.js"></script>
         <script src="vendor/requirejs.js"></script>
         <script type="text/javascript"> 
             var testData = [],
-                initialTimestamp = ( new Date() ).getTime() - 20000,
+                initialTimestamp = ( new Date() ).getTime(),
                 robots = [ 'cob3-3', 'cob3-2' ],
                 scenarios = [ 
                     'ipa-ktichen two-point', 
@@ -19,16 +20,17 @@
                     '2dnav_ros_dwa'
                 ],
                 id = 0,
+                step = 1000*60*60*24,
                 timestamp, robot, scenario, algorithm;
             for( var i in robots ){
                 robot  = robots[ i ];
                 for( var j in scenarios ){
                     scenario = scenarios[ j ];
                     for( var k in algorithms ){
-                        timestamp = 0//initialTimestamp
+                        timestamp = initialTimestamp - 20*step
                         algorithm = algorithms[ k ];
                         for( var i=0; i<20; i++ ){
-                            timestamp += 1000*60*60*24;
+                            timestamp += step
                             testData.push({ 
                                 id: ++id,
                                 date: timestamp,
@@ -71,9 +73,13 @@
                         deps: [ 'highcharts' ],
                         exports: 'jQuery.fn.highcharts'
                     },
-                    'chosen': {
+                    'jquery-ui': {
                         deps: [ 'jquery' ],
-                        exports: 'jQuery.fn.chosen'
+                        exports: 'jQuery.fn'
+                    },
+                    'jquery-numeric': {
+                        deps: [ 'jquery' ],
+                        exports: 'jQuery.fn'
                     }
                 },
                 paths: { 
@@ -84,7 +90,9 @@
                     'jquery.dataTables': '../vendor/jquery.dataTables',
                     'highcharts':        '../vendor/highcharts',
                     'highcharts-more':   '../vendor/highcharts-more',
-                    'chosen':            '../vendor/chosen.jquery'
+                    'chosen':            '../vendor/chosen.jquery',
+                    'jquery-ui':         '../vendor/jquery-ui-1.10.2.custom',
+                    'jquery-numeric':    '../vendor/numeric'
                 }
             });
             require([ 'app', 'backbone' ], function( app, Backbone ){ 

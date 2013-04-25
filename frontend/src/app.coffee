@@ -1,8 +1,14 @@
-define [ 'collections/tests', 'views/resultList', 'views/developerChart', 'views/applicationChart', 'models/lineChart', 'models/columnChart', 'models/testGroup', 'collections/testGroups', 'collections/textFilter', 'models/dateFilter', 'views/textFilterView' ], ( Tests, ResultList, DeveloperChart, ApplicationChart, LineChart, ColumnChart, TestGroup, TestGroups, TextFilter, DateFilter, TextFilterView)->
+define [ 'collections/tests', 'views/resultList', 'views/developerChart', 'views/applicationChart', 'models/lineChart', 'views/dateFilterView', 'models/columnChart', 'models/testGroup', 'collections/testGroups', 'collections/textFilter', 'models/dateFilter', 'views/textFilterView', 'models/numberFilter', 'views/numberFilterView' ], ( Tests, ResultList, DeveloperChart, ApplicationChart, LineChart, DateFilterView, ColumnChart, TestGroup, TestGroups, TextFilter, DateFilter, TextFilterView, NumberFilter, NumberFilterView )->
 
   tests = new TestGroup tests: new Tests testData
-  textFilter = new TextFilter
-  dateFilter = new DateFilter
+  textFilter   = new TextFilter
+  dateFilter   = new DateFilter
+  numberFilter = new NumberFilter
+
+  groupedTests = tests.groupBy [ 'robot', 'algorithm', 'scenario' ]
+  testGroups = new TestGroups \
+    groupedTests, \
+    textFilter: textFilter, dateFilter: dateFilter, numberFilter: numberFilter
 
   #disableAllTestGroupsWithDifferentScenario = ( scenario )->
     #testGroups.forEach ( testGroup )->
@@ -26,15 +32,21 @@ define [ 'collections/tests', 'views/resultList', 'views/developerChart', 'views
     #else if do noTestGroupSelected
       #do enableAllTestGroups
 
-  renderFilterView = ->
+  renderTextFilterView = ->
     textFilterView = new TextFilterView textFilter: textFilter
     $( 'body' ).append textFilterView.render().el
 
   renderResultListView = ->
-    groupedTests = tests.groupBy [ 'robot', 'algorithm', 'scenario' ]
-    testGroups = new TestGroups groupedTests, textFilter: textFilter
     resultListView = new ResultList testGroups: testGroups
     $( '#resultListView' ).html resultListView.render().el
+
+  renderDateFilterView = ->
+    dateFilterView = new DateFilterView dateFilter: dateFilter
+    $( 'body' ).append dateFilterView.render().el
+
+  renderNumberFilterView = ->
+    numberFilterView = new NumberFilterView numberFilter: numberFilter
+    $( 'body' ).append numberFilterView.render().el
 
   renderComponentDeveloperCharts = ->
     devChartModels = [
@@ -82,4 +94,6 @@ define [ 'collections/tests', 'views/resultList', 'views/developerChart', 'views
     #do renderComponentDeveloperCharts
     #do renderApplicationDeveloperCharts
     do renderResultListView
-    do renderFilterView
+    do renderTextFilterView
+    do renderDateFilterView
+    do renderNumberFilterView
