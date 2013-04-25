@@ -2,6 +2,7 @@ define [ 'backbone' ], ( Backbone )->
   Backbone.Model.extend
     defaults:
       count: -1
+<<<<<<< HEAD
 
     complies: ( number, test )->
       count = @get 'count'
