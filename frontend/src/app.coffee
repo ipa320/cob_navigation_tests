@@ -1,4 +1,4 @@
-define [ 'collections/tests', 'views/resultList', 'views/developerChart', 'views/applicationChart', 'models/lineChart', 'views/dateFilterView', 'models/columnChart', 'models/testGroup', 'collections/testGroups', 'collections/textFilter', 'models/dateFilter', 'views/textFilterView', 'models/numberFilter', 'views/numberFilterView' ], ( Tests, ResultList, DeveloperChart, ApplicationChart, LineChart, DateFilterView, ColumnChart, TestGroup, TestGroups, TextFilter, DateFilter, TextFilterView, NumberFilter, NumberFilterView )->
+define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'views/developerChart', 'views/applicationChart', 'models/lineChart',  'models/columnChart', 'models/testGroup', 'collections/testGroups',  'models/dateFilter', 'models/numberFilter', 'views/filterView' ], ( TextFilter, Tests, ResultList, DeveloperChart, ApplicationChart, LineChart, ColumnChart, TestGroup, TestGroups, DateFilter, NumberFilter, FilterView )->
 
   tests = new TestGroup tests: new Tests testData
   textFilter   = new TextFilter
@@ -31,21 +31,16 @@ define [ 'collections/tests', 'views/resultList', 'views/developerChart', 'views
     #else if do noTestGroupSelected
       #do enableAllTestGroups
 
-  renderTextFilterView = ->
-    textFilterView = new TextFilterView textFilter: textFilter
-    $( 'body' ).append textFilterView.render().el
-
   renderResultListView = ->
     resultListView = new ResultList testGroups: testGroups
     $( '#resultListView' ).html resultListView.render().el
 
-  renderDateFilterView = ->
-    dateFilterView = new DateFilterView dateFilter: dateFilter
-    $( 'body' ).append dateFilterView.render().el
-
-  renderNumberFilterView = ->
-    numberFilterView = new NumberFilterView numberFilter: numberFilter
-    $( 'body' ).append numberFilterView.render().el
+  renderFilterView = ->
+    filterView = new FilterView
+      textFilter:   textFilter
+      dateFilter:   dateFilter
+      numberFilter: numberFilter
+    $( '#filterView' ).html filterView.render().el
 
   renderComponentDeveloperCharts = ->
     devChartModels = [
@@ -93,6 +88,4 @@ define [ 'collections/tests', 'views/resultList', 'views/developerChart', 'views
     #do renderComponentDeveloperCharts
     #do renderApplicationDeveloperCharts
     do renderResultListView
-    do renderTextFilterView
-    do renderDateFilterView
-    do renderNumberFilterView
+    do renderFilterView
