@@ -8,4 +8,4 @@ define [ 'backbone' ], ( Backbone )->
       date  = test.get 'date'
       start = @get 'start'
       end   = @get 'end'
-      ( !start || start <= date ) && ( !end || end >= date )
+      ( !start || date >= start ) && ( !end || date <= end )

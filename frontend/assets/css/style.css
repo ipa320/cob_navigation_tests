@@ -36,7 +36,7 @@ table.display thead th div{
     /*width: 100%;*/
     /*bottom: 0;*/
 }
-.chart-container{
+.componentDevView .devCharts > .chart{
     float: left;
     width: 33%;
     height: 400px;

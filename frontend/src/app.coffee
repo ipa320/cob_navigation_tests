@@ -1,4 +1,4 @@
-define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'views/componentDevView', 'models/testGroup', 'collections/testGroups',  'models/dateFilter', 'models/numberFilter', 'views/filterView' ], ( TextFilter, Tests, ResultList, ComponentDevView, TestGroup, TestGroups, DateFilter, NumberFilter, FilterView )->
+define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'views/devView', 'models/testGroup', 'collections/testGroups',  'models/dateFilter', 'models/numberFilter', 'views/filterView' ], ( TextFilter, Tests, ResultList, DevView, TestGroup, TestGroups, DateFilter, NumberFilter, FilterView )->
 
   tests = new TestGroup tests: new Tests testData
   textFilter   = new TextFilter
@@ -42,6 +42,10 @@ define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'vie
       else
         resultListView.setSelectionMode 'promiscuous'
 
+  renderDevView = ->
+    devView = new DevView testGroups: testGroups
+    $( '#devView' ).html devView.render().el
+
 
   renderFilterView = ->
     filterView = new FilterView
@@ -50,32 +54,6 @@ define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'vie
       numberFilter: numberFilter
     $( '#filterView' ).html filterView.render().el
 
-  renderComponentDevView = ->
-    componentDevView = new ComponentDevView testGroups: testGroups
-    $( '#componentDevView' ).html componentDevView.render().el
-
-  renderComponentDeveloperCharts = ->
-    devChartModels = [
-      new LineChart
-        key: 'duration', yAxisLabel: 'Duration in s', valueSuffix: 's'
-        title: 'Duration', groups: testGroups, filter: textFilter
-      new LineChart
-        key: 'distance', yAxisLabel: 'Distance in m', valueSuffix: 'm'
-        title: 'Distance', groups: testGroups, filter: textFilter
-      new LineChart
-        key: 'rotation', yAxisLabel: 'Rotation in deg', valueSuffix: 'deg'
-        title: 'Rotation', groups: testGroups, filter: filter
-    ]
-    componentChartsContainer = $( '#componentCharts' )
-    containers = []
-    for chartModel in devChartModels
-      c = $( '<div class="chart-container" />' ).appendTo componentChartsContainer
-      containers.push c
-
-    for i, chartModel of devChartModels
-      c = containers[ i ]
-      chart = new DeveloperChart model: chartModel
-      c.html chart.render( c.width() ).el
 
 
   renderApplicationDeveloperCharts = ->
@@ -101,4 +79,6 @@ define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'vie
     #do renderApplicationDeveloperCharts
     do renderResultListView
     do renderFilterView
-    do renderComponentDevView
+    do renderDevView
+    $( '.exc' ).prop( 'checked', false ).trigger( 'change' )
+    #setTimeout ( -> $( window ).trigger( 'resize' )), 0

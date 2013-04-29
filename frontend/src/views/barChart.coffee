@@ -5,9 +5,7 @@ define [ 'backbone', 'highcharts-more' ], ( Backbone, Highcharts )->
     elements: []
 
     initialize: ->
-      @model.listenTo @model, 'addSeries', @addSeries.bind @
-      @model.listenTo @model, 'removeSeries', @removeSeries.bind @
-      #@model.listenTo @model, 'change:range', @updateRange.bind @
+      # listen to model
       @chart = null
 
     render: ( width )->

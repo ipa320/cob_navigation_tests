@@ -1,17 +1,19 @@
-define  [ 'backbone', 'views/devChart', 'templates/devCharts' ], ( Backbone, DevChart, devChartsTmpl )->
+define  [ 'backbone', 'views/componentDevChart', 'templates/componentDev' ], ( Backbone, ComponentDevChart, componentDevTmpl )->
   Backbone.View.extend
     tagName:   'div'
-    className: 'devCharts'
+    className: 'componentDev'
 
     initialize: ->
 
     render: ->
-      @$el.html do devChartsTmpl
-      @renderChart 'algorithm'
+      @$el.html do componentDevTmpl
+      @renderChart 'duration'
+      @renderChart 'distance'
+      @renderChart 'rotation'
       @
 
     renderChart: ( key )->
-      devChart = new DevChart
+      chart = new ComponentDevChart
         key: key
         testGroups: @options.testGroups
-      @$( ".#{key}" ).html devChart.render().el
+      @$( ".#{key}" ).html chart.render().el

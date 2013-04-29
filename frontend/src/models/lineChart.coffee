@@ -2,33 +2,40 @@ define [ 'backbone'  ], ( Backbone )->
 
   Backbone.Model.extend
     defaults:
-      key: ''
-      title: ''
+      testGroup:       undefined
+      hcSeries:        undefined
+      key:             ''
+      title:           ''
       xAxisCategories: null
-      yAxisLabel: ''
-      valueSuffix: ''
-      filter: null
+      yAxisLabel:      ''
+      valueSuffix:     ''
+      filter:          null
 
     initialize: ->
-      @get( 'groups' )?.bind 'change:selected', @selectChange, this
-      @get( 'filter' )?.bind 'change:range', @setExtremes, this
+      @on 'change:testGroup', @testGroupChanged
       
-    selectChange: ( model, selected )->
-      hcSeries = @testGroupToHighchartSeries model
-      events = [ 'removeSeries', 'addSeries' ]
-      @trigger events[ +selected ], hcSeries
+    testGroupChanged: ->
+      testGroup = @get 'testGroup'
+      @stopListening @previous 'testGroup'
+      @listenTo testGroup, 'change', @updateHcSeries if testGroup
+      do @updateHcSeries
 
-    testGroupToHighchartSeries: ( model )->
+    updateHcSeries: ->
+      @set 'hcSeries', do @asHighchartsSeries
+
+    asHighchartsSeries: ->
+      testGroup  = @get 'testGroup'
+      return {} if not testGroup
+
       nameChunks = []
       for key in [ 'robot', 'algorithm', 'scenario' ]
-        nameChunks.push model.get key
+        nameChunks.push testGroup.get key
 
-      date = model.getDataPointsForKey( 'date' )
-      data = model.getDataPointsForKey( @attributes.key )
+      date = testGroup?.getDataPointsForKey( 'date' )
+      data = testGroup.getDataPointsForKey( @get 'key' )
       name:  nameChunks.join ' / '
-      id:    model.id
+      id:    testGroup.id
       data:  _.zip date, data
-
 
     extremesChanged: ( min, max )->
       @_swallowNextExtremesEvent = true
