@@ -1,6 +1,7 @@
 define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )->
   TestGroup = Backbone.Model.extend
     defaults:
+      selected:          undefined
       count:             0
       empty:             false
       robot:             'None'
@@ -10,7 +11,6 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       algorithm:         'None'
       algorithms:        []
       enabled:           true
-      selected:          false
       'mean.duration':   'N/A'
       'mean.distance':   'N/A'
       'mean.rotation':   'N/A'

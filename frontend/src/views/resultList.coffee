@@ -4,7 +4,8 @@ define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixed
     id: 'resultList',
     tagName: 'div',
     events:
-      'click table tr': 'selectRow'
+      #'click table tr': 'selectRow'
+      'click input':    'changeSelected'
 
     options:
       testGroups: null
@@ -31,6 +32,7 @@ define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixed
     initialize: ->
       @listenTo @options.testGroups, 'change:enabled',  @enableChanged.bind @
       @listenTo @options.testGroups, 'change:count',    @refreshTable.bind @
+      @setSelectionMode @options.selectionMode
 
     refreshTable: ->
       do @render
@@ -39,11 +41,45 @@ define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixed
       id = model.get 'id'
       @$( '#' + id ).toggleClass 'disabled', !enabled
 
-    selectRow: ( e ) ->
-      current = $( e.currentTarget )
-      id = current.attr 'id'
-      model = @options.testGroups.get id
-      if model?.get 'enabled'
-        current.toggleClass 'row_selected'
-        selected = current.hasClass 'row_selected'
-        model?.set 'selected', selected
+    changeSelected: ( e ) ->
+      checkbox = $ e.currentTarget
+      checked  = checkbox.is( ':checked' )
+      row      = checkbox.closest '.row'
+      id       = row.attr 'id'
+      model    = @options.testGroups.get id
+
+      model.set 'selected', checked
+      if @options.selectionMode == 'exclusive' and checked
+        @unselectAllGroups except: model
+
+    setSelectionMode: ( mode )->
+      mode = 'promiscuous' if mode not in [ 'exclusive', 'promiscuous' ]
+      changed = mode != @options.selectionMode
+      @options.selectionMode = mode
+      return if not changed
+
+      if mode == 'promiscuous'
+        do @selectAllGroups
+      else
+        do @unselectAllGroups
+
+    selectAllGroups: ->
+      @options.testGroups.each ( testGroup )->
+        testGroup.set 'selected', true
+      do @updateCheckboxes
+
+    unselectAllGroups: ( options )->
+      @options.testGroups.each ( testGroup )->
+        return if options?.except == testGroup
+        testGroup.set 'selected', false
+      do @updateCheckboxes
+
+    updateCheckboxes: ->
+      rows = @$ '.row'
+      rows.each ( i, row )=>
+        $row   = $ row
+        id     = $row.attr 'id'
+        model  = @options.testGroups.get id
+
+        chkbox = $row.find 'input:first'
+        chkbox.prop 'checked', model.get 'selected'

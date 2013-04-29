@@ -5,8 +5,8 @@ define [ 'backbone', 'templates/textFilterRow', 'chosen' ], ( Backbone, textFilt
     events:
       'change':     'change'
       'keyup':      'keyup'
-      'click .and': 'setAndLink'
-      'click .or':  'setOrLink'
+      'click .and': 'andClicked'
+      'click .or':  'orClicked'
 
     initialize: ->
       @listenTo @model, 'change:link', @linkChanged
@@ -16,14 +16,24 @@ define [ 'backbone', 'templates/textFilterRow', 'chosen' ], ( Backbone, textFilt
       this
 
     keyup: ( e )->
-      if e.keyCode == 27
+      if e.keyCode == 27 # escape
         @trigger 'escape'
+      if e.keyCode == 13 # enter
+        do @andClicked
       do @change
 
     change: ->
       @model.set 'field', @$( '.filterField' ).val()
       @model.set 'type',  @$( '.filterType'  ).val()
       @model.set 'value', $.trim( @$( '.filterValue' ).val())
+
+    andClicked: ->
+      @trigger 'andClicked'
+      do @setAndLink
+
+    orClicked: ->
+      @trigger 'orClicked'
+      do @setOrLink
 
     setAndLink: ->
       @$( '.and, .or' ).hide()
@@ -47,3 +57,5 @@ define [ 'backbone', 'templates/textFilterRow', 'chosen' ], ( Backbone, textFilt
     focus: ->
       @$( 'input[type=text]:first' ).focus()
 
+    clear: ->
+      @$( 'input[type=text]:first' ).val ''

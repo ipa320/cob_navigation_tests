@@ -4,6 +4,7 @@
         <table class="display" cellspacing="0" cellpadding="0">
         <thead>
             <tr>
+                <th></th>
                 <% for columnKey, columnLabel of @columns: %>
                 <th><div><%- columnLabel %></div></th>
                 <% end %>
@@ -11,7 +12,12 @@
         </thead>
         <tbody>
             <% for row in @data: %>
-            <tr id="<%=row.id%>">
+            <tr id="<%=row.id%>" class="row">
+                <% if row.selected: %>
+                    <td><input type="checkbox" class=="selected" checked="checked"/></td>
+                <% else: %>
+                    <td><input type="checkbox" class=="selected" /></td>
+                <% end %>
                 <% for columnKey, columName of@columns: %>
                     <td><%= row[ columnKey ]%></td>
                 <% end %>

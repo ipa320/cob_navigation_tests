@@ -1,4 +1,4 @@
-define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'views/developerChart', 'views/applicationChart', 'models/lineChart',  'models/columnChart', 'models/testGroup', 'collections/testGroups',  'models/dateFilter', 'models/numberFilter', 'views/filterView' ], ( TextFilter, Tests, ResultList, DeveloperChart, ApplicationChart, LineChart, ColumnChart, TestGroup, TestGroups, DateFilter, NumberFilter, FilterView )->
+define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'views/componentDevView', 'models/testGroup', 'collections/testGroups',  'models/dateFilter', 'models/numberFilter', 'views/filterView' ], ( TextFilter, Tests, ResultList, ComponentDevView, TestGroup, TestGroups, DateFilter, NumberFilter, FilterView )->
 
   tests = new TestGroup tests: new Tests testData
   textFilter   = new TextFilter
@@ -8,6 +8,7 @@ define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'vie
 
   groupedTests = tests.groupBy [ 'robot', 'algorithm', 'scenario' ]
   testGroups = new TestGroups groupedTests, filters: filters
+
 
   #disableAllTestGroupsWithDifferentScenario = ( scenario )->
     #testGroups.forEach ( testGroup )->
@@ -34,6 +35,13 @@ define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'vie
   renderResultListView = ->
     resultListView = new ResultList testGroups: testGroups
     $( '#resultListView' ).html resultListView.render().el
+    $(  '.exc' ).change ->
+      exclusive = !$( this ).is( ':checked' )
+      if exclusive
+        resultListView.setSelectionMode 'exclusive'
+      else
+        resultListView.setSelectionMode 'promiscuous'
+
 
   renderFilterView = ->
     filterView = new FilterView
@@ -41,6 +49,10 @@ define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'vie
       dateFilter:   dateFilter
       numberFilter: numberFilter
     $( '#filterView' ).html filterView.render().el
+
+  renderComponentDevView = ->
+    componentDevView = new ComponentDevView testGroups: testGroups
+    $( '#componentDevView' ).html componentDevView.render().el
 
   renderComponentDeveloperCharts = ->
     devChartModels = [
@@ -89,3 +101,4 @@ define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'vie
     #do renderApplicationDeveloperCharts
     do renderResultListView
     do renderFilterView
+    do renderComponentDevView

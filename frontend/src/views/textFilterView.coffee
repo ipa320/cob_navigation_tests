@@ -2,29 +2,40 @@ define [ 'backbone', 'views/textFilterRow', 'templates/textFilter', 'models/text
   TextFilterView = Backbone.View.extend
     tagName:   'div'
     className: 'textFilter'
-    events:
-      'click .or, .and':  'addNewRow'
 
     initialize: ->
       @rowViews = []
 
-    escape: ( row, criteria )->
-      do row.remove
-      @options.textFilter.remove criteria
-      do @removeLinkFromLastCriteria
+    escape: ( view, criteria )->
+      $row  = $ view.el
+      $prev = do $row.prev
+      if $prev.length
+        @stopListening view
+        do $prev.data( 'view' ).focus
+        $row.data 'view', null
+        do view.remove
+        @options.textFilter.remove criteria
+        do @removeLinkFromLastCriteria
+      else
+        do view.clear
 
     removeLinkFromLastCriteria: ->
       @options.textFilter.last().set 'link', ''
 
     render: ->
-      @addNewRow false
+      do @addNewRow
       this
 
-    addNewRow: ( removable=true )->
+    addNewRow: ->
       criteria = new TextFilterCriteria
-      newRow = new TextFilterRow model: criteria
-      if removable
-        @listenTo newRow, 'escape', @escape.bind @, newRow, criteria
+      newView = new TextFilterRow model: criteria
+      @listenTo newView, 'escape', @escape.bind @, newView, criteria
+      @listenTo newView, 'andClicked', @addNewRow.bind @, criteria
+      @listenTo newView, 'orClicked',  @addNewRow.bind  @, criteria
+
       @options.textFilter.add criteria
-      @$el.append newRow.render().el
-      do newRow.focus
+      $row = newView.render().$el
+      $row.data 'view', newView
+
+      @$el.append $row
+      do newView.focus

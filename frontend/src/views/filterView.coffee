@@ -1,8 +1,8 @@
 define [ 'templates/filter', 'views/dateFilterView', 'views/textFilterView', 'views/numberFilterView' ], ( filterTmpl, DateFilterView, TextFilterView, NumberFilterView )->
 
   Backbone.View.extend
-    tagName: 'div'
-    id: 'filterView'
+    tagName:   'div'
+    className: 'filterView'
 
     render: ->
       @$el.html do filterTmpl
