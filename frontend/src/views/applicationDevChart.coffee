@@ -40,8 +40,7 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
       state = null
       @options.testGroups.every ( testGroup )=>
         return true if testGroup.get( 'empty' ) or !testGroup.get( 'selected' )
-        id = ''
-        id += testGroup.get key for key in @options.fixedAttributeKeys
+        id = ( id || '' ) + testGroup.get key for key in @options.fixedAttributeKeys
         state = id if state == null
         return state == id
 
