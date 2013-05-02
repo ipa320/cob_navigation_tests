@@ -6,9 +6,9 @@ define [ 'templates/filter', 'views/dateFilterView', 'views/textFilterView', 'vi
 
     render: ->
       @$el.html do filterTmpl
-      @renderTextFilterView @$( '.textFilter' )
-      @renderDateFilterView @$( '.dateFilter' )
-      @renderNumberFilterView @$( '.numberFilter' )
+      @renderTextFilterView @$( '.textFilterContainer' )
+      @renderDateFilterView @$( '.dateFilterContainer' )
+      @renderNumberFilterView @$( '.numberFilterContainer' )
       @
 
     renderTextFilterView: ( $el )->

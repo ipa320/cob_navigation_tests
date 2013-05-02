@@ -1,3 +1,4 @@
-<div class="textFilter"></div>
-<div class="dateFilter"></div>
-<div class="numberFilter"></div>
+<h1>Filter Criteria</h1>
+<div class="dateFilterContainer"></div>
+<div class="numberFilterContainer"></div>
+<div class="textFilterContainer"></div>

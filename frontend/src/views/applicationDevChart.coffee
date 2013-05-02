@@ -6,7 +6,7 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
     initialize: ->
       @listenTo @options.testGroups, 'change:empty change:selected', \
         _.debounce @groupsChanged.bind @, 10
-      @chartModel = new BarChartModel
+      @chartModel = new BarChartModel key: @options.variableAttributeKey
       @chartView  = new BarChartView model: @chartModel
 
 
@@ -17,30 +17,31 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
 
 
     groupsChanged: ->
-      if do @validateTestGroups
-        #@chart.set 'testGroups', testGroups
+      testGroups = do @getInterestingRows
+      if @validateTestGroups testGroups
+        @chartModel.set 'testGroups', testGroups
         do @showChart
 
-    validateTestGroups: ->
+    validateTestGroups: ( rows )->
       error = ''
-      if not do @hasAtLeastOneSelectedRow
+      if rows.length == 0
         error = 'No TestGroup selected'
 
-      if not do @hasOnlyOneKindOfEveryFixedAttribute
+      if not @hasOnlyOneKindOfEveryFixedAttribute rows
         error  = "Testgroups selected are too diverse"
 
       @error error if error
       return !error.length
 
-    hasAtLeastOneSelectedRow: ->
-      @options.testGroups.any ( testGroup )=>
-        return !testGroup.get( 'empty' ) and testGroup.get( 'selected' )
+    getInterestingRows: ->
+      @options.testGroups.filter ( testGroup )->
+        return true if !testGroup.get( 'empty' ) and testGroup.get( 'selected' )
 
-    hasOnlyOneKindOfEveryFixedAttribute: ->
+    hasOnlyOneKindOfEveryFixedAttribute: ( rows )->
       state = null
-      @options.testGroups.every ( testGroup )=>
-        return true if testGroup.get( 'empty' ) or !testGroup.get( 'selected' )
-        id = ( id || '' ) + testGroup.get key for key in @options.fixedAttributeKeys
+      rows.every ( testGroup )=>
+        for key in @options.fixedAttributeKeys
+          id = ( id || '' ) + testGroup.get key
         state = id if state == null
         return state == id
 

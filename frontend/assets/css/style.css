@@ -1,11 +1,31 @@
+@import url( 'http://fonts.googleapis.com/css?family=Oswald|Open+Sans:300,400,600,700' );
+
 body{
     font-family: Arial;
     font-size: 13px;
     margin: 0;
     padding: 0;
 }
+h1{
+    font-family: 'Open Sans';
+    font-weight: 300;
+    margin: 10px 0 15px;
+}
+
+#top{
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+}
+/*
+ * Result List
+ */
+#resultListView{
+    margin: 10px 10px 10px 300px;
+}
 table{
     font-size: 14px;
+    cursor: default !important;
 }
 table.display tr.disabled td{
     color: #bbb !important;
@@ -26,35 +46,15 @@ table.display thead th div{
     top: 0;
     padding: 4px 0 0 10px;
 }
-#applicationCharts{
-}
-
-#componentCharts{
-    clear: both;
-    /*display: none;*/
-    /*position: absolute;*/
-    /*width: 100%;*/
-    /*bottom: 0;*/
-}
-.componentDevView .devCharts > .chart{
-    float: left;
-    width: 33%;
-    height: 400px;
-}
-
-#toolbar{
-    background-color: #ddd;
-    margin-top: 30px;
-    height: 50px;
-}
-
 table{
     width: 100%;
 }
 .fixed-table-container{
-    height: 200px;
+    top: 19px;
+    bottom: 0;
     padding-top: 30px;
-    position: relative;
+    position: absolute;
+    margin-right: 20px;
 }
 .header-background{
     position: absolute;
@@ -62,36 +62,161 @@ table{
     right: 0;
     left: 0;
     background-color: white;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #f9f9f9;
     height: 29px
 }
 .table-inner{
     height: 100%;
     overflow-y: auto;
 }
+.row:nth-child(odd){
+    background-color: #f7f7f7;
+}
 
+
+
+/*
+ * Filter
+ */
+#filterView{
+    position: absolute;
+    top: 19px;
+    bottom: 0;
+    padding: 0 20px;
+    width: 230px;
+    float: left;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-right: 1px dashed #ccc;
+    overflow: auto;
+}
+#filterView h1{
+    margin-top: 0;
+}
+#filterView input[type=text]{
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+#filterView input[type=button]{
+    padding: 4px;
+}
+#filterView .filterValue{
+    width: 150px;
+}
+
+/*
+ * Date Filter
+ */
 .dateFilter .date{
     position: relative;
-    width: 200px;
-    float: left;
+    margin-bottom: 5px;
+    clear: both;
+    overflow: hidden;
 }
 .dateFilter .label{
     display: block;
     float: left;
-    padding-top: 3px;
+    padding-top: 6px;
+    width: 55px;
 }
 .dateFilter input{
-    margin: 0 0 0 10px;
     width: 150px;
     float: left;
 }
 .dateFilter .clear{
     position: absolute;
-    left: 179px;
-    top: 2px;
+    left: 180px;
+    top: 6px;
     opacity: 0.5;
     cursor: pointer;
 }
 .dateFilter .clear:hover{
     opacity: 1;
+}
+
+/*
+ * Number Filter
+ */
+.numberFilter{
+    overflow: hidden;
+}
+.numberFilter .labelFront{
+    display: block;
+    float: left;
+    padding-top: 6px;
+    width: 55px;
+}
+.numberFilter input{
+    width: 112px;
+}
+/*
+ * Text Filter
+ */
+.textFilter{
+    margin-top: 19px;
+    border-top: 1px dashed #ccc;
+    padding-top: 19px;
+}
+
+.textFilterRow{
+}
+.textFilterRow .top{
+    padding-bottom: 6px;
+}
+.textFilterRow:hover{
+}
+.textFilterRow:nth-child(odd){
+}
+
+
+/*
+ * Dev View
+ */
+.devView .tabs{
+    position: relative;
+    bottom: -1px;
+}
+.devView .tabs li{
+    float: left;
+    padding: 12px;
+    border: 1px solid #ccc;
+    margin: 5px 5px 0;
+    cursor: pointer;
+}
+.devView .tabs li:hover{
+    text-decoration: underline;
+}
+.devView .tabs li.active{
+    border-bottom: 1px solid white;
+    text-decoration: none !important;
+}
+.devView .tabContent{
+    border-top: 1px solid #ccc;
+    clear: both;
+    padding-top: 20px;
+}
+
+
+/*
+ * Component Dev View
+ */
+.componentDevView .chartContainer{
+    float: left;
+    width: 33%;
+    height: 400px;
+}
+
+/*
+ * Application Dev View
+ */
+.applicationDevView .chartContainer{
+    float: left;
+    width: 45%;
+    height: 400px;
+    position: relative;
+}
+.applicationDevView .error{
+    position: absolute;
+    top: 50%;
+    border: 2px solid #ccc;
 }

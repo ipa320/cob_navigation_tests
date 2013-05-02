@@ -2,39 +2,48 @@ define [ 'backbone'  ], ( Backbone )->
 
   Backbone.Model.extend
     defaults:
-      key: ''
-      title: ''
+      testGroups:       null
+      key:             ''
+      title:           ''
       xAxisCategories: null
-      yAxisLabel: ''
-      valueSuffix: ''
-      filter: null
+      yAxisLabel:      ''
+      valueSuffix:     ''
+      filter:          null
 
     initialize: ->
-      @get( 'groups' )?.bind 'change:selected', @selectChanged, this
-      @get( 'filter' )?.bind 'change:range', @setExtremes, this
+      @
+      @on  'change:testGroups', @testGroupsChanged
       
-    selectChanged: ( model, selected )->
-      hcSeries = @testGroupToHighchartSeries model
-      events = [ 'removeSeries', 'addSeries' ]
-      @trigger events[ +selected ], hcSeries
+    testGroupsChanged: ->
+      do @stopListeningToPreviousTestGroups
+      for testGroup in @get 'testGroups'
+        @listenTo testGroup, 'change', _.debounce @updateHcSeries, 200
+      do @updateHcSeries
 
-    testGroupToHighchartSeries: ( model )->
-      nameChunks = []
-      for key in [ 'robot', 'algorithm', 'scenario' ]
-        nameChunks.push model.get key
+    stopListeningToPreviousTestGroups: ->
+      prevTestGroups = @previous 'testGroups'
+      return if not prevTestGroups
+      for testGroup in prevTestGroups
+        @stopListening testGroup
 
-      mean   = model.get 'mean.'   + @get 'key'
-      stdDev = model.get 'stdDev.' + @get 'key'
-      console.log mean, stdDev
+    updateHcSeries: ->
+      oldHcSeries = @get 'hcSeries'
+      newHcSeries = do @asHighchartsSeries
+      if !_.isEqual oldHcSeries, newHcSeries
+        @set 'hcSeries', newHcSeries
 
-      name:  nameChunks.join ' / '
-      id:    model.id
-      data:  [[ mean - stdDev, mean + stdDev ], [ 0,2 ]]
+    asHighchartsSeries: ()->
+      series = []
+      for testGroup in @get 'testGroups'
+        data = []
+        for key in [ 'duration', 'distance', 'rotation' ]
+          mean   = testGroup.get 'mean.'   + key
+          stdDev = testGroup.get 'stdDev.' + key
+          data.push [ mean - stdDev, mean + stdDev ]
 
-    extremesChanged: ( min, max )->
-      @_swallowNextExtremesEvent = true
-      @get( 'filter' )?.setExtremes min, max
+        series.push
+          name:  testGroup.get @get 'key'
+          id:    testGroup.id
+          data:  data
 
-    setExtremes: ( range )->
-      return @_swallowNextExtremesEvent = false if @_swallowNextExtremesEvent
-      @set 'range', @get( 'filter' ).get 'range'
+      series

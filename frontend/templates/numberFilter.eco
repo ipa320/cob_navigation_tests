@@ -1,1 +1,1 @@
-Letzten: <input type="text" class="count" placeholder="any" />
+<span class="labelFront">Last n:</span><input type="text" class="count" placeholder="any" /> Tests

@@ -79,6 +79,10 @@
                         deps: [ 'jquery' ],
                         exports: 'jQuery.fn'
                     }
+                    <!--'jquery-splitter': {-->
+                        <!--deps: [ 'jquery' ],-->
+                        <!--exports: 'jQuery.fn'-->
+                    <!--}-->
                 },
                 paths: { 
                     'templates':         '../templates',
@@ -91,6 +95,7 @@
                     'chosen':            '../vendor/chosen.jquery',
                     'jquery-ui':         '../vendor/jquery-ui-1.10.2.custom',
                     'jquery-numeric':    '../vendor/numeric'
+                    <!--'jquery-splitter':   '../vendor/jquery.splitter'-->
                 }
             });
             require([ 'app', 'backbone' ], function( app, Backbone ){ 
@@ -99,13 +104,13 @@
         </script>
     </head>
     <body>
-        <input type="checkbox" class="exc" checked="checked"/>
         <div id="app">
-            <div id="resultListView"></div>
-            <div id="toolbar"></div>
+            <div id="top">
+                <div id="filterView"></div>
+                <div id="resultListView"></div>
+            </div>
             <div id="applicationCharts"></div>
             <div id="componentCharts"></div>
-            <div id="filterView"></div>
             <div id="devView"></div>
         </div>
     </body>

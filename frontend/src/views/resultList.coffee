@@ -5,7 +5,8 @@ define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixed
     tagName: 'div',
     events:
       #'click table tr': 'selectRow'
-      'click input':    'changeSelected'
+      'click input':  'changeSelected'
+      'click tr':     'triggerInputClick'
 
     options:
       testGroups: null
@@ -83,3 +84,8 @@ define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixed
 
         chkbox = $row.find 'input:first'
         chkbox.prop 'checked', model.get 'selected'
+
+    triggerInputClick: ( e )->
+      target = $ e.target
+      return if target.is 'input'
+      target.parent().find( 'input' ).trigger 'click'

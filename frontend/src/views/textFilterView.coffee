@@ -23,6 +23,7 @@ define [ 'backbone', 'views/textFilterRow', 'templates/textFilter', 'models/text
       @options.textFilter.last().set 'link', ''
 
     render: ->
+      @$el.html do textFilterTmpl
       do @addNewRow
       this
 
@@ -37,5 +38,5 @@ define [ 'backbone', 'views/textFilterRow', 'templates/textFilter', 'models/text
       $row = newView.render().$el
       $row.data 'view', newView
 
-      @$el.append $row
+      @$( '.rows' ).append $row
       do newView.focus

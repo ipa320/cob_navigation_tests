@@ -1,7 +1,7 @@
 define  [ 'backbone', 'views/componentDevChart', 'templates/componentDev' ], ( Backbone, ComponentDevChart, componentDevTmpl )->
   Backbone.View.extend
     tagName:   'div'
-    className: 'componentDev'
+    className: 'componentDevView'
 
     initialize: ->
 
