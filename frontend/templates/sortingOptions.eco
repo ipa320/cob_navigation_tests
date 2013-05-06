@@ -1,0 +1,5 @@
+<div class="sortingOptions">
+  <span class="intro">Sort Charts by:</span>
+  <input type="radio" id="sortByDate" name="sorting" value="date" <%="checked" if @sorting == 'date'%>/><label for="sortByDate">Sort by date</label>
+  <input type="radio" id="sortByValue" name="sorting" value="value" <%="checked" if @sorting == 'value'%> /><label for="sortByValue">Sort by value</label>
+</div>

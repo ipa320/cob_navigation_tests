@@ -13,6 +13,7 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
     render: ->
       @$el.html do applicationDevChartTmpl
       @$( '.chart' ).html @chartView.render().el
+      do @groupsChanged
       @
 
 

@@ -11,8 +11,9 @@
     </select>
 </div>
 <div class="bottom">
+    <a class="expand" href="javascript:void(0)"><img src="assets/images/textFilterRow/expand.jpg" /></a>
     <input type="text" class="filterValue" />
-    <input type="button" class="and" value="and" />
-    <input type="button" class="or" value="or" />
+    <a class="and" href="javascript:void(0)"><img src="assets/images/textFilterRow/and.jpg" /></a>
+    <a class="or" href="javascript:void(0)"><img src="assets/images/textFilterRow/or.jpg" /></a>
     <span class="link"></span>
 </div>

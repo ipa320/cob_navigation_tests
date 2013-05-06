@@ -4,7 +4,7 @@ define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
     className: 'lineChart'
 
     initialize: ->
-      @listenTo @model, 'change:hcSeries',  _.debounce @resetSeries, 200
+      @listenTo @model, 'change:hcSeries', _.debounce @resetSeries, 200
       @chart = null
 
     resetSeries: ( model, series )->

@@ -3,10 +3,11 @@ define [ 'backbone', 'templates/textFilterRow', 'chosen' ], ( Backbone, textFilt
     tagName: 'div'
     className: 'textFilterRow'
     events:
-      'change':     'change'
-      'keyup':      'keyup'
-      'click .and': 'andClicked'
-      'click .or':  'orClicked'
+      'change':        'change'
+      'keyup':         'keyup'
+      'click .and':    'andClicked'
+      'click .or':     'orClicked'
+      'click .expand': 'expandClicked'
 
     initialize: ->
       @listenTo @model, 'change:link', @linkChanged
@@ -16,6 +17,7 @@ define [ 'backbone', 'templates/textFilterRow', 'chosen' ], ( Backbone, textFilt
       this
 
     keyup: ( e )->
+      console.log 'keyup'
       if e.keyCode == 27 # escape
         @trigger 'escape'
       if e.keyCode == 13 # enter
@@ -34,6 +36,9 @@ define [ 'backbone', 'templates/textFilterRow', 'chosen' ], ( Backbone, textFilt
     orClicked: ->
       @trigger 'orClicked'
       do @setOrLink
+
+    expandClicked: ->
+      @$( '.top' ).toggle()
 
     setAndLink: ->
       @$( '.and, .or' ).hide()

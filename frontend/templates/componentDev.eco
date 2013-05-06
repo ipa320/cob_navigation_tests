@@ -1,3 +1,4 @@
 <div class="chartContainer duration"></div>
 <div class="chartContainer distance"></div>
 <div class="chartContainer rotation"></div>
+<div class="sortingOptionsContainer"></div>

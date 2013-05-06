@@ -105,3 +105,10 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
     groupBy: ->
       tests = @get 'tests'
       return tests.groupBy.apply tests, arguments
+
+    sortBy: ->
+      clone = do @clone
+      tests = clone.get 'tests'
+      sortedTests = tests.sortBy.apply tests, arguments
+      clone.set 'tests', sortedTests
+      clone

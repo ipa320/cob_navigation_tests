@@ -21,7 +21,7 @@ h1{
  * Result List
  */
 #resultListView{
-    margin: 10px 10px 10px 300px;
+    margin: 10px 10px 10px 10px;
 }
 table{
     font-size: 14px;
@@ -54,7 +54,8 @@ table{
     bottom: 0;
     padding-top: 30px;
     position: absolute;
-    margin-right: 20px;
+    left: 300px;
+    right: 20px;
 }
 .header-background{
     position: absolute;
@@ -100,9 +101,6 @@ table{
 #filterView input[type=button]{
     padding: 4px;
 }
-#filterView .filterValue{
-    width: 150px;
-}
 
 /*
  * Date Filter
@@ -126,7 +124,7 @@ table{
 .dateFilter .clear{
     position: absolute;
     left: 180px;
-    top: 6px;
+    top: 7px;
     opacity: 0.5;
     cursor: pointer;
 }
@@ -159,9 +157,19 @@ table{
 }
 
 .textFilterRow{
+    margin-bottom: 10px;
 }
 .textFilterRow .top{
     padding-bottom: 6px;
+    display: none;
+}
+.textFilterRow img{
+    position: relative;
+    top: 2px;
+}
+.textFilterRow input{
+    margin: 0 10px;
+    width: 130px;
 }
 .textFilterRow:hover{
 }
@@ -220,3 +228,21 @@ table{
     top: 50%;
     border: 2px solid #ccc;
 }
+
+/*
+ * Sorting Options
+ */
+.sortingOptionsContainer{
+    position: fixed;
+    bottom: 0;
+    padding: 4px;
+    width: 100%;
+    background-color: #ddd;
+}
+.sortingOptions .intro{
+    font-weight: bold;
+}
+.sortingOptions input[type=radio]{
+    margin-left: 15px;
+}
+

@@ -4,13 +4,18 @@ define [ 'backbone', 'templates/componentDevChart', 'models/lineChart', 'views/l
     className: 'componentDevChart'
 
     initialize: ->
-      @listenTo @options.testGroups, 'change:empty change:selected', @groupsChanged
-      @lineChartModel = new LineChart key: @options.key
+      @listenTo @options.testGroups, 'change:empty change:selected',
+        @groupsChanged
+
+      @lineChartModel = new LineChart
+        key:            @options.key
+        sortingOptions: @options.sortingOptions
       @lineChartView = new LineChartView model: @lineChartModel
 
     render: ->
       @$el.html do chartTmpl
       @$( '.chart' ).html @lineChartView.render().el
+      do @groupsChanged
       @
 
     groupsChanged: ->

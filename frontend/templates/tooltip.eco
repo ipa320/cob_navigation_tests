@@ -1,5 +1,5 @@
 <b><%=@name%></b>
 <br />
 <% for point in @points: %>
-    <span style="color:<%=point.color%>"><%=point.label%></span>:  Mean: <%=point.mean%>, StdDev: <%=point.stdDev%> <%=@unit%><br />
+    <span style="color:<%=point.color%>"><%=point.label%> <%=@unit%></span>:  Mean: <%=point.mean%>, StdDev: <%=point.stdDev%> <%=@unit%><br />
 <% end %>
