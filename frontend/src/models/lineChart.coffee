@@ -34,8 +34,7 @@ define [ 'backbone'  ], ( Backbone )->
 
       if 'value' == sortingOptions.get 'sorting'
         key = @get 'key'
-        testGroup = testGroup.sortBy ( model )->
-          model.get key
+        testGroup = testGroup.sortBy ( model )-> model.get key
 
       nameChunks = []
       for key in [ 'robot', 'algorithm', 'scenario' ]
@@ -43,7 +42,7 @@ define [ 'backbone'  ], ( Backbone )->
 
 
       date = testGroup?.getDataPointsForKey( 'date' )
-      data = testGroup.getDataPointsForKey( @get 'key' )
+      data = testGroup?.getDetailedDataPointsForKey( @get 'key' )
       name:  nameChunks.join ' / '
       id:    testGroup.id
       data:  data

@@ -4,11 +4,13 @@ define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
     className: 'lineChart'
 
     initialize: ->
-      @listenTo @model, 'change:hcSeries', _.debounce @resetSeries, 200
+      @listenTo @model, 'change:hcSeries', _.debounce @resetSeries, 20
       @chart = null
 
     resetSeries: ( model, series )->
       do @chart.series[ 0 ]?.remove
+      @chart.counters.color  = 0
+      @chart.counters.symbol = 0
       @chart.addSeries series, redraw: true, animation: false
 
     render: ->
@@ -17,19 +19,43 @@ define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
         @chart = chart
       this
 
+    tooltip: ( point )->
+      options  = point.point.options
+      date     = options.date
+      index    = options.index
+      roundedY = Math.round( point.y*100 )/100
+      label    = @options.label
+      unit     = @options.unit
+      "Test ##{+index+1} of current series
+       <br>Date: #{@formatDate date}
+       <br>#{label}: #{roundedY} #{unit}"
+
+    formatDate: ( date )->
+      year    = date.getFullYear()
+      month   = date.getMonth()
+      minute  = date.getMinutes()
+      hour    = date.getHours()
+      day     = date.getDate()
+      "#{day}.#{month}.#{year} #{hour}:#{minute}"
+
     highchartsConfig: ->
+      self = @
       chart:
         type: 'line'
         animation: false
+      title:
+        text:        "#{@options.label} in #{@options.unit}"
+      tooltip:
+        formatter: -> self.tooltip this
       plotOptions:
         series:
           animation: false
+      yAxis:
+        title:
+          text: null
       series: []
-      title:
-        text: @model.get 'title'
-      xAxis:
-        events:
-          setExtremes: ( e )=>@extremesChanged e.min, e.max
+      legend:
+        enabled: false
       credits:
         enabled: false
       scrollbar:

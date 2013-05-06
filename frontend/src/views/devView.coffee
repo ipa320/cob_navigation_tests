@@ -11,24 +11,35 @@ define [ 'backbone', 'templates/devView', 'views/componentDevView', 'views/appli
       do @activateApplicationView
       @
 
+    initialize: ->
+      @applicationDevView = new ApplicationDevView
+        testGroups: @options.testGroups
+
+      @componentDevView = new ComponentDevView
+        testGroups: @options.testGroups
+
     renderComponentDevView: ( $el )->
-      componentDevView = new ComponentDevView testGroups: @options.testGroups
-      $el.html componentDevView.render().el
+      $el.html @componentDevView.render().el
 
     renderApplicationDevView: ( $el )->
-      applicationDevView = new ApplicationDevView testGroups: @options.testGroups
-      $el.html applicationDevView.render().el
+      $el.html @applicationDevView.render().el
 
     activateApplicationView: ->
-      @activateTab 'application'
-      @trigger 'changeView', 'application'
-      @renderApplicationDevView @$ '.tabContent'
+      if @activeTab() != 'application'
+        @activateTab 'application'
+        @trigger 'changeView', 'application'
+        @renderApplicationDevView @$ '.tabContent'
 
     activateComponentView: ->
-      @trigger 'changeView', 'component'
-      @activateTab 'component'
-      @renderComponentDevView @$ '.tabContent'
+      if @activeTab() != 'component'
+        @activateTab 'component'
+        @trigger 'changeView', 'component'
+        @renderComponentDevView @$ '.tabContent'
+
+    activeTab: ->
+      @activeTabName
 
     activateTab: ( name )->
       @$( '.tab.active' ).removeClass 'active'
       @$( '.tab.' + name ).addClass 'active'
+      @activeTabName = name

@@ -226,7 +226,6 @@ table{
 .applicationDevView .error{
     position: absolute;
     top: 50%;
-    border: 2px solid #ccc;
 }
 
 /*

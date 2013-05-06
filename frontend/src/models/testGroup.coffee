@@ -17,6 +17,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       'stdDev.duration': 'N/A'
       'stdDev.distance': 'N/A'
       'stdDev.rotation': 'N/A'
+      indexesById:       {}
 
     constructor: ( args, options )->
       if !(args?)
@@ -35,8 +36,9 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
 
     initialize: ->
       do @reset
-      @set 'originalTests', @get 'tests'
-      @set 'tests', @get( 'tests' ).clone()
+      @set 'originalTests',   @get 'tests'
+      @set 'tests',           @get( 'tests' ).clone()
+      @set 'indexesById',     @get( 'tests' ).getIndexesById()
       @once 'change:filters', ->
         do @setupFilters
 
@@ -95,12 +97,19 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
         value = +model.get( attr )
         if !isNaN( value )
           num++
-          sum += Math.pow ( value - mean ), 2 
+          sum += Math.pow ( value - mean ), 2
         @set 'stdDev.' + attr, if sum > 0 then Math.sqrt sum/num else 'N/A'
 
     getDataPointsForKey: ( key )->
       return @get( 'tests' ).map ( model )->
         return model.get key
+
+    getDetailedDataPointsForKey: ( key )->
+      indexesById = @get 'indexesById'
+      return @get( 'tests' ).map ( model )->
+        date:  model.get 'date'
+        index: indexesById[ model.id ]
+        y:     model.get key
 
     groupBy: ->
       tests = @get 'tests'

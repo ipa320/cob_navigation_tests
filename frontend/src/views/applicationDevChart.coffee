@@ -7,7 +7,7 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
       @listenTo @options.testGroups, 'change:empty change:selected', \
         _.debounce @groupsChanged.bind @, 10
       @chartModel = new BarChartModel key: @options.variableAttributeKey
-      @chartView  = new BarChartView model: @chartModel
+      @chartView  = new BarChartView model: @chartModel, title: @options.title
 
 
     render: ->

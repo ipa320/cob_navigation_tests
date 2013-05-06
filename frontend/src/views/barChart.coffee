@@ -49,17 +49,22 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
 
     highchartsConfig: ->
       chart:
-        animation: false
-        type: 'columnrange'
+        animation:   false
+        type:        'columnrange'
+      title:
+        text:        @options.title
       plotOptions:
         series:
           animation: false
-      series: []
+      yAxis:
+        title:
+          text:      ''
+      series:        []
       tooltip:
-        shared: true
-        formatter: @tooltipFormatter
+        shared:      true
+        formatter:   @tooltipFormatter
       xAxis:
-        categories: [ 'Duration', 'Distance', 'Rotation' ]
+        categories:  [ 'Duration', 'Distance', 'Rotation' ]
 
     redrawElements: ->
       console.log @chart

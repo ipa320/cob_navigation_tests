@@ -12,7 +12,11 @@ define [ 'backbone', 'templates/numberFilter', 'jquery-numeric' ], ( Backbone, n
         negative: false
       this
 
+    initialize: ->
+      @deferedUpdate = _.debounce ( value )=>
+        @options.numberFilter.set 'count', value
+      , 200
+
     change: ->
       input = @$ '.count'
-      @options.numberFilter.set 'count', input.val()
-
+      @deferedUpdate input.val()

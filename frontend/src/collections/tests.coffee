@@ -32,3 +32,10 @@ define [ 'underscore', 'backbone', 'models/test' ], ( _, Backbone, Test )->
         if !filter.complies number, model
           return false
       true
+
+
+    getIndexesById: ->
+      indexesById = {}
+      for index, model of @models
+        indexesById[ model.id ] = index
+      return indexesById

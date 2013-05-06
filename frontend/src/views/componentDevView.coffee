@@ -8,17 +8,19 @@ define  [ 'backbone', 'views/componentDevChart', 'templates/componentDev', 'mode
 
     render: ->
       @$el.html do componentDevTmpl
-      @renderChart 'duration'
-      @renderChart 'distance'
-      @renderChart 'rotation'
+      @renderChart 'duration', 'Duration', 's'
+      @renderChart 'distance', 'Distance', 'm'
+      @renderChart 'rotation', 'Rotation', 'deg'
       do @renderSortingOptions
       @
 
-    renderChart: ( key )->
+    renderChart: ( key, label, unit )->
       chart = new ComponentDevChart
         key:            key
         testGroups:     @options.testGroups
         sortingOptions: @sortingOptions
+        label:          label
+        unit:           unit
       @$( ".#{key}" ).html chart.render().el
 
     renderSortingOptions: ->

@@ -14,6 +14,7 @@ define [ 'backbone', 'templates/applicationDev', 'views/applicationDevChart' ], 
         testGroups:           @options.testGroups
         variableAttributeKey: 'algorithm'
         fixedAttributeKeys:   [ 'robot', 'scenario' ]
+        title: 'Different algorithms for fixed robot and scenario'
 
       $el = @$ '.algorithm'
       $el.html view.render().el
@@ -24,6 +25,7 @@ define [ 'backbone', 'templates/applicationDev', 'views/applicationDevChart' ], 
         testGroups:           @options.testGroups
         variableAttributeKey: 'robot'
         fixedAttributeKeys:   [ 'algorithm', 'scenario' ]
+        title: 'Different robots for fixed algorithms and scenario'
 
       $el = @$ '.robot'
       $el.html view.render().el

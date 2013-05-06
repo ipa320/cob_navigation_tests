@@ -10,7 +10,10 @@ define [ 'backbone', 'templates/componentDevChart', 'models/lineChart', 'views/l
       @lineChartModel = new LineChart
         key:            @options.key
         sortingOptions: @options.sortingOptions
-      @lineChartView = new LineChartView model: @lineChartModel
+      @lineChartView = new LineChartView
+        model: @lineChartModel
+        label: @options.label
+        unit:  @options.unit
 
     render: ->
       @$el.html do chartTmpl
@@ -46,4 +49,7 @@ define [ 'backbone', 'templates/componentDevChart', 'models/lineChart', 'views/l
 
     noError: ->
       @$( '.error' ).hide()
-      @$( '.chart' ).show()
+      chart = @$ '.chart'
+      if !chart.is ':visible'
+        chart.show()
+        $( window ).trigger 'resize'
