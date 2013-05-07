@@ -8,11 +8,12 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
       @id = _.uniqueId 'appChart'
       @elements = []
 
+      @chartContainer = chartContainer = $( '<div class="chart" />' )
+      @chartContainer.highcharts do @highchartsConfig, ( chart ) =>
+        @chart = chart
+
     render: ( width )->
-      @$el.html chartContainer = $( '<div class="chart" />' )
-      chartContainer.width width if width
-        
-      chartContainer.highcharts do @highchartsConfig, ( chart ) => @chart = chart
+      @$el.html @chartContainer
       this
 
       

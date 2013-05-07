@@ -9,7 +9,13 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
         _.debounce @groupsChanged.bind @, 10
       @chartModel = new BarChartModel key: @options.variableAttributeKey
       @chartView  = new BarChartView model: @chartModel, title: @options.title
+      @triggerResizeOnce = _.once @triggerResize
 
+    # most of the times, several resize triggers are issued with small or no
+    # time difference. Group all those together
+    triggerResize: _.debounce ->
+      $( window ).trigger 'resize'
+    , 20
 
     render: ->
       console.log 'render'
@@ -58,3 +64,4 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
     showChart: ->
       do @$( '.chart' ).show
       do @$( '.error' ).hide
+      do @triggerResizeOnce
