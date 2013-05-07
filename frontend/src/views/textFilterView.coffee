@@ -42,15 +42,14 @@ define [ 'backbone', 'views/textFilterRow', 'templates/textFilter', 'models/text
     addNewRow: ->
       criteria = new TextFilterCriteria
       newView  = new TextFilterRow model: criteria
-      @listenTo newView, 'escape',         @escape.bind         @, newView, criteria
-      @listenTo newView, 'selectNext',     @selectNext.bind     @, newView
+      @listenTo newView, 'escape',     @escape.bind     @, newView, criteria
+      @listenTo newView, 'selectNext', @selectNext.bind @, newView
+      @listenTo newView, 'andClicked', @addNewRow.bind  @, criteria
+      @listenTo newView, 'orClicked',  @addNewRow.bind  @, criteria
       @listenTo newView, 'selectPrevious', @selectPrevious.bind @, newView
-      @listenTo newView, 'andClicked',     @addNewRow.bind      @, criteria
-      @listenTo newView, 'orClicked',      @addNewRow.bind      @, criteria
 
       @options.textFilter.add criteria
       $row = newView.render().$el
-      console.log newView, newView.el
       $row.data 'view', newView
 
       @$( '.rows' ).append $row
