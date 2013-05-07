@@ -2,11 +2,12 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
   Backbone.View.extend
     classname: '.application-view'
     tagName: 'div'
-    elements: []
-
 
     initialize: ->
       @listenTo @model, 'change:hcSeries', @updateChart
+      $( window ).on 'resize', @redrawElements.bind @
+      @id = _.uniqueId 'appChart'
+      @elements = []
 
     render: ( width )->
       chartContainer = $( '<div class="chart" />' ).appendTo( this.$el )
@@ -22,7 +23,7 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
       for series in @model.get 'hcSeries'
         copy = _.extend {}, series
         @chart.addSeries copy, true, null
-      #do @redrawElements
+      do @redrawElements
 
     clear: ->
       @chart.counters.color = 0
@@ -67,7 +68,6 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
         categories:  [ 'Duration', 'Distance', 'Rotation' ]
 
     redrawElements: ->
-      console.log @chart
       for element in @elements
         element.destroy()
       for series in @chart.series

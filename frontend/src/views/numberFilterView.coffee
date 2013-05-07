@@ -17,6 +17,8 @@ define [ 'backbone', 'templates/numberFilter', 'jquery-numeric' ], ( Backbone, n
         @options.numberFilter.set 'count', value
       , 200
 
-    change: ->
+    change: ( e )->
       input = @$ '.count'
+      if e.keyCode == 27
+        input.val ''
       @deferedUpdate input.val()

@@ -17,7 +17,6 @@ define [ 'backbone', 'templates/textFilterRow', 'chosen' ], ( Backbone, textFilt
       this
 
     keyup: ( e )->
-      console.log 'keyup'
       if e.keyCode == 27 # escape
         @trigger 'escape'
       if e.keyCode == 13 # enter
