@@ -27,15 +27,30 @@ define [ 'backbone', 'views/textFilterRow', 'templates/textFilter', 'models/text
       do @addNewRow
       this
 
+    selectPrevious: ( view )->
+      @select view, 'prev'
+
+    selectNext: ( view )->
+      @select view, 'next'
+
+    select: ( view, target )->
+      $row       = $ view?.el
+      $target    = do $row[ target ]
+      targetView = $target.data 'view'
+      do targetView.focus if targetView
+
     addNewRow: ->
       criteria = new TextFilterCriteria
-      newView = new TextFilterRow model: criteria
-      @listenTo newView, 'escape', @escape.bind @, newView, criteria
-      @listenTo newView, 'andClicked', @addNewRow.bind @, criteria
-      @listenTo newView, 'orClicked',  @addNewRow.bind  @, criteria
+      newView  = new TextFilterRow model: criteria
+      @listenTo newView, 'escape',         @escape.bind         @, newView, criteria
+      @listenTo newView, 'selectNext',     @selectNext.bind     @, newView
+      @listenTo newView, 'selectPrevious', @selectPrevious.bind @, newView
+      @listenTo newView, 'andClicked',     @addNewRow.bind      @, criteria
+      @listenTo newView, 'orClicked',      @addNewRow.bind      @, criteria
 
       @options.textFilter.add criteria
       $row = newView.render().$el
+      console.log newView, newView.el
       $row.data 'view', newView
 
       @$( '.rows' ).append $row

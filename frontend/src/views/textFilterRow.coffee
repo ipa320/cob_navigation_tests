@@ -5,6 +5,7 @@ define [ 'backbone', 'templates/textFilterRow', 'chosen' ], ( Backbone, textFilt
     events:
       'change':        'change'
       'keyup':         'keyup'
+      'keydown':       'keydown'
       'click .and':    'andClicked'
       'click .or':     'orClicked'
       'click .expand': 'expandClicked'
@@ -22,6 +23,13 @@ define [ 'backbone', 'templates/textFilterRow', 'chosen' ], ( Backbone, textFilt
       if e.keyCode == 13 # enter
         do @andClicked
       do @change
+
+    keydown: ( e )->
+      inputHasFocus = @$( 'input' ).is ':focus'
+      if inputHasFocus and e.keyCode == 9  # tab
+        event = if e.shiftKey then 'selectPrevious' else 'selectNext'
+        @trigger event
+        do e.preventDefault
 
     change: ->
       @model.set 'field', @$( '.filterField' ).val()
