@@ -4,6 +4,7 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
     className: 'applicationDevChart'
 
     initialize: ->
+      console.log 'initialize app'
       @listenTo @options.testGroups, 'change:empty change:selected', \
         _.debounce @groupsChanged.bind @, 10
       @chartModel = new BarChartModel key: @options.variableAttributeKey
@@ -11,6 +12,7 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
 
 
     render: ->
+      console.log 'render'
       @$el.html do applicationDevChartTmpl
       @$( '.chart' ).html @chartView.render().el
       do @groupsChanged

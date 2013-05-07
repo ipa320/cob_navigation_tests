@@ -14,7 +14,7 @@ define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
       @chart.addSeries series, redraw: true, animation: false
 
     render: ->
-      chartContainer = $( '<div class="chart" />' ).appendTo( @$el )
+      @$el.html chartContainer = $( '<div class="chart" />' )
       chartContainer.highcharts do @highchartsConfig, ( chart ) =>
         @chart = chart
       this

@@ -5,23 +5,30 @@ define  [ 'backbone', 'views/componentDevChart', 'templates/componentDev', 'mode
 
     initialize: ->
       @sortingOptions = new SortingOptions
+      
+      @createChart 'duration', 'Duration', 's'
+      @createChart 'distance', 'Distance', 'm'
+      @createChart 'rotation', 'Rotation', 'deg'
 
     render: ->
       @$el.html do componentDevTmpl
-      @renderChart 'duration', 'Duration', 's'
-      @renderChart 'distance', 'Distance', 'm'
-      @renderChart 'rotation', 'Rotation', 'deg'
+      @renderChart 'duration'
+      @renderChart 'distance'
+      @renderChart 'rotation'
       do @renderSortingOptions
       @
 
-    renderChart: ( key, label, unit )->
-      chart = new ComponentDevChart
+    createChart: ( key, label, unit )->
+      @charts = @charts ? []
+      @charts[ key ] = new ComponentDevChart
         key:            key
         testGroups:     @options.testGroups
         sortingOptions: @sortingOptions
         label:          label
         unit:           unit
-      @$( ".#{key}" ).html chart.render().el
+
+    renderChart: ( key )->
+      @$( ".#{key}" ).html @charts[ key ].render().el
 
     renderSortingOptions: ->
       sortingOptions = new SortingOptionsView

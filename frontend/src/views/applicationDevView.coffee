@@ -3,6 +3,19 @@ define [ 'backbone', 'templates/applicationDev', 'views/applicationDevChart' ], 
     tagName:   'div'
     className: 'applicationDevView'
 
+    initialize: ->
+      @algorithmChart = new ApplicationDevChart
+        testGroups:           @options.testGroups
+        variableAttributeKey: 'algorithm'
+        fixedAttributeKeys:   [ 'robot', 'scenario' ]
+        title: 'Different algorithms for fixed robot and scenario'
+
+      @robotChart = new ApplicationDevChart
+        testGroups:           @options.testGroups
+        variableAttributeKey: 'robot'
+        fixedAttributeKeys:   [ 'algorithm', 'scenario' ]
+        title: 'Different robots for fixed algorithms and scenario'
+
     render: ->
       @$el.html do applicationDevTmpl
       do @renderAlgorithmChart
@@ -10,22 +23,9 @@ define [ 'backbone', 'templates/applicationDev', 'views/applicationDevChart' ], 
       @
 
     renderAlgorithmChart: ->
-      view = new ApplicationDevChart
-        testGroups:           @options.testGroups
-        variableAttributeKey: 'algorithm'
-        fixedAttributeKeys:   [ 'robot', 'scenario' ]
-        title: 'Different algorithms for fixed robot and scenario'
-
       $el = @$ '.algorithm'
-      $el.html view.render().el
-      
+      $el.html @algorithmChart.render().el
 
     renderRobotChart: ->
-      view = new ApplicationDevChart
-        testGroups:           @options.testGroups
-        variableAttributeKey: 'robot'
-        fixedAttributeKeys:   [ 'algorithm', 'scenario' ]
-        title: 'Different robots for fixed algorithms and scenario'
-
       $el = @$ '.robot'
-      $el.html view.render().el
+      $el.html @robotChart.render().el

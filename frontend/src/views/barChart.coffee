@@ -10,7 +10,7 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
       @elements = []
 
     render: ( width )->
-      chartContainer = $( '<div class="chart" />' ).appendTo( this.$el )
+      chartContainer = $( '<div class="chart" />' ).html( @$el )
       chartContainer.width width if width
         
       chartContainer.highcharts do @highchartsConfig, ( chart ) => @chart = chart
@@ -70,6 +70,7 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
     redrawElements: ->
       for element in @elements
         element.destroy()
+      @elements = []
       for series in @chart.series
         points = series.points
         plotLeft = @chart.plotLeft
