@@ -4,10 +4,11 @@ define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
     className: 'lineChart'
 
     initialize: ->
-      @listenTo @model, 'change:hcSeries', _.debounce @resetSeries, 20
+      @listenTo @model, 'change:hcSeries', _.debounce @resetSeries.bind( @ ), 20
       @chart = null
 
     resetSeries: ( model, series )->
+      return if not @chart
       do @chart.series[ 0 ]?.remove
       @chart.counters.color  = 0
       @chart.counters.symbol = 0

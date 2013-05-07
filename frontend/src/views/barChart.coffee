@@ -4,13 +4,12 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
     tagName: 'div'
 
     initialize: ->
-      @listenTo @model, 'change:hcSeries', @updateChart
-      $( window ).on 'resize', @redrawElements.bind @
+      @listenTo @model, 'change:hcSeries', _.debounce @updateChart.bind( @ ), 20
       @id = _.uniqueId 'appChart'
       @elements = []
 
     render: ( width )->
-      chartContainer = $( '<div class="chart" />' ).html( @$el )
+      @$el.html chartContainer = $( '<div class="chart" />' )
       chartContainer.width width if width
         
       chartContainer.highcharts do @highchartsConfig, ( chart ) => @chart = chart
@@ -22,8 +21,8 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
       do @clear
       for series in @model.get 'hcSeries'
         copy = _.extend {}, series
-        @chart.addSeries copy, true, null
-      do @redrawElements
+        @chart.addSeries copy, false, null
+      do @chart.redraw
 
     clear: ->
       @chart.counters.color = 0
@@ -52,6 +51,8 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
       chart:
         animation:   false
         type:        'columnrange'
+        events:
+          redraw:    @redrawElements.bind @
       title:
         text:        @options.title
       plotOptions:
@@ -68,9 +69,11 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
         categories:  [ 'Duration', 'Distance', 'Rotation' ]
 
     redrawElements: ->
-      for element in @elements
-        element.destroy()
-      @elements = []
+      if @elements.length
+        for element in @elements
+          element.destroy()
+        @elements = []
+
       for series in @chart.series
         points = series.points
         plotLeft = @chart.plotLeft
