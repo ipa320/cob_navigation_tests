@@ -7,6 +7,10 @@ define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
       @listenTo @model, 'change:hcSeries', _.debounce @resetSeries.bind( @ ), 20
       @chart = null
 
+      @chartContainer = chartContainer = $( '<div class="chart" />' )
+      chartContainer.highcharts do @highchartsConfig, ( chart ) =>
+        @chart = chart
+
     resetSeries: ( model, series )->
       return if not @chart
       do @chart.series[ 0 ]?.remove
@@ -15,9 +19,7 @@ define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
       @chart.addSeries series, redraw: true, animation: false
 
     render: ->
-      @$el.html chartContainer = $( '<div class="chart" />' )
-      chartContainer.highcharts do @highchartsConfig, ( chart ) =>
-        @chart = chart
+      @$el.html @chartContainer
       this
 
     tooltip: ( point )->

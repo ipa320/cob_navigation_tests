@@ -3,9 +3,15 @@ define [ 'backbone', 'templates/componentDevChart', 'models/lineChart', 'views/l
     tagName:   'div'
     className: 'componentDevChart'
 
+    # most of the times, several resize triggers are issued with small or no
+    # time difference. Group all those together
+    triggerResize: _.debounce ->
+      $( window ).trigger 'resize'
+    , 20
+
     initialize: ->
       @listenTo @options.testGroups, 'change:empty change:selected',
-        @groupsChanged
+        _.debounce @groupsChanged.bind( @ ), 20
 
       @lineChartModel = new LineChart
         key:            @options.key
@@ -14,6 +20,8 @@ define [ 'backbone', 'templates/componentDevChart', 'models/lineChart', 'views/l
         model: @lineChartModel
         label: @options.label
         unit:  @options.unit
+
+      @triggerResizeOnce = _.once @triggerResize
 
     render: ->
       @$el.html do chartTmpl
@@ -52,4 +60,4 @@ define [ 'backbone', 'templates/componentDevChart', 'models/lineChart', 'views/l
       chart = @$ '.chart'
       if !chart.is ':visible'
         chart.show()
-        $( window ).trigger 'resize'
+        do @triggerResizeOnce
