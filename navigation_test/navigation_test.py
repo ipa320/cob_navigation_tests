@@ -11,7 +11,7 @@ from gazeboHelper.metricsObserverTF import MetricsObserverTF
 from gazeboHelper.tolerance import Tolerance
 from gazeboHelper.position import Position
 from gazeboHelper.navigator import Navigator
-from jsonFileWriter import JsonFileWriter
+from jsonFileHandler import JsonFileHandler
 
 class TestNavigation( unittest.TestCase ):
     def setUp( self ):
@@ -21,7 +21,7 @@ class TestNavigation( unittest.TestCase ):
         self.tolerance = Tolerance( xy=0.2, theta=.3 )
         self.positionResolver = PositionResolver()
         path = os.path.dirname(os.path.abspath(__file__))
-        self.testResultWriter = JsonFileWriter( path + '/metrics.json' )
+        self.testResultWriter = JsonFileHandler( path + '/metrics.json' )
 
         self._startBagRecording, self._stopBagRecording = \
             self._waitForBagRecorder()
