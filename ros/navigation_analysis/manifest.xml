@@ -1,0 +1,15 @@
+<package>
+  <description brief="navigation_tests">
+
+      This ROS-package analyzes bag files recorded by navigation_test
+
+  </description>
+  <author>Simon Ebner</author>
+  <license>LGPL</license>
+  <review status="unreviewed" notes=""/>
+  <url></url>
+
+  <depend package="gazebo"/>
+  <depend package="navigation_helper"/>
+
+</package>

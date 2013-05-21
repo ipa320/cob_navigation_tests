@@ -5,43 +5,52 @@ import rospy, rostopic
 import os, logging, sys
 import cob_srvs.srv, time
 import unittest, rostest
-from navigationStatusPublisher import NavigationStatusPublisher
-from gazeboHelper.positionResolver import PositionResolver
-from gazeboHelper.metricsObserverTF import MetricsObserverTF
-from gazeboHelper.tolerance import Tolerance
-from gazeboHelper.position import Position
-from gazeboHelper.navigator import Navigator
-from jsonFileHandler import JsonFileHandler
+import std_srvs, std_srvs.srv
+from navigationStatusPublisher           import NavigationStatusPublisher
+from navigation_helper.positionResolver  import PositionResolver
+from navigation_helper.metricsObserverTF import MetricsObserverTF
+from navigation_helper.tolerance         import Tolerance
+from navigation_helper.position          import Position
+from navigation_helper.navigator         import Navigator
+from navigation_helper.jsonFileHandler   import JsonFileHandler
 
 class TestNavigation( unittest.TestCase ):
     def setUp( self ):
+
+        rospy.loginfo( 'Setting navigator' )
         self.navigator = Navigator( '/move_base' )
         self._metricsObserver = MetricsObserverTF()
-        self._navigationStatusPublisher = NavigationStatusPublisher( '~status' )
+
+        setting = self._getSetting()
+        self._navigationStatusPublisher = NavigationStatusPublisher( '~status',
+                setting )
+
         self.tolerance = Tolerance( xy=0.2, theta=.3 )
         self.positionResolver = PositionResolver()
         path = os.path.dirname(os.path.abspath(__file__))
         self.testResultWriter = JsonFileHandler( path + '/metrics.json' )
 
-        self._startBagRecording, self._stopBagRecording = \
-            self._waitForBagRecorder()
-        self._startBagRecording()
-        time.sleep( 4 )
+        rospy.loginfo( 'Waiting for Bag Recorder' )
+        self._stopBagRecording = self._waitForBagRecorder()
+
+    def _getSetting( self ):
+        return {
+            'scenario':   rospy.get_param( '/navigation_test_route/name' ),
+            'robot':      rospy.get_param( '~robot' ),
+            'navigation': rospy.get_param( '~navigation' )
+        }
 
     def _waitForBagRecorder( self ):
-        rospy.wait_for_service( '/logger/start' )
         rospy.wait_for_service( '/logger/stop' )
 
-        startBagRecordingService = rospy.ServiceProxy( '/logger/start', 
-                cob_srvs.srv.Trigger )
         stopBagRecordingService  = rospy.ServiceProxy( '/logger/stop',  
                 cob_srvs.srv.Trigger )
-        print 'Logger ready'
-        return ( startBagRecordingService, stopBagRecordingService )
+        rospy.loginfo( 'Logger ready' )
+        return stopBagRecordingService
 
 
     def testNavigate( self ):
-        goals = rospy.get_param( '/navigation_test/goals' )
+        goals = rospy.get_param( '/navigation_test_route/goals' )
         self._metricsObserver.start()
 
         i = 0
@@ -65,6 +74,10 @@ class TestNavigation( unittest.TestCase ):
         
         self._stopBagRecording()
         time.sleep( 4 )
+
+        rospy.signal_shutdown( 'finished' )
+        time.sleep( 25 )
+
 
 if __name__ == '__main__':
     rospy.init_node( 'navigation_test', anonymous=True)

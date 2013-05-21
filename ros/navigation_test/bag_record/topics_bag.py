@@ -78,7 +78,7 @@ from sensor_msgs.msg import *
 from move_base_msgs.msg import *
 from visualization_msgs.msg import *
 
-import math
+import math, uuid
 import rostopic
 import time
 
@@ -108,7 +108,7 @@ class topics_bag():
         
         # this creates the bagfile
         localtime = time.localtime(time.time())
-        filename = str(localtime[0]) + "-" + str(localtime[1]) + "-" + str(localtime[2]) + "_" + str(localtime[3]) + "-" + str(localtime[4]) + "-" + str(localtime[5]) + ".bag"
+        filename = '%s.bag' % uuid.uuid4()
         filelocation = str( self.bag_path )
         if(not os.path.exists(filelocation)):
             os.makedirs(filelocation)
@@ -138,20 +138,15 @@ class topics_bag():
             self.current_rotation[frame["target_frame"]] = [0,0,0,0]
             
 
-        rospy.Service('~start', Trigger, self.trigger_callback_start)
+        global_lock.active_bag = True
+
+    def init_stop_service( self ):
+        rospy.loginfo( 'Setting up stop service' )
         rospy.Service('~stop', Trigger, self.trigger_callback_stop)
 
     def active(self):
     
         return global_lock.active_bag		
-        
-    def trigger_callback_start(self, req):
-        res = TriggerResponse()
-        global_lock.active_bag = True
-        res.success.data = True
-        res.error_message.data = "Bagfile recording started"
-        print res.error_message.data
-        return res
 		  
     def trigger_callback_stop(self, req):
         res = TriggerResponse()
@@ -196,10 +191,6 @@ class topics_bag():
         trigger_position = self.tf_trigger(tfs["reference_frame"], tfs["target_frame"], tfs)
         return trigger_position
 
-    def publishReadyTopic( self ):
-        self._statusPublisher = rospy.Publisher( '~ready', String )
-        self._statusPublisher.publish( 'ready' )
-        
 if __name__ == "__main__":
     rospy.init_node('topics_bag')
     bagR = topics_bag()
@@ -219,11 +210,12 @@ if __name__ == "__main__":
             topics_c.append(topic_r)
         rospy.sleep(2)
         sleep_interrupted = False
-        rospy.loginfo( 'About to publish ready topic' )
-        bagR.publishReadyTopic()
-        while not rospy.is_shutdown() and not sleep_interrupted:
-			
+        wasActive = False
+        while ( not wasActive or bagR.active()) and not rospy.is_shutdown() and not sleep_interrupted:
             if bagR.active()==1:
+                if not wasActive:
+                    bagR.init_stop_service()
+                wasActive = True
                 # listen to tf changes
                 for tfs in bagR.wanted_tfs:
                     triggers = bagR.bag_processor(tfs)

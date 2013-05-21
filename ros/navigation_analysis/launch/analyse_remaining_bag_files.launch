@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="analyse_remaining_bag_files" pkg="navigation_analysis" type="workerPool.py" output="screen">
+        <param name="~bagDir" value="/share/uhr-se/bag_record" />
+        <param name="~repository" value="git@github.com:SimonEbner/navigation_test_results.git" />
+    </node>
+</launch>

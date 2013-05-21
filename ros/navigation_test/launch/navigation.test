@@ -3,13 +3,16 @@
     <include file="$( find navigation_test )/launch/bag_record.launch">
         <arg name="bag_path" value="/share/uhr-se/bag_record/" />
     </include>
-    <rosparam command="load" ns="/navigation_test" file="$(find navigation_test)/routes/$(arg route).yaml"/>
+
+    <rosparam command="load" ns="/navigation_test_route" file="$(find navigation_test)/routes/$(arg route).yaml"/>
+    <arg name="navigation" value="2dnav_ros_dwa" />
+
     <arg name="robot" default="$(optenv ROBOT !!NO_ROBOT_SET!!)"/>
     <arg name="robot_env" default="$(optenv ROBOT_ENV !!NO_ROBOT_ENV_SET!!)"/>
     <arg name="pkg_robot_config" default="$(find cob_default_robot_config)"/>
     <arg name="pkg_env_config" default="$(find cob_default_env_config)"/>
 
-    <!-- upload default configuration parameters -->
+    <!--upload default configuration parameters-->
     <include file="$(arg pkg_robot_config)/upload_param.launch">
         <arg name="robot" value="$(arg robot)" />
     </include>
@@ -17,7 +20,7 @@
         <arg name="robot_env" value="$(arg robot_env)" />
     </include>
 
-    <!-- startup simulated world -->
+    <!--startup simulated world-->
     <include file="$(find cob_gazebo_worlds)/launch/$(arg robot_env).launch" />
 
     <!-- startup simulated robot -->
@@ -25,10 +28,13 @@
         <arg name="robot" value="$(arg robot)" />
     </include>
 
-    <include file="$(find cob_navigation_global)/launch/2dnav_ros_dwa.launch" >
+    <include file="$(find cob_navigation_global)/launch/$(arg navigation).launch" >
         <arg name="robot" value="$(arg robot)" />
         <arg name="robot_env" value="$(arg robot_env)" />
     </include>
 
-    <test test-name="navigation_test" pkg="navigation_test" type="navigation_test.py" time-limit="300.0"/>
+    <test test-name="navigation_test" pkg="navigation_test" type="navigation_test.py" time-limit="300.0">
+        <param name="~robot" value="$(arg robot)" />
+        <param name="~navigation" value="$(arg navigation)" />
+    </test>
 </launch>

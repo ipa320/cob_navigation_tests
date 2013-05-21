@@ -28,8 +28,16 @@ from gazebo_msgs.msg import *
 from simple_script_server import *
 import std_srvs.srv
 import yaml
+import std_msgs.msg
 
 std = sys.stdout
+
+def resetTime():
+    pub = rospy.Publisher('/reset_time', std_msgs.msg.Empty )
+    print "Resetting time"
+    time.sleep(1)
+    pub.publish( std_msgs.msg.Empty() )
+
 
 def resetWorld():
     service = rospy.ServiceProxy( '/gazebo/reset_world', std_srvs.srv.Empty )

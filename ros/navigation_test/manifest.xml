@@ -1,0 +1,16 @@
+<package>
+  <description brief="navigation_tests">
+
+     This package provides launch files for starting a simulated Care-O-bot.
+
+  </description>
+  <author>Simon Ebner</author>
+  <license>LGPL</license>
+  <review status="unreviewed" notes=""/>
+  <url></url>
+
+  <depend package="gazebo"/>
+  <depend package="navigation_helper"/>
+  <depend package="rostest" />
+
+</package>
