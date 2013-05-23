@@ -41,5 +41,7 @@ define [ 'app', 'backbone' ], ( app, Backbone )->
   $.ajax
     url: '/data'
     dataType: 'json'
-    success: app
+    success: ( data )->
+      $( '#loading' ).fadeOut( 700 )
+      app( data )
     error: -> alert( 'Could not load data' )

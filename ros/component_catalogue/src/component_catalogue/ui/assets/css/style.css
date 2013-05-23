@@ -12,6 +12,31 @@ h1{
     margin: 10px 0 15px;
 }
 
+#loading{
+    z-index: 200;
+    position: fixed;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: white;
+}
+#loading .dialog{
+    position: absolute;
+    width: 300px;
+    top: 50%;
+    margin-top: -100px;
+    left: 50%;
+    margin-left: -150px;
+    text-align: center;
+    line-height: 1.3em;
+    color: #666;
+    font-size: 18px;
+}
+#loading .dialog .loader{
+    margin-bottom: 10px;
+}
+
+
 #top{
     height: 300px;
     position: relative;
