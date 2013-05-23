@@ -28,7 +28,7 @@ class BagDirectoryReader( object ):
                 yield bagFilename
 
     def getAllBagFilenamesAnalyzed( self ):
-        resultRepository = ResultRepository( self._result )
+        resultRepository = ResultRepository( self._repository )
         return resultRepository.allFilenamesAnalyzed()
 
 
