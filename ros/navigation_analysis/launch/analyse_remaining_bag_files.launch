@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <launch>
+    <arg name="repository" default="git@github.com:SimonEbner/navigation_test_results.git" />
+    <arg name="bagDir" default="/share/uhr-se/bag_record" />
     <node name="analyse_remaining_bag_files" pkg="navigation_analysis" type="workerPool.py" output="screen">
-        <param name="~bagDir" value="/share/uhr-se/bag_record" />
-        <param name="~repository" value="git@github.com:SimonEbner/navigation_test_results.git" />
+        <param name="~bagDir" value="$( arg bagDir )" />
+        <param name="~repository" value="$( arg repository )" />
     </node>
 </launch>
