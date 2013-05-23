@@ -19,7 +19,11 @@
                     <td><input type="checkbox" class=="selected" /></td>
                 <% end %>
                 <% for columnKey, columName of@columns: %>
-                    <td><%= row[ columnKey ]%></td>
+                    <td><% if helper.isNumber row[ columnKey]: %>
+                        <%= helper.formatDecimals row[ columnKey ], 2 %>
+                    <% else: %>
+                        <%= row[ columnKey ]%>
+                    <%end%></td>
                 <% end %>
             </tr>
             <% end %>
