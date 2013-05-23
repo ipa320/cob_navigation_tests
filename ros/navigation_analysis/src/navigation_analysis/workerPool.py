@@ -3,8 +3,9 @@ import roslib
 roslib.load_manifest( 'navigation_analysis' )
 import rospy
 import os, re, subprocess, socket
-from git import Git
+from navigation_helper.git import Git
 from navigation_helper.jsonFileHandler import JsonFileHandler
+from navigation_helper.resultRepository import ResultRepository
 
 class BagDirectoryReader( object ):
     def __init__( self, directory, repository ):
@@ -27,14 +28,8 @@ class BagDirectoryReader( object ):
                 yield bagFilename
 
     def getAllBagFilenamesAnalyzed( self ):
-        allFilenamesAnalyzed = []
-        for dirname, filename in self._repository.walk():
-            if not filename.startswith( 'result' ) or not filename.endswith( '.json' ):
-                continue
-            testResultHandler = JsonFileHandler( dirname + '/' + filename )
-            nextFilename = map( lambda f: f[ 'filename' ], testResultHandler.read() )
-            allFilenamesAnalyzed += nextFilename
-        return allFilenamesAnalyzed
+        resultRepository = ResultRepository( self._result )
+        return resultRepository.allFilenamesAnalyzed()
 
 
 

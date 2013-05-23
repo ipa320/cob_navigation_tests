@@ -2,7 +2,7 @@
     <select class="filterField">
         <option value="any">Any Field</option>
         <option value="robot">Roboter</option>
-        <option value="algorithm">Algorithmus</option>
+        <option value="navigation">Navigation</option>
         <option value="scenario">Szenario</option>
     </select>
     <select class="filterType">

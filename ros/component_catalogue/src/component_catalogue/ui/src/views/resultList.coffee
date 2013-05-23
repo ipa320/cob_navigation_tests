@@ -13,7 +13,7 @@ define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixed
       columns:
         'count':          '#'
         'robot':          'Roboter'
-        'algorithm':      'Alogrithm'
+        'navigation':     'Navigation'
         'scenario':       'Scenario'
         'mean.duration':  'Duration (&empty; in s)'
         'mean.distance':  'Distance (&empty; in m)'

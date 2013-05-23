@@ -13,14 +13,14 @@ define [ 'backbone' ], ( Backbone )->
       return comparator.call @, fieldsOfInterest
 
     getFieldsOfInterest: ( test )->
-      robot     = test.get 'robot'
-      algorithm = test.get 'algorithm'
+      robot      = test.get 'robot'
+      navigation = test.get 'navigation'
       scenario  = test.get 'scenario'
 
       switch @get 'field'
-        when 'any'       then [ robot, algorithm, scenario ]
-        when 'robot'     then [ robot ]
-        when 'algorithm' then [ algorithm ]
+        when 'any'        then [ robot, navigation, scenario ]
+        when 'robot'      then [ robot ]
+        when 'navigation' then [ navigation ]
         when 'scenario'  then [ scenario ]
         else
           console.warn 'Invalid filter field', @get 'field'

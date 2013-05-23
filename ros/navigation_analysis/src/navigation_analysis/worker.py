@@ -6,7 +6,7 @@ import navigation_helper.gazeboHelper, navigation_helper.msg
 from threading import Thread
 from navigation_helper.metricsObserverTF import MetricsObserverTF
 from navigation_helper.jsonFileHandler   import JsonFileHandler
-from git import Git
+from navigation_helper.git import Git
 import subprocess
 
 class Worker( object ):

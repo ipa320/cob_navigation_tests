@@ -1,15 +1,14 @@
 define [ 'backbone' ], ( Backbone )->
   Test = Backbone.Model.extend
     defaults:
-      date: 0
-      robot: ''
-      scenario: ''
-      algorithm: ''
-      tooSexy: 'yes'
+      date:        0
+      robot:       ''
+      scenario:    ''
+      navigation:  ''
       testResults: null
-      duration:  null
-      distance:  null
-      rotation:  null
+      duration:    null
+      distance:    null
+      rotation:    null
 
     initialize: ->
       date = @get 'date'

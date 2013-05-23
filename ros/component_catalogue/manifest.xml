@@ -1,0 +1,14 @@
+<package>
+  <description brief="component_catalogue">
+
+      The front end to display the test results fron the navigation tests
+
+  </description>
+  <author>Simon Ebner</author>
+  <license>LGPL</license>
+  <review status="unreviewed" notes=""/>
+  <url></url>
+
+  <depend package="navigation_helper"/>
+
+</package>

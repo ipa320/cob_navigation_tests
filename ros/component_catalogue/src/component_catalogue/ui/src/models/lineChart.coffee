@@ -37,7 +37,7 @@ define [ 'backbone'  ], ( Backbone )->
         testGroup = testGroup.sortBy ( model )-> model.get key
 
       nameChunks = []
-      for key in [ 'robot', 'algorithm', 'scenario' ]
+      for key in [ 'robot', 'navigation', 'scenario' ]
         nameChunks.push testGroup.get key
 
 

@@ -8,8 +8,8 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       robots:            [],
       scenario:          'None'
       scenarios:         [],
-      algorithm:         'None'
-      algorithms:        []
+      navigation:        'None'
+      navigations:       []
       enabled:           true
       'mean.duration':   'N/A'
       'mean.distance':   'N/A'
@@ -59,7 +59,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       do @refreshAttributes
 
     refreshAttributes: ->
-      for attr in [ 'robot', 'scenario', 'algorithm' ]
+      for attr in [ 'robot', 'scenario', 'navigation' ]
         @updateUniqAttribute attr
       for attr in [ 'duration', 'distance', 'rotation' ]
         @updateMedianAttribute attr
