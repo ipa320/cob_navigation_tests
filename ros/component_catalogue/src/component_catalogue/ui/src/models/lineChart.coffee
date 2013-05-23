@@ -32,8 +32,7 @@ define [ 'backbone'  ], ( Backbone )->
       sortingOptions = @get 'sortingOptions'
       return {} if not testGroup
 
-      if 'value' == sortingOptions.get 'sorting'
-        key = @get 'key'
+      if 'date' != ( key = sortingOptions.get 'sorting' )
         testGroup = testGroup.sortBy ( model )-> model.get key
 
       nameChunks = []
