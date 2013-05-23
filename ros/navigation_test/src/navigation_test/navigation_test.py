@@ -73,10 +73,10 @@ class TestNavigation( unittest.TestCase ):
         self.testResultWriter.write( self._metricsObserver.serialize() )
         
         self._stopBagRecording()
-        time.sleep( 4 )
+        time.sleep( 2 )
 
         rospy.signal_shutdown( 'finished' )
-        time.sleep( 25 )
+        time.sleep( 4 )
 
 
 if __name__ == '__main__':
