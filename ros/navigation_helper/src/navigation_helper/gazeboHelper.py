@@ -25,6 +25,7 @@ from gazebo.srv import *
 from gazebo_msgs.srv import *
 from gazebo_msgs.msg import *
 
+# Pkg: cob_script_server
 from simple_script_server import *
 import std_srvs.srv
 import yaml
