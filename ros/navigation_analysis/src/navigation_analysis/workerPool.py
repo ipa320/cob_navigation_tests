@@ -54,16 +54,18 @@ class WorkerPool( object ):
 
     def newInstance( self, filepath ):
         newPort = self.findNextAvailablePort()
+        env = os.environ.copy()
+        env[ 'ROS_MASTER_URI' ] = 'http://localhost:%s' % newPort
         args = [
             'roslaunch',
-            '-p', str( newPort ),
             'navigation_analysis',
             'analyse_bag_file.launch',
             'filepath:=%s'   % filepath,
             'repository:=%s' % self._repositoryName
         ]
         print args
-        subprocess.call( args )
+        p = subprocess.Popen( args, env=env )
+        p.wait()
 
 
 
