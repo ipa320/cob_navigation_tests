@@ -19,12 +19,33 @@ class Worker( object ):
         analyzer = BagAnalyzer( filename )
         analyzer.start()
         player = BagReplayer( self._bagFilepath )
-        player.play() 
-        print '"%s" analyzed' % self._bagFilepath
-        data = analyzer.serialize()
+        try:
+            player.play()
+            print '"%s" analyzed' % self._bagFilepath
+            analyzer.stop()
+            data = analyzer.serialize()
+            self.saveResults( data )
 
-        self.saveResults( data )
+        except BagAnalyzer.NoStatusReceivedError:
+            print 'ERROR: No Status topic received.'
+            print 'The Robot most likely did not move.'
+            print 'Bag-File: %s' % self._bagFilepath
+            print 'Remove bag file to avoid the same error next time'
 
+        except subprocess.CalledProcessError:
+            print 'ERROR: Bag-File corrupted'
+            print 'Bag-File: %s' % self._bagFilepath
+            print 'Remove bag file to avoid the same error next time'
+
+        finally:
+            analyzer.stop()
+
+
+    def _formatError( self, errorStr ):
+        return {
+            'error': errorStr,
+            'filepath': self._bagFilepath
+        }
 
     def saveResults( self, data ):
         filename = os.path.basename( self._bagFilepath )
@@ -45,9 +66,11 @@ class BagReplayer( object ):
 
     def play( self ):
         print 'Playing %s' % self._filepath
-        p = subprocess.call([ 'rosbag', 'play', self._filepath ])
+        p = subprocess.check_call([ 'rosbag', 'play', self._filepath ])
 
 class BagAnalyzer( object ):
+    class NoStatusReceivedError( Exception ): pass
+
     def __init__( self, filename ):
         print 'Initializing Analyzer'
         self._filename               = filename
@@ -74,18 +97,30 @@ class BagAnalyzer( object ):
 
     def stop( self ):
         print 'Stopping MetricsObserver'
-        self._active = False
-        self._statusSubscriber.unregister()
-        self._metricsObserver.stop()
+        if self._active:
+            self._active = False
+            self._statusSubscriber.unregister()
+            self._metricsObserver.stop()
 
     def serialize( self ):
+        self._assertNoUnrecoverableErrorOccured()
         data = self._metricsObserver.serialize()
+        data[ 'error'     ] = self._getError()
         data[ 'duration'  ] = self._duration
         data[ 'filename'  ] = self._filename
         data[ 'localtime' ] = self._localtime
         data[ 'localtimeFormatted' ] = self._localtimeFormatted()
         data = dict( data.items() + self._setting.items() )
         return data
+
+    def _assertNoUnrecoverableErrorOccured( self ):
+        if not self._startTime:
+            raise BagAnalyzer.NoStatusReceivedError()
+
+    def _getError( self ):
+        if self._duration == 'N/A':
+            return 'Test timed out'
+        return ''
 
     def _localtimeFormatted( self ):
         print 'Localtime: %s' % self._localtime
