@@ -12,6 +12,7 @@ define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixed
       testGroups: null
       columns:
         'count':          '#'
+        'errors':         '# errors'
         'robot':          'Roboter'
         'navigation':     'Navigation'
         'scenario':       'Scenario'

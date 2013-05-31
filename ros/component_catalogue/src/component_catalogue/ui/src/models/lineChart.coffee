@@ -40,11 +40,26 @@ define [ 'backbone'  ], ( Backbone )->
         nameChunks.push testGroup.get key
 
 
-      date = testGroup?.getDataPointsForKey( 'date' )
       data = testGroup?.getDetailedDataPointsForKey( @get 'key' )
+      this.formatErrorPoints data
+      console.log( data )
       name:  nameChunks.join ' / '
       id:    testGroup.id
       data:  data
+
+    formatErrorPoints: ( data )->
+      for i, current of data
+        continue if !current.error
+        previous = data[ +i-1 ]
+        next     = data[ +i+1 ]
+        if +previous?.y && +next?.y
+          # todo, smarter way to interpolate if two consecutive tests fail
+          current.y = ( previous.y + next.y ) / 2
+        else
+          current.y = +previous?.y || +next?.y || 0
+
+        current.marker = { symbol: 'square', fillColor: 'red' }
+
 
     extremesChanged: ( min, max )->
       @_swallowNextExtremesEvent = true

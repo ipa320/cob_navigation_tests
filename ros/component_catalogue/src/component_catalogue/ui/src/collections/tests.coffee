@@ -34,8 +34,8 @@ define [ 'underscore', 'backbone', 'models/test' ], ( _, Backbone, Test )->
       true
 
 
-    getIndexesById: ->
-      indexesById = {}
+    getIndexesByCid: ->
+      indexesByCid = {}
       for index, model of @models
-        indexesById[ model.id ] = index
-      return indexesById
+        indexesByCid[ model.cid ] = index
+      return indexesByCid

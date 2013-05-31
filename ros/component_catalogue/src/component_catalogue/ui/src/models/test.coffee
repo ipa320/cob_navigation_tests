@@ -1,6 +1,7 @@
 define [ 'backbone' ], ( Backbone )->
   Test = Backbone.Model.extend
     defaults:
+      error:       false
       date:        0
       robot:       ''
       scenario:    ''

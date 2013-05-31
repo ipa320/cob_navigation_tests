@@ -17,7 +17,8 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       'stdDev.duration': 'N/A'
       'stdDev.distance': 'N/A'
       'stdDev.rotation': 'N/A'
-      indexesById:       {}
+      indexesByCid:       {}
+      errors:            ''
 
     constructor: ( args, options )->
       if !(args?)
@@ -36,9 +37,9 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
 
     initialize: ->
       do @reset
-      @set 'originalTests',   @get 'tests'
-      @set 'tests',           @get( 'tests' ).clone()
-      @set 'indexesById',     @get( 'tests' ).getIndexesById()
+      @set 'originalTests',  @get 'tests'
+      @set 'tests',          @get( 'tests' ).clone()
+      @set 'indexesByCid',   @get( 'tests' ).getIndexesByCid()
       @once 'change:filters', ->
         do @setupFilters
 
@@ -64,6 +65,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       for attr in [ 'duration', 'distance', 'rotation' ]
         @updateMedianAttribute attr
         @updateStdDevAttribute attr
+      do @updateErrorCount
 
       count = @get( 'tests' ).length
       @set 'count', count
@@ -72,6 +74,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
     updateUniqAttribute: ( attr )->
       uniqueValues = []
       @get( 'tests' ).forEach ( model )->
+        return if model.get( 'error' )
         value = model.get attr
         uniqueValues.push value if value? and value not in uniqueValues
 
@@ -84,11 +87,18 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
     updateMedianAttribute: ( attr )->
       sum = num = 0
       @get( 'tests' ).forEach ( model )->
+        return if model.get( 'error' )
         value = +model.get( attr )
         if !isNaN( value )
           num++
           sum += value
       @set( 'mean.' + attr, if num > 0 then sum/num else 'N/A' )
+      
+    updateErrorCount: ->
+      errors = 0
+      erroneous = @get( 'tests' ).forEach ( model )->
+        errors++ if model.get 'error'
+      @set 'errors', errors
   
     updateStdDevAttribute: ( attr )->
       mean = @get 'mean.' + attr
@@ -102,13 +112,15 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
 
     getDataPointsForKey: ( key )->
       return @get( 'tests' ).map ( model )->
+        return 'error' if model.get 'error'
         return model.get key
 
     getDetailedDataPointsForKey: ( key )->
-      indexesById = @get 'indexesById'
+      indexesByCid = @get 'indexesByCid'
       return @get( 'tests' ).map ( model )->
         date:  model.get 'date'
-        index: indexesById[ model.id ]
+        error: model.get 'error'
+        index: indexesByCid[ model.cid ]
         y:     model.get key
 
     groupBy: ->
