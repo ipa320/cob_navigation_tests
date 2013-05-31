@@ -1,7 +1,9 @@
 <div class="sortingOptions">
   <span class="intro">Sort Charts by:</span>
-  <input type="radio" id="sortByDate" name="sorting" value="date" <%="checked" if @sorting == 'date'%>/><label for="sortByDate">Sort by date</label>
-  <input type="radio" id="sortByDuration" name="sorting" value="duration" <%="checked" if @sorting == 'value'%> /><label for="sortByDuration">Sort by duration</label>
-  <input type="radio" id="sortByDistance" name="sorting" value="distance" <%="checked" if @sorting == 'value'%> /><label for="sortByDistance">Sort by distance</label>
-  <input type="radio" id="sortByRotation" name="sorting" value="rotation" <%="checked" if @sorting == 'value'%> /><label for="sortByRotation">Sort by rotation</label>
+  <input class="sort" type="radio" id="sortByDate" name="sorting" value="date" <%="checked" if @sorting == 'date'%>/><label for="sortByDate">Sort by date</label>
+  <input class="sort" type="radio" id="sortByDuration" name="sorting" value="duration" <%="checked" if @sorting == 'value'%> /><label for="sortByDuration">Sort by duration</label>
+  <input class="sort" type="radio" id="sortByDistance" name="sorting" value="distance" <%="checked" if @sorting == 'value'%> /><label for="sortByDistance">Sort by distance</label>
+  <input class="sort" type="radio" id="sortByRotation" name="sorting" value="rotation" <%="checked" if @sorting == 'value'%> /><label for="sortByRotation">Sort by rotation</label>
+
+  <label for="showErrorsChkbx" class="showErrorsLabel">Show errors:</label><input type="checkbox" id="showErrorsChkbx" <%="checked" if @showErrors %> />
 </div>

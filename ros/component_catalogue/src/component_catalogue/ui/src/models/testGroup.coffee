@@ -52,7 +52,16 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       do @refreshAttributes
 
     updateTestsLists: ->
-      newTests = @get( 'originalTests' ).filter @get 'filters'
+      @applyFilters @get 'filters'
+
+    filter: ( filter )->
+      clone   = do @clone
+      filters = clone.get( 'filters' ).concat filter
+      clone.applyFilters filters
+      clone
+
+    applyFilters: ( filters )->
+      newTests = @get( 'originalTests' ).filter filters
       @set 'tests', newTests
 
 

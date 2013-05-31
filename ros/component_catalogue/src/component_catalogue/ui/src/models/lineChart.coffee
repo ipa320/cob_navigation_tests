@@ -1,4 +1,4 @@
-define [ 'backbone'  ], ( Backbone )->
+define [ 'backbone', 'models/noErroneousFilter'  ], ( Backbone, NoErroneousFilter )->
 
   Backbone.Model.extend
     defaults:
@@ -31,6 +31,9 @@ define [ 'backbone'  ], ( Backbone )->
       testGroup      = @get 'testGroup'
       sortingOptions = @get 'sortingOptions'
       return {} if not testGroup
+
+      if !sortingOptions.get 'showErrors'
+        testGroup = testGroup.filter new NoErroneousFilter
 
       if 'date' != ( key = sortingOptions.get 'sorting' )
         testGroup = testGroup.sortBy key
