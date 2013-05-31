@@ -85,8 +85,4 @@ if __name__ == '__main__':
             bagFilepath = bagDir + '/' + bagFilename
             pool.newInstance( bagFilepath )
 
-
-        #repository.push()
-
-
     print 'All files analyzed, Saving.'
