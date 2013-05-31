@@ -1,6 +1,7 @@
 define [ 'underscore', 'backbone', 'models/test' ], ( _, Backbone, Test )->
   Tests = Backbone.Collection.extend
     model: Test
+    comparator: 'localtime'
 
     groupBy: ( groups )->
       groupedSiblings = {}

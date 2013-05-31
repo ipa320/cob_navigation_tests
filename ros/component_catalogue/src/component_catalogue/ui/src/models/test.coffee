@@ -12,6 +12,5 @@ define [ 'backbone' ], ( Backbone )->
       rotation:    null
 
     initialize: ->
-      date = @get 'date'
-      if !( date instanceof Date )
-        @set 'date', new Date date
+      date = @get( 'localtime' )*1000
+      @set 'date', new Date date

@@ -33,7 +33,7 @@ define [ 'backbone'  ], ( Backbone )->
       return {} if not testGroup
 
       if 'date' != ( key = sortingOptions.get 'sorting' )
-        testGroup = testGroup.sortBy ( model )-> model.get key
+        testGroup = testGroup.sortBy key
 
       nameChunks = []
       for key in [ 'robot', 'navigation', 'scenario' ]

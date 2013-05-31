@@ -131,5 +131,5 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       clone = do @clone
       tests = clone.get 'tests'
       sortedTests = tests.sortBy.apply tests, arguments
-      clone.set 'tests', sortedTests
+      clone.set 'tests', sortedTests, silent: true
       clone
