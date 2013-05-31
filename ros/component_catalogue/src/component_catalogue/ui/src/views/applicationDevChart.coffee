@@ -6,9 +6,18 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
     initialize: ->
       @listenTo @options.testGroups, 'change:empty change:selected', \
         _.debounce @groupsChanged.bind @, 10
-      @chartModel = new BarChartModel key: @options.variableAttributeKey
-      @chartView  = new BarChartView model: @chartModel, title: @options.title
       @triggerResizeOnce = _.once @triggerResize
+
+      @chartModels = []
+      @chartViews  = []
+      for key in [ 'duration', 'distance', 'rotation' ]
+        model = new BarChartModel
+          key: key
+          variableKey: @options.variableAttributeKey # think of a better name
+        @chartModels.push model
+        @chartViews.push new BarChartView
+          model: model
+          title: @options.title
 
     # most of the times, several resize triggers are issued with small or no
     # time difference. Group all those together
@@ -18,7 +27,8 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
 
     render: ->
       @$el.html do applicationDevChartTmpl
-      @$( '.chart' ).html @chartView.render().el
+      for i, view of @chartViews
+        @$( ".chart_#{i}" ).html view.render().el
       do @groupsChanged
       @
 
@@ -26,8 +36,9 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
     groupsChanged: ->
       testGroups = do @getInterestingRows
       if @validateTestGroups testGroups
-        @chartModel.set 'testGroups', testGroups
-        do @showChart
+        for key, model of @chartModels
+          model.set 'testGroups', testGroups
+        do @showCharts
 
     validateTestGroups: ( rows )->
       error = ''
@@ -57,9 +68,9 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
 
     error: ( msg )->
       @$( '.error' ).show().html msg
-      do @$( '.chart' ).hide
+      do @$( '.charts' ).hide
 
-    showChart: ->
-      do @$( '.chart' ).show
+    showCharts: ->
+      do @$( '.charts' ).show
       do @$( '.error' ).hide
       do @triggerResizeOnce

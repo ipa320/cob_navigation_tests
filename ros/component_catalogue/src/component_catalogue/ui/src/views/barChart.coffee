@@ -59,9 +59,16 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
       plotOptions:
         series:
           animation: false
-      yAxis:
+      yAxis: [
         title:
           text:      ''
+        ,
+        title:
+          text: ''
+        ,
+        title:
+          text: ''
+      ]
       series:        []
       tooltip:
         shared:      true
@@ -92,5 +99,3 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
             'fill': 'white'
           }).add().toFront()
           @elements.push rect
-
-

@@ -34,15 +34,15 @@ define [ 'backbone'  ], ( Backbone )->
 
     asHighchartsSeries: ()->
       series = []
+      key    = @get 'key'
       for testGroup in @get 'testGroups'
         data = []
-        for key in [ 'duration', 'distance', 'rotation' ]
-          mean   = testGroup.get 'mean.'   + key
-          stdDev = testGroup.get 'stdDev.' + key
-          data.push [ mean - stdDev, mean + stdDev ]
+        mean   = testGroup.get 'mean.'   + key
+        stdDev = testGroup.get 'stdDev.' + key
+        data.push [ mean - stdDev, mean + stdDev ]
 
         series.push
-          name:  testGroup.get @get 'key'
+          name:  testGroup.get @get 'variableKey'
           id:    testGroup.id
           data:  data
 
