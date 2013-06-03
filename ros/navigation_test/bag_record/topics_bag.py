@@ -155,7 +155,7 @@ class topics_bag():
         res.error_message.data = "Bagfile recording stopped"
         print res.error_message.data
         return res  
-		  
+
     def tf_trigger(self, reference_frame, target_frame, tfs):
         #  this function is responsible for setting up the triggers for recording
         # on the bagfile.
@@ -190,6 +190,26 @@ class topics_bag():
         
         trigger_position = self.tf_trigger(tfs["reference_frame"], tfs["target_frame"], tfs)
         return trigger_position
+
+
+
+shutdown = False
+def waitForShutdown():
+    rospy.Service('/logger/shutdown', Trigger, shutdownReceived )
+    rospy.loginfo("Published shutdown" )
+    global shutdown
+    while not shutdown:
+        print 'Waiting for shutdown.'
+        time.sleep( 1 )
+
+def shutdownReceived( req ):
+    global shutdown
+    shutdown = True
+    res = TriggerResponse()
+    res.success.data = True
+    res.error_message.data = "Shutting down"
+    print res.error_message.data
+    return res
 
 if __name__ == "__main__":
     rospy.init_node('topics_bag')
@@ -246,4 +266,5 @@ if __name__ == "__main__":
 	# closing bag file
     rospy.loginfo("Closing bag file")
     bagR.bag.close()
+    waitForShutdown()
 

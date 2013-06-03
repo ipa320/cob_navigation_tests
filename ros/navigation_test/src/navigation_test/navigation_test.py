@@ -73,10 +73,19 @@ class TestNavigation( unittest.TestCase ):
         self.testResultWriter.write( self._metricsObserver.serialize() )
         
         self._stopBagRecording()
-        time.sleep( 2 )
+        self._waitForBagRecorderShutdown()
 
         rospy.signal_shutdown( 'finished' )
         time.sleep( 4 )
+
+    def _waitForBagRecorderShutdown( self ):
+        rospy.loginfo("waiting for logger to be able to shutdown")
+        rospy.wait_for_service( '/logger/shutdown' )
+        shutdownService = rospy.ServiceProxy( '/logger/shutdown',
+                cob_srvs.srv.Trigger )
+        shutdownService()
+        rospy.loginfo("found.")
+
 
 
 if __name__ == '__main__':
