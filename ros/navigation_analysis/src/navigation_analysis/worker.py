@@ -40,11 +40,6 @@ class Worker( object ):
             analyzer.stop()
 
 
-    def _formatError( self, errorStr ):
-        return {
-            'error': errorStr,
-            'filepath': self._bagFilepath
-        }
 
     def saveResults( self, data ):
         filename = os.path.basename( self._bagFilepath )
