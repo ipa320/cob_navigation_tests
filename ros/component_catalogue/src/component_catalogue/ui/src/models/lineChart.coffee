@@ -53,16 +53,21 @@ define [ 'backbone', 'models/noErroneousFilter'  ], ( Backbone, NoErroneousFilte
     formatErrorPoints: ( data )->
       for i, current of data
         continue if !current.error
-        previous = data[ +i-1 ]
-        next     = data[ +i+1 ]
-        if +previous?.y && +next?.y
-          # todo, smarter way to interpolate if two consecutive tests fail
-          current.y = ( previous.y + next.y ) / 2
+
+        previousY = +data[ i - 1 ]?.y || 0
+        next      = @findNextValue data, i
+        console.log 'search next value', i, next, previousY
+        if next
+          current.y = ( next.y - previousY ) / ( next.index - i + 1 ) + previousY
         else
-          current.y = +previous?.y || +next?.y || 0
+          current.y = previousY
 
         current.marker = { symbol: 'square', fillColor: 'red' }
 
+    findNextValue: ( data, i )->
+      while current = data[ ++i ]
+        if !current.error && +current.y
+          return index: i, y: +current.y
 
     extremesChanged: ( min, max )->
       @_swallowNextExtremesEvent = true
