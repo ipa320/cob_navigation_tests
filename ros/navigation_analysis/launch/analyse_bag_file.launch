@@ -1,7 +1,10 @@
 <?xml version="1.0"?>
 <launch>
+    <arg name="deleteOnError" default="no" />
+
     <node name="analyse_remaining_bag_files" pkg="navigation_analysis" type="worker.py" output="screen" required="true">
         <param name="~filepath" value="$(arg filepath)" />
         <param name="~repository" value="$(arg repository)" />
+        <param name="~deleteOnError" value="$(arg deleteOnError)" />
     </node>
 </launch>

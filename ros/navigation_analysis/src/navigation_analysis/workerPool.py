@@ -36,10 +36,11 @@ class BagDirectoryReader( object ):
 
 
 class WorkerPool( object ):
-    def __init__( self, repositoryName ):
+    def __init__( self, repositoryName, deleteOnError ):
         self._s = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
         self._lastPort       = 11310
         self._repositoryName = repositoryName
+        self._deleteOnError  = deleteOnError
 
     def findNextAvailablePort( self ):
         try:
@@ -60,8 +61,9 @@ class WorkerPool( object ):
             'roslaunch',
             'navigation_analysis',
             'analyse_bag_file.launch',
-            'filepath:=%s'   % filepath,
-            'repository:=%s' % self._repositoryName
+            'filepath:=%s'      % filepath,
+            'repository:=%s'    % self._repositoryName,
+            'deleteOnError:=%s' % self._deleteOnError
         ]
         print args
         p = subprocess.Popen( args, env=env )
@@ -73,12 +75,13 @@ if __name__ == '__main__':
     rospy.init_node( 'analyze_remaining_bag_files' )
     bagDir         = rospy.get_param( '~bagDir' )
     repositoryName = rospy.get_param( '~repository' )
+    deleteOnError  = rospy.get_param( '~deleteOnError' )
 
     print 'Reading %s' % bagDir
     path = os.path.dirname(os.path.abspath(__file__))
 
     git = Git( repositoryName )
-    pool = WorkerPool( repositoryName )
+    pool = WorkerPool( repositoryName, deleteOnError )
 
     with git as repository:
         directoryReader = BagDirectoryReader( bagDir, repository )

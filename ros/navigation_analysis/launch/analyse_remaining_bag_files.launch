@@ -2,8 +2,10 @@
 <launch>
     <arg name="repository" default="git@github.com:SimonEbner/navigation_test_results.git" />
     <arg name="bagDir" default="/share/uhr-se/bag_record" />
+    <arg name="deleteOnError" default="no" />
     <node name="analyse_remaining_bag_files" pkg="navigation_analysis" type="workerPool.py" output="screen">
         <param name="~bagDir" value="$( arg bagDir )" />
         <param name="~repository" value="$( arg repository )" />
+        <param name="~deleteOnError" value="$( arg deleteOnError )" />
     </node>
 </launch>

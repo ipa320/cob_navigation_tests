@@ -9,9 +9,10 @@ from navigation_helper.git import Git
 import subprocess
 
 class Worker( object ):
-    def __init__( self, bagFilepath, repository ):
-        self._repository  = repository
-        self._bagFilepath = bagFilepath
+    def __init__( self, bagFilepath, repository, deleteOnError ):
+        self._repository    = repository
+        self._bagFilepath   = bagFilepath
+        self._deleteOnError = deleteOnError
 
     def start( self ):
         filename = os.path.basename( self._bagFilepath )
@@ -26,20 +27,42 @@ class Worker( object ):
             self.saveResults( data )
 
         except BagAnalyzer.NoStatusReceivedError:
-            print 'ERROR: No Status topic received.'
-            print 'The Robot most likely did not move.'
-            print 'Bag-File: %s' % self._bagFilepath
-            print 'Remove bag file to avoid the same error next time'
+            self._errorOccured( 'No Status topic received.' )
 
         except subprocess.CalledProcessError:
-            print 'ERROR: Bag-File corrupted'
-            print 'Bag-File: %s' % self._bagFilepath
-            print 'Remove bag file to avoid the same error next time'
+            self._errorOccured( 'Bag-File corrupted' )
 
         finally:
             analyzer.stop()
 
+    def _errorOccured( self, msg ):
+        print 'ERROR: %s' % msg
+        print 'Bag-File: %s' % self._bagFilepath
+        if self._deleteOnError == 'yes':
+            self._deleteBagFile()
+        elif self._deleteOnError == 'ask':
+            self._askToDeleteBagFile()
+        else:
+            self._dontDeleteBagFile()
 
+    def _askToDeleteBagFile( self ):
+        response = ''
+        validResponses = [ 'yes', 'no' ]
+        while response not in validResponses:
+            response = raw_input( 'Delete invalid bagfile? [yes/no]: ' )
+
+        if response == 'yes':
+            self._deleteBagFile()
+        else:
+            self._dontDeleteBagFile()
+
+
+    def _deleteBagFile( self ):
+        print 'Deleting.'
+        os.remove( self._bagFilepath )
+
+    def _dontDeleteBagFile( self ):
+        print 'Not deleting. Remove bag file to avoid the same error next time'
 
     def saveResults( self, data ):
         filename = os.path.basename( self._bagFilepath )
@@ -154,8 +177,9 @@ if __name__ == '__main__':
     rospy.init_node( 'analyse_worker', anonymous=True )
     filepath       = rospy.get_param( '~filepath' )
     repositoryName = rospy.get_param( '~repository' )
+    deleteOnError  = rospy.get_param( '~deleteOnError' )
 
     git = Git( repositoryName )
     with git as repository:
-        worker = Worker( filepath, repository )
+        worker = Worker( filepath, repository, deleteOnError )
         worker.start()
