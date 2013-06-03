@@ -244,10 +244,16 @@ table{
  */
 .applicationDevView .chartContainer{
     float: left;
-    width: 45%;
+    width: 100%;
     height: 400px;
     position: relative;
 }
+
+.applicationDevView .chartContainer .charts > div{
+    width: 30%;
+    float: left;
+}
+
 .applicationDevView .error{
     position: absolute;
     top: 50%;
