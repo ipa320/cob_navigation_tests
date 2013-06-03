@@ -6,26 +6,40 @@ import os, re, subprocess, socket
 from navigation_helper.git import Git
 from navigation_helper.jsonFileHandler import JsonFileHandler
 from navigation_helper.resultRepository import ResultRepository
+from worker import Worker
 
 class BagDirectoryReader( object ):
     def __init__( self, directory, repository ):
-        self._directory  = directory
-        self._repository = repository
+        self._directory     = directory
+        self._repository    = repository
+        self._usedFilenames = []
 
     def getBagFilenames( self ):
         bagFiles = []
         for dirname, dirnames, filenames in os.walk( self._directory ):
             for filename in filenames:
                 if re.match( '.*\.bag$', filename ):
-                    bagFiles.append( filename )
-        return bagFiles
+                    yield filename
 
-    def getUnanalyzedBagFilenames( self ):
-        bagFilenames = self.getBagFilenames()
-        bagFilenamesAnalyzed = self.getAllBagFilenamesAnalyzed()
-        for bagFilename in bagFilenames:
-            if not bagFilename in bagFilenamesAnalyzed:
-                yield bagFilename
+    def hasUnanalyzedBagFilenames( self ):
+        return self._nextUnanalyedBagFilename( silent=True ) != None
+
+    def nextUnanalyzedBagFilename( self ):
+        return self._nextUnanalyedBagFilename( silent=False )
+
+    def _nextUnanalyedBagFilename( self, silent ):
+        for bagFilename in self.getBagFilenames():
+            fileUsed     = bagFilename in self._usedFilenames
+            fileAnalyzed = bagFilename in self.getAllBagFilenamesAnalyzed()
+            if fileUsed or fileAnalyzed:
+                continue
+            
+            if not silent:
+                self._usedFilenames.append( bagFilename )
+
+            return bagFilename
+        return None
+
 
     def getAllBagFilenamesAnalyzed( self ):
         resultRepository = ResultRepository( self._repository )
@@ -85,9 +99,13 @@ if __name__ == '__main__':
 
     with git as repository:
         directoryReader = BagDirectoryReader( bagDir, repository )
-        for bagFilename in directoryReader.getUnanalyzedBagFilenames():
-            print 'now analyzing %s' % bagFilename
+        while directoryReader.hasUnanalyzedBagFilenames():
+            bagFilename = directoryReader.nextUnanalyzedBagFilename()
             bagFilepath = bagDir + '/' + bagFilename
+            if os.path.isfile( bagFilepath + Worker.FIX_SUFFIX ):
+                print 'Skipping %s since a fix exists' % bagFilename
+                continue
+            print 'Analyzing %s' % bagFilename
             pool.newInstance( bagFilepath )
 
     print 'All files analyzed, Saving.'

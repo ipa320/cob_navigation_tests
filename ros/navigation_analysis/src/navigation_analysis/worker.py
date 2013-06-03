@@ -7,8 +7,11 @@ from navigation_helper.metricsObserverTF import MetricsObserverTF
 from navigation_helper.jsonFileHandler   import JsonFileHandler
 from navigation_helper.git import Git
 import subprocess
+from rosbagPatcher.rosbagPatcher import BagFilePatcher
+
 
 class Worker( object ):
+    FIX_SUFFIX    = '_fix.bag'
     def __init__( self, bagFilepath, repository, deleteOnError ):
         self._repository    = repository
         self._bagFilepath   = bagFilepath
@@ -29,11 +32,26 @@ class Worker( object ):
         except BagAnalyzer.NoStatusReceivedError:
             self._errorOccured( 'No Status topic received.' )
 
-        except subprocess.CalledProcessError:
-            self._errorOccured( 'Bag-File corrupted' )
+        except subprocess.CalledProcessError,e:
+            if not self.isFixingAttempt():
+                self._fixBagFile()
+            else:
+                self._errorOccured( 'Bag-File corrupted' )
 
         finally:
             analyzer.stop()
+
+    def isFixingAttempt( self ):
+        return self._bagFilepath.endswith( Worker.FIX_SUFFIX )
+
+    def _fixBagFile( self ):
+        print
+        print 'BAG-FILE ERROR OCCURED. TRYING TO RECOVER'
+        print '-----------------------------------------'
+        newFilepath = self._bagFilepath + Worker.FIX_SUFFIX
+        patcher = BagFilePatcher( self._bagFilepath, newFilepath )
+        patcher.patch()
+        
 
     def _errorOccured( self, msg ):
         print 'ERROR: %s' % msg
