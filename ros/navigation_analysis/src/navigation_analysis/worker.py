@@ -3,7 +3,6 @@ import roslib
 roslib.load_manifest( 'navigation_analysis' )
 import rospy, os, re, subprocess, sys, time, datetime
 import navigation_helper.gazeboHelper, navigation_helper.msg
-from threading import Thread
 from navigation_helper.metricsObserverTF import MetricsObserverTF
 from navigation_helper.jsonFileHandler   import JsonFileHandler
 from navigation_helper.git import Git
