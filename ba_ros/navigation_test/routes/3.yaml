@@ -1,0 +1,4 @@
+name:   'ipa-kitchen-two-point-B'
+goals: 
+    - [ 1.03, -1.085, 0 ]
+    - [ 0, 0, 0 ]
