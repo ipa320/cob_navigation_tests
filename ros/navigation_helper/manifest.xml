@@ -10,7 +10,6 @@
   <depend package="gazebo"/>
   <depend package="cob_default_robot_config"/>
   <depend package="cob_default_env_config"/>
-  <depend package="cob_default_env_config"/>
   <depend package="cob_navigation_global"/>
   <depend package="rostest" />
   <depend package="cob_script_server" />
