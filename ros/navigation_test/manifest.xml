@@ -12,5 +12,6 @@
   <depend package="gazebo"/>
   <depend package="navigation_helper"/>
   <depend package="rostest" />
+  <depend package="cob_bringup_sim" />
 
 </package>
