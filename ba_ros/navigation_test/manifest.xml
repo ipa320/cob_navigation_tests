@@ -1,7 +1,7 @@
 <package>
   <description brief="navigation_tests">
 
-     This package provides launch files for starting a simulated Care-O-bot.
+      This packages contains the meta information to feed navigation_test_skeleton
 
   </description>
   <author>Simon Ebner</author>
@@ -9,9 +9,8 @@
   <review status="unreviewed" notes=""/>
   <url></url>
 
-  <depend package="gazebo"/>
-  <depend package="navigation_helper"/>
-  <depend package="rostest" />
+  <depend package="navigation_test_skeleton" />
+  <depend package="cob_navigation_global" />
   <depend package="cob_bringup_sim" />
 
 </package>

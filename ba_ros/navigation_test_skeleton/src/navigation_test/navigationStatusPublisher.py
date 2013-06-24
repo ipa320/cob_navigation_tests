@@ -38,4 +38,5 @@ class NavigationStatusPublisher( object ):
         msg.robot      = self._setting[ 'robot' ]
         msg.scenario   = self._setting[ 'scenario' ]
         msg.navigation = self._setting[ 'navigation' ]
+        msg.repository = self._setting[ 'repository' ]
         return msg

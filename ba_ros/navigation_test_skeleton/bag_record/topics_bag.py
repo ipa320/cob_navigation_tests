@@ -58,7 +58,7 @@
 #################################################################
 
 import roslib
-PKG = "navigation_test"
+PKG = "navigation_test_skeleton"
 roslib.load_manifest(PKG)
 import rospy
 
@@ -94,39 +94,24 @@ import global_lock
 class topics_bag():
 
     def __init__(self):
-    
-        # this defines the variables according to the ones specified at the yaml
-        # file. The triggers, the wanted tfs, the wanted topics and where they are going
-        # to be written, more specifically at the file named as self.bag.
-        self.trigger_record_translation = rospy.get_param('~trigger_record_translation')
-        self.trigger_record_rotation = rospy.get_param('~trigger_record_rotation')
-        self.trigger_timestep = rospy.get_param('~trigger_timestep')
-        self.wanted_tfs = rospy.get_param('~wanted_tfs')
-        self.trigger_topics = rospy.get_param("~trigger_topics")
-        self.continuous_topics = rospy.get_param("~continuous_topics")
-        self.bag_path = rospy.get_param("~bag_path")
-        
-        # this creates the bagfile
-        localtime = time.localtime(time.time())
-        filename = '%s.bag' % uuid.uuid4()
-        filelocation = str( self.bag_path )
-        if(not os.path.exists(filelocation)):
-            os.makedirs(filelocation)
-        rospy.loginfo("Logging to " + filelocation + filename)
-        self.bag = rosbag.Bag(filelocation + filename, 'w')
+        self.loadParams()
+        self.openBagfile()
         
         while(rospy.rostime.get_time() == 0.0):
 			time.sleep(0.1)
+
         # necessary tf elements 
-        self.tfL = tf.TransformListener()
-        self.tfposed = TransformStamped()
-        self.tfMsg = tfMessage()
+        self.tfL     = tf.TransformListener()
         
         rospy.sleep(2)
         # waits for a tf transform before starting. This is important to check if
         # the system is fully functional.
         
-        self.tfL.waitForTransform(self.wanted_tfs[0]["reference_frame"], self.wanted_tfs[0]["target_frame"], rospy.Time(0), rospy.Duration(4.0))
+        self.tfL.waitForTransform(
+                self.wanted_tfs[0]["reference_frame"],
+                self.wanted_tfs[0]["target_frame"],
+                rospy.Time(0),
+                rospy.Duration(10))
         
         # dictionaries for storing current translation and rotation for the specific
         # frames
@@ -139,6 +124,33 @@ class topics_bag():
             
 
         global_lock.active_bag = True
+
+    def loadParams( self ):
+        # this defines the variables according to the ones specified at the yaml
+        # file. The triggers, the wanted tfs, the wanted topics and where they are going
+        # to be written, more specifically at the file named as self.bag.
+        self.trigger_record_translation = self.requiredParam('~trigger_record_translation')
+        self.trigger_record_rotation    = self.requiredParam('~trigger_record_rotation')
+        self.trigger_timestep           = self.requiredParam('~trigger_timestep')
+        self.wanted_tfs                 = self.requiredParam('~wanted_tfs')
+        self.trigger_topics             = self.requiredParam("~trigger_topics")
+        self.continuous_topics          = self.requiredParam("~continuous_topics")
+        self.bag_path                   = self.requiredParam("~bag_path")
+
+    def requiredParam( self, key ):
+        value = rospy.get_param( key )
+        if value is None:
+            raise Exception( 'Could not load paramter %s' % key )
+        return value
+
+    def openBagfile( self ):
+        # this creates the bagfile
+        filename     = '%s.bag' % uuid.uuid4()
+        filelocation = str( self.bag_path )
+        if(not os.path.exists( filelocation )):
+            os.makedirs( filelocation )
+        rospy.loginfo("Logging to " + filelocation + '/' + filename)
+        self.bag = rosbag.Bag(filelocation + '/' + filename, 'w')
 
     def init_stop_service( self ):
         rospy.loginfo( 'Setting up stop service' )

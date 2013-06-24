@@ -3,37 +3,39 @@ import roslib
 roslib.load_manifest( 'navigation_analysis' )
 import rospy, os, re, subprocess, sys, time, datetime
 import navigation_helper.gazeboHelper, navigation_helper.msg
+import subprocess
 from navigation_helper.metricsObserverTF import MetricsObserverTF
 from navigation_helper.jsonFileHandler   import JsonFileHandler
-from navigation_helper.git import Git
-import subprocess
+from navigation_helper.git               import Git
+from navigation_helper.bagInfo           import BagInfo
 from rosbagPatcher.rosbagPatcher import BagFilePatcher
 
 
 class Worker( object ):
-    FIX_SUFFIX    = '_fix.bag'
-    def __init__( self, bagFilepath, repository, deleteOnError ):
-        self._repository    = repository
-        self._bagFilepath   = bagFilepath
-        self._deleteOnError = deleteOnError
+    def __init__( self, bagInfo ):
+        self.bagInfo = bagInfo
 
     def start( self ):
-        filename = os.path.basename( self._bagFilepath )
+        filename = self.bagInfo.filename
         analyzer = BagAnalyzer( filename )
         analyzer.start()
-        player = BagReplayer( self._bagFilepath )
+        player = BagReplayer( self.bagInfo.filepath )
         try:
             player.play()
-            print '"%s" analyzed' % self._bagFilepath
             analyzer.stop()
+            print '"%s" analyzed' % self.bagInfo.filepath
             data = analyzer.serialize()
             self.saveResults( data )
+            self.bagInfo.setAnalyzed()
 
         except BagAnalyzer.NoStatusReceivedError:
             self._errorOccured( 'No Status topic received.' )
 
+        except BagAnalyzer.NoRepositoryNameReceivedError:
+            self._errorOccured( 'No Repository name received.' )
+
         except subprocess.CalledProcessError,e:
-            if not self.isFixingAttempt():
+            if not bagInfo.isFixed():
                 self._fixBagFile()
             else:
                 self._errorOccured( 'Bag-File corrupted' )
@@ -41,59 +43,42 @@ class Worker( object ):
         finally:
             analyzer.stop()
 
-    def isFixingAttempt( self ):
-        return self._bagFilepath.endswith( Worker.FIX_SUFFIX )
-
     def _fixBagFile( self ):
         print
         print 'BAG-FILE ERROR OCCURED. TRYING TO RECOVER'
         print '-----------------------------------------'
-        newFilepath = self._bagFilepath + Worker.FIX_SUFFIX
-        patcher = BagFilePatcher( self._bagFilepath, newFilepath )
+        patcher = BagFilePatcher( self._bagInfo.filepath )
         patcher.patch()
+        self.bagInfo.setFixed()
         
 
     def _errorOccured( self, msg ):
+        self.bagInfo.setErroneous()
         print 'ERROR: %s' % msg
-        print 'Bag-File: %s' % self._bagFilepath
-        if self._deleteOnError == 'yes':
-            self._deleteBagFile()
-        elif self._deleteOnError == 'ask':
-            self._askToDeleteBagFile()
-        else:
-            self._dontDeleteBagFile()
-
-    def _askToDeleteBagFile( self ):
-        response = ''
-        validResponses = [ 'yes', 'no' ]
-        while response not in validResponses:
-            response = raw_input( 'Delete invalid bagfile? [yes/no]: ' )
-
-        if response == 'yes':
-            self._deleteBagFile()
-        else:
-            self._dontDeleteBagFile()
-
-
-    def _deleteBagFile( self ):
-        print 'Deleting.'
-        os.remove( self._bagFilepath )
-
-    def _dontDeleteBagFile( self ):
-        print 'Not deleting. Remove bag file to avoid the same error next time'
+        print 'Bag-File: %s' % self.bagInfo.filepath
 
     def saveResults( self, data ):
-        filename = os.path.basename( self._bagFilepath )
+        filename       = self.bagInfo.rawFilename
+        repositoryName = self._getRepositoryNameFromData( data )
         subdirectories = ( data[ 'navigation' ], data[ 'robot' ], data[ 'scenario' ] )
-        path = self._repository.mkdir( subdirectories )
 
-        filepath = '%s/result_%s.json' % ( path, filename )
-        resultWriter = JsonFileHandler( filepath )
-        resultWriter.write( data )
+        with Git( repositoryName )  as r:
+            path = r.mkdir( subdirectories )
+            filepath = '%s/result_%s.json' % ( path, filename )
+            resultWriter = JsonFileHandler( filepath )
+            resultWriter.write( data )
 
-        self._repository.commitAllChanges( 'Date: %s, Bag File %s' % (
-            data[ 'localtimeFormatted' ], filename ))
-        self._repository.pullAndPush()
+            r.commitAllChanges( 'Date: %s, Bag File %s' % (
+                data[ 'localtimeFormatted' ], filename ))
+            r.pullAndPush()
+
+    def _getRepositoryNameFromData( self, data ):
+        repositoryName = data[ 'repository' ]
+        if not repositoryName:
+            raise BagAnalyzer.NoRepositoryNameReceivedError( 
+                    'Repository is not valid: %s' % data )
+        return repositoryName
+
 
 class BagReplayer( object ):
     def __init__( self, filepath ):
@@ -105,6 +90,7 @@ class BagReplayer( object ):
 
 class BagAnalyzer( object ):
     class NoStatusReceivedError( Exception ): pass
+    class NoRepositoryNameReceivedError( Exception ): pass
 
     def __init__( self, filename ):
         print 'Initializing Analyzer'
@@ -171,6 +157,7 @@ class BagAnalyzer( object ):
             self._setting[ 'robot' ]      = msg.setting.robot
             self._setting[ 'navigation' ] = msg.setting.navigation
             self._setting[ 'scenario' ]   = msg.setting.scenario
+            self._setting[ 'repository' ] = msg.setting.repository
         
 
         if msg.info == 'finished':
@@ -193,11 +180,6 @@ class BagAnalyzer( object ):
 
 if __name__ == '__main__':
     rospy.init_node( 'analyse_worker', anonymous=True )
-    filepath       = rospy.get_param( '~filepath' )
-    repositoryName = rospy.get_param( '~repository' )
-    deleteOnError  = rospy.get_param( '~deleteOnError' )
-
-    git = Git( repositoryName )
-    with git as repository:
-        worker = Worker( filepath, repository, deleteOnError )
-        worker.start()
+    filepath = rospy.get_param( '~filepath' )
+    worker = Worker( BagInfo( filepath ))
+    worker.start()

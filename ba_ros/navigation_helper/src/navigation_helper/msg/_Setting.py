@@ -4,16 +4,17 @@ import struct
 
 
 class Setting(roslib.message.Message):
-  _md5sum = "9f76ecd6ab5bbfc36103cc8f56ee5e17"
+  _md5sum = "e3da676ea304d6234e6e8b89e57f6e22"
   _type = "navigation_helper/Setting"
   _has_header = False #flag to mark the presence of a Header object
   _full_text = """string navigation
 string robot
 string scenario
+string repository
 
 """
-  __slots__ = ['navigation','robot','scenario']
-  _slot_types = ['string','string','string']
+  __slots__ = ['navigation','robot','scenario','repository']
+  _slot_types = ['string','string','string','string']
 
   def __init__(self, *args, **kwds):
     """
@@ -23,7 +24,7 @@ string scenario
     changes.  You cannot mix in-order arguments and keyword arguments.
     
     The available fields are:
-       navigation,robot,scenario
+       navigation,robot,scenario,repository
     
     @param args: complete set of field values, in .msg order
     @param kwds: use keyword arguments corresponding to message field names
@@ -38,10 +39,13 @@ string scenario
         self.robot = ''
       if self.scenario is None:
         self.scenario = ''
+      if self.repository is None:
+        self.repository = ''
     else:
       self.navigation = ''
       self.robot = ''
       self.scenario = ''
+      self.repository = ''
 
   def _get_types(self):
     """
@@ -63,6 +67,9 @@ string scenario
       length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
       _x = self.scenario
+      length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self.repository
       length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
     except struct.error as se: self._check_types(se)
@@ -94,6 +101,12 @@ string scenario
       start = end
       end += length
       self.scenario = str[start:end]
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      self.repository = str[start:end]
       return self
     except struct.error as e:
       raise roslib.message.DeserializationError(e) #most likely buffer underfill
@@ -115,6 +128,9 @@ string scenario
       length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
       _x = self.scenario
+      length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self.repository
       length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
     except struct.error as se: self._check_types(se)
@@ -148,6 +164,12 @@ string scenario
       start = end
       end += length
       self.scenario = str[start:end]
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      self.repository = str[start:end]
       return self
     except struct.error as e:
       raise roslib.message.DeserializationError(e) #most likely buffer underfill

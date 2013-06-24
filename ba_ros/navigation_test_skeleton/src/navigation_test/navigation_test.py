@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import roslib, math
-roslib.load_manifest( 'navigation_test' )
+roslib.load_manifest( 'navigation_test_skeleton' )
 import rospy, rostopic
 import os, logging, sys
 import cob_srvs.srv, time
@@ -22,8 +22,8 @@ class TestNavigation( unittest.TestCase ):
         self._metricsObserver = MetricsObserverTF()
 
         setting = self._getSetting()
-        self._navigationStatusPublisher = NavigationStatusPublisher( '~status',
-                setting )
+        self._navigationStatusPublisher = NavigationStatusPublisher( 
+                '/navigation_test/status', setting )
 
         self.tolerance = Tolerance( xy=0.2, theta=.3 )
         self.positionResolver = PositionResolver()
@@ -35,9 +35,10 @@ class TestNavigation( unittest.TestCase ):
 
     def _getSetting( self ):
         return {
-            'scenario':   rospy.get_param( '/navigation_test_route/name' ),
+            'scenario':   rospy.get_param( '~name' ),
             'robot':      rospy.get_param( '~robot' ),
-            'navigation': rospy.get_param( '~navigation' )
+            'navigation': rospy.get_param( '~navigation' ),
+            'repository': rospy.get_param( '~repository' )
         }
 
     def _waitForBagRecorder( self ):
@@ -50,7 +51,7 @@ class TestNavigation( unittest.TestCase ):
 
 
     def testNavigate( self ):
-        goals = rospy.get_param( '/navigation_test_route/goals' )
+        goals = rospy.get_param( '~goals' )
         self._metricsObserver.start()
 
         i = 0
@@ -89,6 +90,7 @@ class TestNavigation( unittest.TestCase ):
 
 
 if __name__ == '__main__':
-    rospy.init_node( 'navigation_test', anonymous=True)
+    rospy.init_node( 'navigation_test_schalal' )
+    rospy.loginfo(" Doing some stuff" )
     rostest.rosrun( 'navgation_test', 'test_navigation',
         TestNavigation, sys.argv)

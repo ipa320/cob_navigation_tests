@@ -30,3 +30,4 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #target_link_libraries(example ${PROJECT_NAME})
 
 rosbuild_add_roslaunch_check(launch/navigation.test)
+rosbuild_add_rostest(launch/navigation.test TIMEOUT 1000.0)

@@ -3,23 +3,25 @@ import roslib
 roslib.load_manifest( 'navigation_analysis' )
 import rospy
 import os, re, subprocess, socket
-from navigation_helper.git import Git
-from navigation_helper.jsonFileHandler import JsonFileHandler
+from navigation_helper.git              import Git
+from navigation_helper.jsonFileHandler  import JsonFileHandler
 from navigation_helper.resultRepository import ResultRepository
+from navigation_helper.bagInfo          import BagInfo
 from worker import Worker
 
-class BagDirectoryReader( object ):
-    def __init__( self, directory, repository ):
-        self._directory     = directory
-        self._repository    = repository
-        self._usedFilenames = []
 
-    def getBagFilenames( self ):
+class BagDirectoryReader( object ):
+    def __init__( self, directory ):
+        self._directory     = directory
+        self._filesAnalyzed = []
+
+    def getBagInfos( self ):
         bagFiles = []
         for dirname, dirnames, filenames in os.walk( self._directory ):
             for filename in filenames:
-                if re.match( '.*\.bag$', filename ):
-                    yield filename
+                if BagInfo.isBagFile( filename ):
+                    filepath = "%s/%s" % ( self._directory, filename )
+                    yield BagInfo( filepath )
 
     def hasUnanalyzedBagFilenames( self ):
         return self._nextUnanalyedBagFilename( silent=True ) != None
@@ -28,16 +30,15 @@ class BagDirectoryReader( object ):
         return self._nextUnanalyedBagFilename( silent=False )
 
     def _nextUnanalyedBagFilename( self, silent ):
-        for bagFilename in self.getBagFilenames():
-            fileUsed     = bagFilename in self._usedFilenames
-            fileAnalyzed = bagFilename in self.getAllBagFilenamesAnalyzed()
-            if fileUsed or fileAnalyzed:
+        for bagInfo in self.getBagInfos():
+            analyzedAlready = bagInfo.filepath in self._filesAnalyzed
+            if analyzedAlready or bagInfo.isProcessed():
                 continue
-            
-            if not silent:
-                self._usedFilenames.append( bagFilename )
 
-            return bagFilename
+            if not silent:
+                self._filesAnalyzed.append( bagInfo.filepath )
+
+            return bagInfo
         return None
 
 
@@ -50,11 +51,9 @@ class BagDirectoryReader( object ):
 
 
 class WorkerPool( object ):
-    def __init__( self, repositoryName, deleteOnError ):
+    def __init__( self ):
         self._s = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
         self._lastPort       = 11310
-        self._repositoryName = repositoryName
-        self._deleteOnError  = deleteOnError
 
     def findNextAvailablePort( self ):
         try:
@@ -67,7 +66,7 @@ class WorkerPool( object ):
 
         return self._lastPort
 
-    def newInstance( self, filepath ):
+    def newInstance( self, bagInfo ):
         newPort = self.findNextAvailablePort()
         env = os.environ.copy()
         env[ 'ROS_MASTER_URI' ] = 'http://localhost:%s' % newPort
@@ -75,9 +74,7 @@ class WorkerPool( object ):
             'roslaunch',
             'navigation_analysis',
             'analyse_bag_file.launch',
-            'filepath:=%s'      % filepath,
-            'repository:=%s'    % self._repositoryName,
-            'deleteOnError:=%s' % self._deleteOnError
+            'filepath:=%s'      % bagInfo.filepath
         ]
         print args
         p = subprocess.Popen( args, env=env )
@@ -85,27 +82,31 @@ class WorkerPool( object ):
 
 
 
+def printInfoMessage( bagInfo ):
+    title = 'Analyzing next bag file'
+    lineLength = max( len( bagInfo.filepath ), len( title )) + 2
+    print ''
+    print '-' * lineLength
+    print ''
+    print " %s" % title
+    print " %s" % bagInfo.filepath
+    print ''
+    print '-' * lineLength
+    print ''
+
 if __name__ == '__main__':
     rospy.init_node( 'analyze_remaining_bag_files' )
-    bagDir         = rospy.get_param( '~bagDir' )
-    repositoryName = rospy.get_param( '~repository' )
-    deleteOnError  = rospy.get_param( '~deleteOnError' )
+    bagDir = rospy.get_param( '~bagDir' )
 
     print 'Reading %s' % bagDir
     path = os.path.dirname(os.path.abspath(__file__))
 
-    git = Git( repositoryName )
-    pool = WorkerPool( repositoryName, deleteOnError )
+    pool = WorkerPool()
 
-    with git as repository:
-        directoryReader = BagDirectoryReader( bagDir, repository )
-        while directoryReader.hasUnanalyzedBagFilenames():
-            bagFilename = directoryReader.nextUnanalyzedBagFilename()
-            bagFilepath = bagDir + '/' + bagFilename
-            if os.path.isfile( bagFilepath + Worker.FIX_SUFFIX ):
-                print 'Skipping %s since a fix exists' % bagFilename
-                continue
-            print 'Analyzing %s' % bagFilename
-            pool.newInstance( bagFilepath )
+    directoryReader = BagDirectoryReader( bagDir )
+    while directoryReader.hasUnanalyzedBagFilenames():
+        bagInfo = directoryReader.nextUnanalyzedBagFilename()
+        printInfoMessage( bagInfo )
+        pool.newInstance( bagInfo )
 
     print 'All files analyzed, Saving.'

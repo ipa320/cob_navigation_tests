@@ -6,7 +6,7 @@ import navigation_helper.msg
 import std_msgs.msg
 
 class Status(roslib.message.Message):
-  _md5sum = "b2a555b7b5dfb08a05e9b3a20f36c5ae"
+  _md5sum = "b64ede49ee77a346ac5741a00a9fa384"
   _type = "navigation_helper/Status"
   _has_header = True #flag to mark the presence of a Header object
   _full_text = """Header header
@@ -41,6 +41,7 @@ MSG: navigation_helper/Setting
 string navigation
 string robot
 string scenario
+string repository
 
 """
   __slots__ = ['header','localtime','waypointId','waypointX','waypointY','waypointTheta','info','setting']
@@ -121,6 +122,9 @@ string scenario
       _x = self.setting.scenario
       length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self.setting.repository
+      length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -174,6 +178,12 @@ string scenario
       start = end
       end += length
       self.setting.scenario = str[start:end]
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      self.setting.repository = str[start:end]
       return self
     except struct.error as e:
       raise roslib.message.DeserializationError(e) #most likely buffer underfill
@@ -205,6 +215,9 @@ string scenario
       length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
       _x = self.setting.scenario
+      length = len(_x)
+      buff.write(struct.pack('<I%ss'%length, length, _x))
+      _x = self.setting.repository
       length = len(_x)
       buff.write(struct.pack('<I%ss'%length, length, _x))
     except struct.error as se: self._check_types(se)
@@ -262,6 +275,12 @@ string scenario
       start = end
       end += length
       self.setting.scenario = str[start:end]
+      start = end
+      end += 4
+      (length,) = _struct_I.unpack(str[start:end])
+      start = end
+      end += length
+      self.setting.repository = str[start:end]
       return self
     except struct.error as e:
       raise roslib.message.DeserializationError(e) #most likely buffer underfill
