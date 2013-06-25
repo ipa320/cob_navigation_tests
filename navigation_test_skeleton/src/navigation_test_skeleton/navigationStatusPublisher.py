@@ -1,4 +1,4 @@
-import navigation_helper.msg
+import navigation_test_helper.msg
 import rospy, time
 
 class NavigationStatusPublisher( object ):
@@ -6,7 +6,7 @@ class NavigationStatusPublisher( object ):
         self._waypointNo   = -1
         self._nextWaypoint = None
         self._localtime    = time.time()
-        self._publisher    = rospy.Publisher( topic, navigation_helper.msg.Status )
+        self._publisher    = rospy.Publisher( topic, navigation_test_helper.msg.Status )
         self._setting      = setting
 
     def nextWaypoint( self, waypoint):
@@ -21,7 +21,7 @@ class NavigationStatusPublisher( object ):
 
     def _createMsg( self, info='' ):
         waypoint          = self._nextWaypoint
-        msg               = navigation_helper.msg.Status()
+        msg               = navigation_test_helper.msg.Status()
         msg.header.stamp  = rospy.Time.now()
         msg.info          = info
         msg.localtime     = self._localtime
@@ -34,7 +34,7 @@ class NavigationStatusPublisher( object ):
         return msg
 
     def _createSettingMsg( self ):
-        msg = navigation_helper.msg.Setting()
+        msg = navigation_test_helper.msg.Setting()
         msg.robot      = self._setting[ 'robot' ]
         msg.scenario   = self._setting[ 'scenario' ]
         msg.navigation = self._setting[ 'navigation' ]

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import roslib
-roslib.load_manifest( 'navigation_helper' )
+roslib.load_manifest( 'navigation_test_helper' )
 import rospy
 import sys, argparse, tempfile, subprocess, shutil, os, string, errno
 

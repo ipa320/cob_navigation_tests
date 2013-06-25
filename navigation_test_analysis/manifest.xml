@@ -10,6 +10,6 @@
   <url></url>
 
   <depend package="gazebo"/>
-  <depend package="navigation_helper"/>
+  <depend package="navigation_test_helper"/>
 
 </package>

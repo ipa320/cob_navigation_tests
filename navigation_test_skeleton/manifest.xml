@@ -9,7 +9,7 @@
   <review status="unreviewed" notes=""/>
   <url></url>
 
-  <depend package="navigation_helper"/>
+  <depend package="navigation_test_helper"/>
   <depend package="rostest" />
 
 </package>

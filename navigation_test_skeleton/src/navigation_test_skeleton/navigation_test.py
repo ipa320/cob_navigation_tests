@@ -7,12 +7,12 @@ import cob_srvs.srv, time
 import unittest, rostest
 import std_srvs, std_srvs.srv
 from navigationStatusPublisher           import NavigationStatusPublisher
-from navigation_helper.positionResolver  import PositionResolver
-from navigation_helper.metricsObserverTF import MetricsObserverTF
-from navigation_helper.tolerance         import Tolerance
-from navigation_helper.position          import Position
-from navigation_helper.navigator         import Navigator
-from navigation_helper.jsonFileHandler   import JsonFileHandler
+from navigation_test_helper.positionResolver  import PositionResolver
+from navigation_test_helper.metricsObserverTF import MetricsObserverTF
+from navigation_test_helper.tolerance         import Tolerance
+from navigation_test_helper.position          import Position
+from navigation_test_helper.navigator         import Navigator
+from navigation_test_helper.jsonFileHandler   import JsonFileHandler
 
 class TestNavigation( unittest.TestCase ):
     def setUp( self ):

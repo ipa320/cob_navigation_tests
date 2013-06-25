@@ -2,12 +2,12 @@
 import roslib
 roslib.load_manifest( 'navigation_analysis' )
 import rospy, os, re, subprocess, sys, time, datetime
-import navigation_helper.gazeboHelper, navigation_helper.msg
+import navigation_test_helper.gazeboHelper, navigation_test_helper.msg
 import subprocess
-from navigation_helper.metricsObserverTF import MetricsObserverTF
-from navigation_helper.jsonFileHandler   import JsonFileHandler
-from navigation_helper.git               import Git
-from navigation_helper.bagInfo           import BagInfo
+from navigation_test_helper.metricsObserverTF import MetricsObserverTF
+from navigation_test_helper.jsonFileHandler   import JsonFileHandler
+from navigation_test_helper.git               import Git
+from navigation_test_helper.bagInfo           import BagInfo
 from rosbagPatcher.rosbagPatcher import BagFilePatcher
 
 
@@ -106,7 +106,7 @@ class BagAnalyzer( object ):
     def setupStatusListener( self ):
         print 'Listening to /navigation_test/status'
         self._statusSubscriber = rospy.Subscriber( '/navigation_test/status', 
-                navigation_helper.msg.Status, self._callback )
+                navigation_test_helper.msg.Status, self._callback )
         print self._statusSubscriber
 
     def start( self ):

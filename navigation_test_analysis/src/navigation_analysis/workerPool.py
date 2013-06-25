@@ -3,10 +3,10 @@ import roslib
 roslib.load_manifest( 'navigation_analysis' )
 import rospy
 import os, re, subprocess, socket
-from navigation_helper.git              import Git
-from navigation_helper.jsonFileHandler  import JsonFileHandler
-from navigation_helper.resultRepository import ResultRepository
-from navigation_helper.bagInfo          import BagInfo
+from navigation_test_helper.git              import Git
+from navigation_test_helper.jsonFileHandler  import JsonFileHandler
+from navigation_test_helper.resultRepository import ResultRepository
+from navigation_test_helper.bagInfo          import BagInfo
 from worker import Worker
 
 

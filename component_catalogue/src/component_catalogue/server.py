@@ -5,8 +5,8 @@ import rospy
 
 import SimpleHTTPServer, SocketServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler
-from navigation_helper.git import Git
-from navigation_helper.resultRepository import ResultRepository
+from navigation_test_helper.git import Git
+from navigation_test_helper.resultRepository import ResultRepository
 import os, json
 
 os.chdir( os.path.dirname( os.path.realpath( __file__ )))
