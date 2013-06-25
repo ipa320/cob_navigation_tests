@@ -10,7 +10,7 @@
   <depend stack="cob_robots" /> <!-- cob_default_robot_config -->
   <depend stack="cob_simulation" /> <!-- cob_bringup_sim -->
   <depend stack="ros" />
-  <depend stack="ros_comm" /> <!-- rostest -->
+  <depend stack="ros_comm" /> <!-- rostest, rosbag -->
   <depend stack="simulator_gazebo" /> <!-- gazebo -->
 
 </stack>

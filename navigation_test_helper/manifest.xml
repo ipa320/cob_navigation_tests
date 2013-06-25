@@ -12,6 +12,7 @@
   <depend package="cob_default_env_config"/>
   <depend package="cob_navigation_global"/>
   <depend package="rostest" />
+  <depend package="rosbag" />
   <depend package="cob_script_server" />
   <depend package="cob_gazebo_worlds" />
 
