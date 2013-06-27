@@ -105,9 +105,14 @@ class SSHCopier():
         self.host     = matcher.group( 2 )
         self.path     = matcher.group( 3 )
 
+    def _sshOptions( self ):
+        return ' '.join([
+                '-o ConnectTimeout=30s',
+                '-o PasswordAuthentication=no',
+                '-o StrictHostKeyChecking=no' ])
+
     def _wrapBySsh( self, cmd ):
-        ssh = 'ssh -o ConnectTimeout=30s -o PasswordAuthentication=no %s@%s' % ( \
-            self.username, self.host )
+        ssh = 'ssh %s %s@%s' % ( self._sshOptions(), self.username, self.host )
         sshArgs = ssh.split( ' ' )
         cmdArgs = cmd.split( ' ' )
         return sshArgs + cmdArgs
@@ -132,8 +137,8 @@ class SSHCopier():
 
     def _scpCommandArgs( self, localFilepath ):
         filename = os.path.basename( localFilepath )
-        cmd = 'scp %s %s@%s:%s/%s' % ( localFilepath, self.username,
-            self.host, self.path, filename )
+        cmd = 'scp %s %s %s@%s:%s/%s' % ( self._sshOptions(), localFilepath,
+                self.username, self.host, self.path, filename )
         return cmd.split( ' ' )
 
     def _execute( self, args ):
