@@ -78,23 +78,95 @@ from sensor_msgs.msg import *
 from move_base_msgs.msg import *
 from visualization_msgs.msg import *
 
-import math, uuid
-import rostopic
-import time
-
-import itertools
-
-import os
-import sys, subprocess
-
-import record_topic
-
 import global_lock
+import rostopic, record_topic
+import math, uuid, re, tempfile, time, os, sys, subprocess, itertools, shutil
+
+class CopyException( Exception ):
+    def __init__( self, source, target, err ):
+        msg = 'Could not copy file %s to %s' % ( source, target )
+        if err: msg += 'Err:\n%s' % err
+        Exception.__init__( self, msg )
+
+class SSHCopier():
+    pattern = '([^@]+)@([^:]+):(.+)'
+
+    @staticmethod
+    def matcher( uri ):
+        return re.match( SSHCopier.pattern, uri ) 
+
+    @staticmethod
+    def matches( uri ):
+        return SSHCopier.matcher( uri ) != None
+
+    def __init__( self, uri ):
+        matcher       = SSHCopier.matcher( uri )
+        self.username = matcher.group( 1 )
+        self.host     = matcher.group( 2 )
+        self.path     = matcher.group( 3 )
+
+    def _wrapBySsh( self, cmd ):
+        ssh = 'ssh -o ConnectTimeout=4s -o PasswordAuthentication=no %s@%s' % ( \
+            self.username, self.host )
+        sshArgs = ssh.split( ' ' )
+        cmdArgs = cmd.split( ' ' )
+        return sshArgs + cmdArgs
+
+    def assertWritable( self ):
+        args = self._wrapBySsh( 'touch %s/.connection_test' % self.path )
+        success, stdout = self._execute( args )
+        if not success:
+            msg  = "Couldn't write to directory %s as %s on host %s," % ( \
+                    self.path, self.username, self.host )
+            msg += "\n\ncmd: %s" % args
+            msg += "\n\nstdout+sterr: %s" % stdout
+            raise Exception( msg )
+        return True
+
+    def copyFile( self, localFilepath ):
+        args = self._scpCommandArgs( localFilepath )
+        success, stdout = self._execute( args )
+        if not success:
+            target= "%s@%s:%s/" % ( self.username, self.host, self.path )
+            raise CopyException( localFilepath, target )
+
+    def _scpCommandArgs( self, localFilepath ):
+        filename = os.path.basename( localFilepath )
+        cmd = 'scp %s %s@%s:%s/%s' % ( localFilepath, self.username,
+            self.host, self.path, filename )
+        return cmd.split( ' ' )
+
+    def _execute( self, args ):
+        PIPE = subprocess.PIPE
+        p    = subprocess.Popen( args, stdout=PIPE, stderr=PIPE )
+        stdin, stdout = p.communicate()
+        success       = p.returncode == 0
+        return success, stdout
+
+
+class LocalCopier():
+    def __init__( self, path ):
+        self.path = path
+
+    def assertWritable( self ):
+        if not os.access( self.path, os.W_OK ):
+            raise Exception( 'Cannot write to local filesystem on %s' %
+                self.path )
+        return True
+
+    def copyFile( self, localFilepath ):
+        filename       = os.path.basename( localFilepath )
+        targetFilepath = '%s/%s' % ( self.path, filename )
+        try:
+            shutil.copyfile( localFilepath, targetFilepath )
+        except IOError,e:
+            raise CopyException( localFilepath, targetFilepath )
 
 class topics_bag():
 
     def __init__(self):
         self.loadParams()
+        self.setupFileCopier()
         self.openBagfile()
         
         while(rospy.rostime.get_time() == 0.0):
@@ -125,6 +197,25 @@ class topics_bag():
 
         global_lock.active_bag = True
 
+    def setupFileCopier( self ):
+        if SSHCopier.matches( self.bag_target_path ):
+            self._fileCopier = SSHCopier( self.bag_target_path )
+        else:
+            self._fileCopier = LocalCopier( self.bag_target_path )
+        self._fileCopier.assertWritable()
+
+    def close( self ):
+        self.bag.close()
+        try:
+            self._fileCopier.copyFile( self.bag_local_filepath )
+            os.remove( self.bag_local_filepath )
+        except CopyException,e:
+            sys.stderr.write( 'An exception occured copying the file. The \
+                    original bagfile can still be found in %s' % \
+                    self.bag_local_filepath )
+            raise e
+
+
     def loadParams( self ):
         # this defines the variables according to the ones specified at the yaml
         # file. The triggers, the wanted tfs, the wanted topics and where they are going
@@ -135,7 +226,10 @@ class topics_bag():
         self.wanted_tfs                 = self.requiredParam('~wanted_tfs')
         self.trigger_topics             = self.requiredParam("~trigger_topics")
         self.continuous_topics          = self.requiredParam("~continuous_topics")
-        self.bag_path                   = self.requiredParam("~bag_path")
+        self.bag_target_path            = self.requiredParam("~bag_path")
+        self.bag_local_path             = tempfile.gettempdir()
+        self.bag_filename               = '%s.bag' % uuid.uuid4()
+        self.bag_local_filepath         = self.bag_local_path + '/' + self.bag_filename
 
     def requiredParam( self, key ):
         value = rospy.get_param( key )
@@ -145,16 +239,12 @@ class topics_bag():
 
     def openBagfile( self ):
         # this creates the bagfile
-        filename     = '%s.bag' % uuid.uuid4()
-        filelocation = str( self.bag_path )
-        if(not os.path.exists( filelocation )):
-            os.makedirs( filelocation )
-        rospy.loginfo("Logging to " + filelocation + '/' + filename)
-        self.bag = rosbag.Bag(filelocation + '/' + filename, 'w')
+        rospy.loginfo( "Logging to " + self.bag_local_filepath )
+        self.bag = rosbag.Bag( self.bag_local_filepath, 'w' )
 
     def init_stop_service( self ):
         rospy.loginfo( 'Setting up stop service' )
-        rospy.Service('~stop', Trigger, self.trigger_callback_stop)
+        rospy.Service( '~stop', Trigger, self.trigger_callback_stop )
 
     def active(self):
     
@@ -277,6 +367,6 @@ if __name__ == "__main__":
 			
 	# closing bag file
     rospy.loginfo("Closing bag file")
-    bagR.bag.close()
+    bagR.close()
     waitForShutdown()
 
