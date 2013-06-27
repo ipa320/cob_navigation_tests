@@ -106,7 +106,7 @@ class SSHCopier():
         self.path     = matcher.group( 3 )
 
     def _wrapBySsh( self, cmd ):
-        ssh = 'ssh -o ConnectTimeout=4s -o PasswordAuthentication=no %s@%s' % ( \
+        ssh = 'ssh -o ConnectTimeout=30s -o PasswordAuthentication=no %s@%s' % ( \
             self.username, self.host )
         sshArgs = ssh.split( ' ' )
         cmdArgs = cmd.split( ' ' )
