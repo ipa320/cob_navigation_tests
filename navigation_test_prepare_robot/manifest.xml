@@ -1,0 +1,15 @@
+<package>
+  <description brief="navigation_test_prepare_robot">
+
+      Parepare the robot for a navigation scenario.
+      Fold in arm for example
+
+  </description>
+  <author>Simon Ebner</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/moveArmFolded</url>
+
+    <depend package="rospy" />
+    <depend package="cob_script_server" />
+</package>
