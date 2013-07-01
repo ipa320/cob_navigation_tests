@@ -17,7 +17,7 @@
   <property name="table_width" value="1.0" />
   <property name="table_depth" value="4.0" />
   <property name="leg_radius" value="0.02" />
-  <property name="table_x" value="2.50" />
+  <property name="table_x" value="1.50" />
   <property name="table_y" value="-0.5" />
   <property name="table_z" value="0.0" />
 
