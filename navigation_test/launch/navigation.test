@@ -16,6 +16,8 @@
         <arg name="robot_env" value="$(arg robot_env)" />
     </include>
 
+    <include file="$(find navigation_test_prepare_robot)/launch/prepare_robot_simulation.launch" />
+
     <include file="$(find navigation_test_skeleton)/launch/navigation.test">
         <arg name="scenarioFile" value="$(find navigation_test)/routes/1.yaml" />
         <arg name="robot"        value="$( arg robot )" />
