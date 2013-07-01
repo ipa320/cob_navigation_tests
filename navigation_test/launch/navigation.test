@@ -2,8 +2,9 @@
 <launch>
     <arg name="navigation" value="2dnav_ros_dwa" />
 
-    <arg name="robot"            default="cob3-3"/>
-    <arg name="robot_env"        default="ipa-kitchen"/>
+    <arg name="robot"     default="cob3-3"/>
+    <arg name="robot_env" default="ipa-kitchen"/>
+    <arg name="setupRobotService" value="/navigation_test/setupRobot" />
 
     <!--upload default configuration parameters-->
     <include file="$(find cob_bringup_sim)/launch/robot.launch">
@@ -16,7 +17,9 @@
         <arg name="robot_env" value="$(arg robot_env)" />
     </include>
 
-    <include file="$(find navigation_test_prepare_robot)/launch/prepare_robot_simulation.launch" />
+    <include file="$(find navigation_test_prepare_robot)/launch/prepare_robot_simulation.launch">
+        <arg name="setupRobotService" value="$( arg setupRobotService )" />
+    </include>
 
     <include file="$(find navigation_test_skeleton)/launch/navigation.test">
         <arg name="scenarioFile" value="$(find navigation_test)/routes/1.yaml" />
@@ -24,5 +27,6 @@
         <arg name="navigation"   value="$( arg navigation )" />
         <arg name="bag_path"     value="webportal@10.0.1.218:/home/webportal/bagfiles" />
         <arg name="repository"   value="git@github.com:SimonEbner/navigation_test_results" />
+        <arg name="setupRobotService" value="$( arg setupRobotService )" />
     </include>
 </launch>

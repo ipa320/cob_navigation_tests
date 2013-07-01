@@ -1,10 +1,13 @@
 <?xml version="1.0"?>
 <launch>
+    <arg name="setupRobotService" />
+
     <include file="$( find navigation_test_skeleton )/launch/navigation.launch">
         <arg name="robot"        value="cob3-3" />
         <arg name="repository"   value="git@github.com:SimonEbner/navigation_test_results.git" />
         <arg name="bag_path"     value="/share/uhr-se/bagrecord/" />
         <arg name="navigation"   value="2dros_nav_tr" />
         <arg name="scenarioFile" value="$( find navigation_test )/routes/1.yaml" />
+        <arg name="setupRobotService" value="$( arg setupRobotService )" />
     </include>
 </launch>

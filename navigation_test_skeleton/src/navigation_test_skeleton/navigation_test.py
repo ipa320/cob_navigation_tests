@@ -45,12 +45,11 @@ class TestNavigation( unittest.TestCase ):
         }
 
     def _setupRobotWhenReady( self ):
-        setupRobotServiceName = rospy.get_param( '~setupRobotServiceName' )
+        setupRobotServiceName = rospy.get_param( '~setupRobotService' )
+        rospy.loginfo( 'Waiting on setup service %s' % setupRobotServiceName )
         rospy.wait_for_service( setupRobotServiceName )
         setupRobotService = rospy.ServiceProxy( setupRobotServiceName,
                 SetupRobotService )
-        rospy.loginfo( 'Calling robot setup service %s' % 
-                setupRobotServiceName )
         result = setupRobotService()
         if not result.success:
             raise Exception( 'Setup Robot Service failed: %s' % result.msg )
