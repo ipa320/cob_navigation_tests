@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$( find navigation_test_prepare_robot )/launch/move_arm_folded.launch" />
+</launch>
