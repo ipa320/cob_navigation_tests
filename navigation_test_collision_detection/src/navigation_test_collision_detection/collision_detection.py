@@ -7,12 +7,13 @@ from gazebo_msgs.msg            import ContactsState
 from navigation_test_helper.msg import Collision
 
 class CollisionDetector:
-    def __init__( self, bumperTopicName, publisherTopicName ):
-        self._bumperTopicName    = bumperTopicName
-        self._publisherTopicName = publisherTopicName
-        self._collisionActive    = False
-        self._collisionsNum      = 0
-        self._timeLastCollision  = None
+    def __init__( self, bumperTopicName, publisherTopicName, collisionMinInterval ):
+        self._bumperTopicName      = bumperTopicName
+        self._publisherTopicName   = publisherTopicName
+        self._collisionActive      = False
+        self._collisionsNum        = 0
+        self._timeLastCollision    = None
+        self._collisionMinInterval = int( collisionMinInterval )
     
     def start( self ):
         rospy.loginfo( 'Starting collision detection' )
@@ -39,8 +40,10 @@ class CollisionDetector:
 
     def _possibleCollisionDetected( self ):
         self._collisionActive   = True
-        if self._lastCollisionLessThan1sAgo():
-            rospy.loginfo( 'Ignoring collision, last collision less than 1s ago' )
+        if self._collisionWithinInterval():
+            msg = 'Ignoring collision, last collision less than %ss ago' % \
+                    self._collisionWithinInterval
+            rospy.loginfo( msg )
         else:
             self._realCollisionDetected()
 
@@ -58,8 +61,8 @@ class CollisionDetector:
         rospy.loginfo( 'Object resolved collision' )
         self._collisionActive = False
 
-    def _lastCollisionLessThan1sAgo( self ):
-        return self._secondsSinceLastCollision() < 1
+    def _collisionWithinInterval( self ):
+        return self._secondsSinceLastCollision() < self._collisionMinInterval
 
     def _secondsSinceLastCollision( self ):
         if not self._timeLastCollision:
@@ -69,9 +72,11 @@ class CollisionDetector:
 
 if __name__ == '__main__':
     rospy.init_node( 'collision_detection' )
-    bumperTopicName    = rospy.get_param( '~bumperTopic' )
-    collisionTopicName = rospy.get_param( '~collisionPublisherTopic' )
+    bumperTopicName      = rospy.get_param( '~bumperTopic' )
+    collisionMinInterval = rospy.get_param( '~collisionMinInterval' )
+    collisionTopicName   = rospy.get_param( '~collisionPublisherTopic' )
 
-    detector  = CollisionDetector( bumperTopicName, collisionTopicName )
+    detector  = CollisionDetector( bumperTopicName, collisionTopicName,
+            collisionMinInterval )
     detector.start()
     rospy.spin()
