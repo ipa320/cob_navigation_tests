@@ -1,0 +1,16 @@
+<package>
+  <description brief="navigation_test_collision_detection">
+
+     navigation_test_collision_detection
+
+  </description>
+  <author>Simon Ebner</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/navigation_test_collision_detection</url>
+
+  <depend package="rospy" />
+  <depend package="gazebo_msgs" />
+  <depend package="navigation_test_helper" />
+
+</package>

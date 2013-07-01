@@ -21,6 +21,11 @@
         <arg name="setupRobotService" value="$( arg setupRobotService )" />
     </include>
 
+    <include file="$(find navigation_test_collision_detection)/launch/collision_detection.launch">
+        <arg name="bumperTopic" value="/base_bumper/state" />
+        <arg name="collisionPublisherTopic" value="/navigation_test/collisions" />
+    </include>
+
     <include file="$(find navigation_test_skeleton)/launch/navigation.test">
         <arg name="scenarioFile" value="$(find navigation_test)/routes/1.yaml" />
         <arg name="robot"        value="$( arg robot )" />

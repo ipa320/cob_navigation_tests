@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="bumperTopic" />
+    <arg name="collisionPublisherTopic" />
+
+    <node name="collision_detection" pkg="navigation_test_collision_detection" type="collision_detection.py" output="screen">
+        <param name="~bumperTopic" value="$( arg bumperTopic )" />
+        <param name="~collisionPublisherTopic" value="$( arg collisionPublisherTopic )" />
+    </node>
+</launch>
