@@ -1,0 +1,14 @@
+<package>
+  <description brief="large_table">
+
+     large_table
+
+  </description>
+  <author>Simon Ebner</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/large_table</url>
+
+</package>
+
+
