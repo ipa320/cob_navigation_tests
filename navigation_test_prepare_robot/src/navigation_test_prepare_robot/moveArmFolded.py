@@ -2,19 +2,21 @@
 import roslib
 roslib.load_manifest( 'navigation_test_prepare_robot' )
 import rospy, time
-from simple_script_server import simple_script_server
-import std_msgs
+from simple_script_server       import simple_script_server
+from navigation_test_helper.srv import SetupRobotService
 
-if __name__=='__main__':
-    publisher = rospy.Publisher( '/navigation_test/robot_ready', 
-            std_msgs.msg.String )
-    rospy.init_node( 'moveArmFolded' )
+def setupRobotService( serviceName ):
+    rospy.loginfo( 'Creating setup service %s' % serviceName )
+    rospy.Service( serviceName, SetupRobotService, setupRobot )
+
+def setupRobot( req ):
     rospy.loginfo( 'Moving robot arm to home position' )
     scriptServer = simple_script_server()
-    scriptServer.move( 'arm', 'folded', True )
-    
-    i = 0
-    while not rospy.is_shutdown():
-        publisher.publish( 'robot ready, #%d' % i )
-        time.sleep( 1 )
-        i += 1
+    scriptServer.move( 'arm', 'folded', blocking=True )
+    return True, ''
+
+if __name__=='__main__':
+    rospy.init_node( 'moveArmFolded' )
+    serviceName = rospy.get_param( '~setupRobotServiceName' )
+    setupRobotService( serviceName )
+    rospy.spin()

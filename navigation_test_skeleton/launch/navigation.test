@@ -5,6 +5,7 @@
     <arg name="navigation" />
     <arg name="repository" />
     <arg name="scenarioFile" />
+    <arg name="setupRobotServiceName" default="/navigation_test/setup_robot" />
 
     <include file="$( find navigation_test_skeleton )/launch/bag_record.launch">
         <arg name="bag_path" value="$( arg bag_path )" />
@@ -15,5 +16,6 @@
         <param name="~robot"      value="$( arg robot )" />
         <param name="~navigation" value="$( arg navigation )" />
         <param name="~repository" value="$( arg repository )" />
+        <param name="~setupRobotServiceName" value="$( arg setupRobotServiceName )" />
     </test>
 </launch>

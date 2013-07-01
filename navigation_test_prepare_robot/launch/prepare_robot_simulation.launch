@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
 <launch>
-    <include file="$( find navigation_test_prepare_robot )/launch/move_arm_folded.launch" />
+    <arg name="setupRobotServiceName" default="/navigation_test/setup_robot" />
+    <node name="navigation_testprepare_robot_simulation" pkg="navigation_test_prepare_robot" type="moveArmFolded.py">
+        <param name="setupRobotServiceName" value="$( arg setupRobotServiceName )" />
+    </node>
 </launch>

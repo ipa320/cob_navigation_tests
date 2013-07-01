@@ -5,18 +5,20 @@ import rospy, rostopic
 import os, logging, sys
 import cob_srvs.srv, time
 import unittest, rostest
-import std_srvs, std_srvs.srv, std_msgs, threading
+import std_srvs, std_srvs.srv, std_msgs
 from navigationStatusPublisher                import NavigationStatusPublisher
 from navigation_test_helper.positionResolver  import PositionResolver
 from navigation_test_helper.metricsObserverTF import MetricsObserverTF
 from navigation_test_helper.tolerance         import Tolerance
 from navigation_test_helper.position          import Position
 from navigation_test_helper.navigator         import Navigator
+from navigation_test_helper.srv               import SetupRobotService
 
 
 class TestNavigation( unittest.TestCase ):
     def setUp( self ):
         rospy.loginfo( 'Setting navigator' )
+
         self.navigator = Navigator( '/move_base' )
         self._metricsObserver = MetricsObserverTF()
 
@@ -28,8 +30,7 @@ class TestNavigation( unittest.TestCase ):
         self.positionResolver = PositionResolver()
 
         rospy.loginfo( 'Waiting for robot to be ready' )
-        robotReadyLock = self._waitForRobotToBeReady()
-        robotReadyLock.acquire()
+        self._setupRobotWhenReady()
 
         rospy.loginfo( 'Waiting for Bag Recorder' )
         self._stopBagRecording = self._waitForBagRecorder()
@@ -43,16 +44,17 @@ class TestNavigation( unittest.TestCase ):
             'repository': rospy.get_param( '~repository' )
         }
 
-    def _waitForRobotToBeReady( self ):
-        self._robotReadyLock = threading.Lock()
-        subscriber = rospy.Subscriber( '/navigation_test/robot_ready', 
-                std_msgs.msg.String, self._callbackRobotReady )
-        self._robotReadyLock.acquire()
-        return self._robotReadyLock
+    def _setupRobotWhenReady( self ):
+        setupRobotServiceName = rospy.get_param( '~setupRobotServiceName' )
+        rospy.wait_for_service( setupRobotServiceName )
+        setupRobotService = rospy.ServiceProxy( setupRobotServiceName,
+                SetupRobotService )
+        rospy.loginfo( 'Calling robot setup service %s' % 
+                setupRobotServiceName )
+        result = setupRobotService()
+        if not result.success:
+            raise Exception( 'Setup Robot Service failed: %s' % result.msg )
 
-    def _callbackRobotReady( self, msg ):
-        rospy.loginfo( 'Robot ready. Releasing lock' )
-        self._robotReadyLock.release()
 
     def _waitForBagRecorder( self ):
         rospy.wait_for_service( '/logger/stop' )
