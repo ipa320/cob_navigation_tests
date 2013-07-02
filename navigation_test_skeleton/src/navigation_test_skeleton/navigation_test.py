@@ -16,7 +16,7 @@ from navigation_test_helper.srv               import SetupRobotService
 
 
 class TestNavigation( unittest.TestCase ):
-    def setUp( self ):
+    def _initialize( self ):
         rospy.loginfo( 'Setting navigator' )
 
         self.navigator = Navigator( '/move_base' )
@@ -65,6 +65,7 @@ class TestNavigation( unittest.TestCase ):
 
 
     def testNavigate( self ):
+        self._initialize()
         goals = rospy.get_param( '~goals' )
         self._metricsObserver.start()
 
