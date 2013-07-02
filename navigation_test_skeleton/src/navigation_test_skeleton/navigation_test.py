@@ -69,21 +69,30 @@ class TestNavigation( unittest.TestCase ):
         goals = rospy.get_param( '~goals' )
         self._metricsObserver.start()
 
-        i = 0
-        for goal in goals:
-            self._navigationStatusPublisher.nextWaypoint( goal )
-            targetPosition = Position( *goal )
+        try:
+            i = 0
+            for goal in goals:
+                self._navigationStatusPublisher.nextWaypoint( goal )
+                targetPosition = Position( *goal )
 
-            self.navigator.goTo( targetPosition ) 
-            self.navigator.waitForResult( timeout=300.0 )
+                self.navigator.goTo( targetPosition ) 
+                succeeded = self.navigator.waitForResult( timeout=300.0 )
+                rospy.loginfo( "Goal reached: %s" % succeeded )
+                if not succeeded:
+                    self._navigationStatusPublisher.navigationResigned()
+                    raise Exception( 'Navigation resigned.' )
 
-            errorMsg = 'Position: %s does not match goal %s' % ( 
-                    self.positionResolver.getPosition(), goal )
-            self.assertTrue( self.positionResolver.inPosition( targetPosition, 
-                    self.tolerance ), errorMsg )
+                errorMsg = 'Position: %s does not match goal %s' % ( 
+                        self.positionResolver.getPosition(), goal )
+                self.assertTrue( self.positionResolver.inPosition( targetPosition, 
+                        self.tolerance ), errorMsg )
 
-            i += 1
+                i += 1
+        
+        finally:
+            self._terminate()
 
+    def _terminate( self ):
         self._navigationStatusPublisher.finished()
         self._metricsObserver.stop()
         

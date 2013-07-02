@@ -16,7 +16,7 @@ class Navigator( object ):
         self.move_client.send_goal( goalMsg )
     
     def waitForResult( self, timeout=30.0 ):
-        self.move_client.wait_for_result(rospy.Duration( timeout ))
+        return self.move_client.wait_for_result(rospy.Duration( timeout ))
 
     def _createGoalMessage( self, goal ):
         poseMsg = self._createPoseMessage( goal )
