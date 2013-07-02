@@ -11,16 +11,18 @@ class Navigator( object ):
                 MoveBaseAction)
         self.move_client.wait_for_server()
 
-
     def goTo( self, goal ):
-        posMsg = self._createGoalMessage( goal )
-        self.pub_goal =  MoveBaseGoal( posMsg ) 
-        self.move_client.send_goal( self.pub_goal )
+        goalMsg = self._createGoalMessage( goal )
+        self.move_client.send_goal( goalMsg )
     
     def waitForResult( self, timeout=30.0 ):
         self.move_client.wait_for_result(rospy.Duration( timeout ))
 
     def _createGoalMessage( self, goal ):
+        poseMsg = self._createPoseMessage( goal )
+        return  MoveBaseGoal( poseMsg ) 
+
+    def _createPoseMessage( self, goal ):
         msg = geometry_msgs.msg.PoseStamped()
         msg.header.frame_id = '/map'
         msg.header.stamp = rospy.get_rostime()
