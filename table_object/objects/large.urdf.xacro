@@ -21,6 +21,8 @@
   <property name="table_y" value="-0.5" />
   <property name="table_z" value="0.0" />
 
+  <property name="table_mass" value="0.1" />
+
   <property name="table_top_thickness" value="0.05"/>
 
   <property name="M_PI" value="3.1415926535897931" />
@@ -29,7 +31,7 @@
   <!-- tabletop height is .55+.01+.025=.585 -->
   <link name="table_top_link">
     <inertial>
-      <mass value="1.0" />
+        <mass value="${table_mass}" />
       <origin xyz="${table_x} ${table_y} ${table_z+table_height-table_top_thickness/2}" />
       <inertia ixx="1" ixy="0"  ixz="0"
                iyy="1" iyz="0"
@@ -63,7 +65,7 @@
   </joint> 
   <link name="leg1_link">
     <inertial>
-      <mass value="1.0" />
+    <mass value="${table_mass}" />
       <origin xyz="0 0 ${-table_height/2}" />
       <inertia ixx="0.1" ixy="0"  ixz="0"
                iyy="0.1" iyz="0"
@@ -98,7 +100,7 @@
   </joint> 
   <link name="leg2_link">
     <inertial>
-      <mass value="1.0" />
+      <mass value="${table_mass}" />
       <origin xyz="0 0 ${-table_height/2}" />
       <inertia ixx="0.1" ixy="0"  ixz="0"
                iyy="0.1" iyz="0"
@@ -133,7 +135,7 @@
   </joint> 
   <link name="leg3_link">
     <inertial>
-      <mass value="1.0" />
+      <mass value="${table_mass}" />
       <origin xyz="0 0 ${-table_height/2}" />
       <inertia ixx="0.1" ixy="0"  ixz="0"
                iyy="0.1" iyz="0"
@@ -168,7 +170,7 @@
   </joint> 
   <link name="leg4_link">
     <inertial>
-      <mass value="1.0" />
+      <mass value="${table_mass}" />
       <origin xyz="0 0 ${-table_height/2}" />
       <inertia ixx="0.1" ixy="0"  ixz="0"
                iyy="0.1" iyz="0"
