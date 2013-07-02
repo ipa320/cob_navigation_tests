@@ -42,7 +42,7 @@ class CollisionDetector:
         self._collisionActive   = True
         if self._collisionWithinInterval():
             msg = 'Ignoring collision, last collision less than %ss ago' % \
-                    self._collisionWithinInterval
+                    self._collisionMinInterval
             rospy.loginfo( msg )
         else:
             self._realCollisionDetected()
