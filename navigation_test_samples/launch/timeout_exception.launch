@@ -28,7 +28,7 @@
     </include>
 
     <include file="$(find navigation_test_skeleton)/launch/navigation.test">
-        <arg name="scenarioFile" value="$(find navigation_test)/routes/1.yaml" />
+        <arg name="scenarioFile" value="$(find navigation_test_samples)/routes/1.yaml" />
         <arg name="robot"        value="$( arg robot )" />
         <arg name="navigation"   value="$( arg navigation )" />
         <arg name="bag_path"     value="webportal@10.0.1.218:/home/webportal/bagfiles" />
