@@ -6,7 +6,7 @@
     <arg name="robot_env"         default="ipa-apartment" />
     <arg name="setupRobotService" default="/navigation_test/setupRobot" />
     <arg name="bumperTopic"       default="/base_bumper/state" />
-    <arg name="collisionPublisherTopic" default="/navigation_test/collisions" />
+    <arg name="collisionsTopic"   default="/navigation_test/collisions" />
     <arg name="timeoutInS"        default="300" />
     <arg name="scenarioFile"      default="$( find navigation_test_samples)/routes/1.yaml" />
     <arg name="repository"        default="git@github.com:SimonEbner/navigation_test_results" />
@@ -27,8 +27,8 @@
     </include>
 
     <include file="$( find navigation_test_collision_detection )/launch/collision_detection.launch">
-        <arg name="bumperTopic"             value="$( arg bumperTopic )" />
-        <arg name="collisionPublisherTopic" value="$( arg collisionPublisherTopic )" />
+        <arg name="bumperTopic"     value="$( arg bumperTopic )" />
+        <arg name="collisionsTopic" value="$( arg collisionsTopic )" />
     </include>
 
     <include file="$(find navigation_test_skeleton)/launch/navigation.test">

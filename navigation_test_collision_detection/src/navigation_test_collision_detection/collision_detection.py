@@ -7,9 +7,9 @@ from gazebo_msgs.msg            import ContactsState
 from navigation_test_helper.msg import Collision
 
 class CollisionDetector:
-    def __init__( self, bumperTopicName, publisherTopicName, collisionMinInterval ):
+    def __init__( self, bumperTopicName, collisionsTopicName, collisionMinInterval ):
         self._bumperTopicName      = bumperTopicName
-        self._publisherTopicName   = publisherTopicName
+        self._collisionsTopicName  = collisionsTopicName
         self._collisionActive      = False
         self._collisionsNum        = 0
         self._timeLastCollision    = None
@@ -25,7 +25,7 @@ class CollisionDetector:
                 ContactsState, self._contactsStateCallback )
 
     def _setupCollisionPublisher( self ):
-        self._publisher = rospy.Publisher( self._publisherTopicName,
+        self._publisher = rospy.Publisher( self._collisionsTopicName,
                 Collision )
 
     def _contactsStateCallback( self, msg ):
@@ -74,9 +74,9 @@ if __name__ == '__main__':
     rospy.init_node( 'collision_detection' )
     bumperTopicName      = rospy.get_param( '~bumperTopic' )
     collisionMinInterval = rospy.get_param( '~collisionMinInterval' )
-    collisionTopicName   = rospy.get_param( '~collisionPublisherTopic' )
+    collisionsTopicName  = rospy.get_param( '~collisionsTopic' )
 
-    detector  = CollisionDetector( bumperTopicName, collisionTopicName,
+    detector  = CollisionDetector( bumperTopicName, collisionsTopicName,
             collisionMinInterval )
     detector.start()
     rospy.spin()
