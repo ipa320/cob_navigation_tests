@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <launch>
+    <arg name="scenarioName" />
     <arg name="bag_path" />
     <arg name="robot" />
     <arg name="navigation" />
@@ -16,10 +17,11 @@
          everything down properly -->
     <test test-name="navigation_test" pkg="navigation_test_skeleton" type="navigation_test.py" time-limit="1000000">
         <rosparam file="$( arg scenarioFile )" command="load"/>
-        <param name="~timeoutInS" value="$( arg timeoutInS )" />
-        <param name="~robot"      value="$( arg robot )" />
-        <param name="~navigation" value="$( arg navigation )" />
-        <param name="~repository" value="$( arg repository )" />
+        <param name="~scenarioName" value="$( arg scenarioName )" />
+        <param name="~timeoutInS"   value="$( arg timeoutInS )" />
+        <param name="~robot"        value="$( arg robot )" />
+        <param name="~navigation"   value="$( arg navigation )" />
+        <param name="~repository"   value="$( arg repository )" />
         <param name="~setupRobotService" value="$( arg setupRobotService )" />
     </test>
 </launch>

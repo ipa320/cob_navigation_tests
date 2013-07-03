@@ -41,7 +41,7 @@ class TestNavigation( unittest.TestCase ):
 
     def _getSetting( self ):
         return {
-            'scenario':   rospy.get_param( '~name' ),
+            'scenario':   rospy.get_param( '~scenarioName' ),
             'robot':      rospy.get_param( '~robot' ),
             'navigation': rospy.get_param( '~navigation' ),
             'repository': rospy.get_param( '~repository' )
