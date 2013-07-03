@@ -1,39 +1,9 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="navigation" value="2dnav_ros_dwa" />
-
-    <arg name="robot"     default="cob3-3"/>
-    <arg name="robot_env" default="ipa-apartment"/>
-    <arg name="setupRobotService" value="/navigation_test/setupRobot" />
-
-    <include file="$(find cob_bringup_sim)/launch/robot.launch">
-        <arg name="robot"     value="$(arg robot)" />
-        <arg name="robot_env" value="$(arg robot_env)" />
-    </include>
-
-    <include file="$(find cob_navigation_global)/launch/$(arg navigation).launch" >
-        <arg name="robot"     value="$(arg robot)" />
-        <arg name="robot_env" value="$(arg robot_env)" />
-    </include>
-    <include file="$( find navigation_test_samples_gazebo_objects )/launch/large_heavy_table.launch" />
-
-    <include file="$(find navigation_test_prepare_robot)/launch/prepare_robot_simulation.launch">
-        <arg name="setupRobotService" value="$( arg setupRobotService )" />
-    </include>
-
-    <include file="$(find navigation_test_collision_detection)/launch/collision_detection.launch">
-        <arg name="bumperTopic" value="/base_bumper/state" />
-        <arg name="collisionPublisherTopic" value="/navigation_test/collisions" />
-    </include>
-
-    <include file="$(find navigation_test_skeleton)/launch/navigation.test">
+    <include file="$( find navigation_test_samples )/launch/sample_base.launch">
         <arg name="scenarioName" value="robot_blocked" />
         <arg name="timeoutInS"   value="600" />
-        <arg name="scenarioFile" value="$(find navigation_test_samples)/routes/1.yaml" />
-        <arg name="robot"        value="$( arg robot )" />
-        <arg name="navigation"   value="$( arg navigation )" />
-        <arg name="bag_path"     value="webportal@10.0.1.218:/home/webportal/bagfiles" />
-        <arg name="repository"   value="git@github.com:SimonEbner/navigation_test_results" />
-        <arg name="setupRobotService" value="$( arg setupRobotService )" />
     </include>
+
+    <include file="$( find navigation_test_samples_gazebo_objects )/launch/large_heavy_table.launch" />
 </launch>
