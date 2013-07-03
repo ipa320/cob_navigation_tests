@@ -16,7 +16,7 @@
         <arg name="robot"     value="$(arg robot)" />
         <arg name="robot_env" value="$(arg robot_env)" />
     </include>
-    <include file="$( find table_object )/launch/large.launch" />
+    <include file="$( find navigation_test_samples_gazebo_objects )/launch/large_heavy_table.launch" />
 
     <include file="$(find navigation_test_prepare_robot)/launch/prepare_robot_simulation.launch">
         <arg name="setupRobotService" value="$( arg setupRobotService )" />
