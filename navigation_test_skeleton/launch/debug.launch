@@ -4,6 +4,7 @@
     <arg name="timeoutInS" default="300" />
 
     <include file="$( find navigation_test_skeleton )/launch/navigation.launch">
+        <arg name="scenarioName" value="debugScenario" />
         <arg name="timeoutInS"   value="$( arg timeoutInS )" />
         <arg name="robot"        value="cob3-3" />
         <arg name="repository"   value="git@github.com:SimonEbner/navigation_test_results.git" />
