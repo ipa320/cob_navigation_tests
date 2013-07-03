@@ -87,7 +87,7 @@ class TestNavigation( unittest.TestCase ):
                     self._watchDog.assertExecutionTimeLeft()
                     time.sleep( 3 )
 
-                succeeded = resultWaiter.assertSucceeded()
+                resultWaiter.assertSucceeded()
                 rospy.loginfo( "The current goal was reached" )
 
                 errorMsg = 'Position: %s does not match goal %s' % ( 
