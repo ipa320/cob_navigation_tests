@@ -27,8 +27,8 @@ class GoalResultWaiter( threading.Thread ):
         success = self._move_client.wait_for_result( timeoutDuration )
 
         with self._lock:
-            self._success   = success
-            self._finished  = True
+            self._success  = success
+            self._finished = True
 
     def block( self ):
         self.join()
@@ -36,7 +36,7 @@ class GoalResultWaiter( threading.Thread ):
 
     def wasSuccessfull( self ):
         with self._lock:
-            return self._finished
+            return self._success
 
     def assertSucceeded( self ):
         if not self.wasSuccessfull():
