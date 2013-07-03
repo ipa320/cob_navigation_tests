@@ -12,30 +12,31 @@ class NavigationStatusPublisher( object ):
     def nextWaypoint( self, waypoint):
         self._waypointNo += 1
         self._nextWaypoint = waypoint
-        msg = self._createMsg()
+        msg = self._createMsg( info='running' )
         self._publisher.publish( msg )
 
     def resigned( self ):
-        msg = self._createMsg( 'resigned' )
+        msg = self._createMsg( info='finished', error='resigned' )
         self._publisher.publish( msg )
 
     def timedout( self ):
-        msg = self._createMsg( 'timeout' )
+        msg = self._createMsg( info='finished', error='timedout' )
         self._publisher.publish( msg )
 
     def missed( self ):
-        msg = self._createMsg( 'missed' )
+        msg = self._createMsg( info='finished', error='missed' )
         self._publisher.publish( msg )
 
     def finished( self ):
-        msg = self._createMsg( 'finished' )
+        msg = self._createMsg( info='finished' )
         self._publisher.publish( msg )
 
-    def _createMsg( self, info='' ):
+    def _createMsg( self, info='', error='' ):
         waypoint          = self._nextWaypoint
         msg               = navigation_test_helper.msg.Status()
         msg.header.stamp  = rospy.Time.now()
         msg.info          = info
+        msg.error         = error
         msg.localtime     = self._localtime
         msg.waypointId    = self._waypointNo
         msg.setting       = self._createSettingMsg()

@@ -5,4 +5,5 @@ float64 waypointX
 float64 waypointY
 float64 waypointTheta
 string info
+string error
 Setting setting
