@@ -1,3 +1,3 @@
 [submodule "navigation_analysis/src/navigation_analysis/rosbagPatcher"]
-	path = ros/navigation_analysis/src/navigation_analysis/rosbagPatcher
+	path = ros/navigation_analysis/src/navigation_test_analysis/rosbagPatcher
 	url = git@github.com:SimonEbner/rosbagPatcher
