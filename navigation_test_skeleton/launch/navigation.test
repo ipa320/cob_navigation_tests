@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="scenarioName" />
-    <arg name="bag_path" />
+    <arg name="bagPath" />
     <arg name="robot" />
     <arg name="navigation" />
     <arg name="repository" />
@@ -10,7 +10,7 @@
     <arg name="timeoutInS" />
 
     <include file="$( find navigation_test_skeleton )/launch/bag_record.launch">
-        <arg name="bag_path" value="$( arg bag_path )" />
+        <arg name="bagPath" value="$( arg bagPath )" />
     </include>
 
     <!-- Set time-limit practically to infinitiy and abort within the test script to shut

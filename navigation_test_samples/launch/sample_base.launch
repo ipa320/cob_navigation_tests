@@ -10,7 +10,7 @@
     <arg name="timeoutInS"        default="300" />
     <arg name="scenarioFile"      default="$( find navigation_test_samples)/routes/1.yaml" />
     <arg name="repository"        default="git@github.com:SimonEbner/navigation_test_results" />
-    <arg name="bag_path"          default="/share/uhr-se/bagrecord" />
+    <arg name="bagPath"           default="/share/uhr-se/bagrecord" />
 
     <include file="$( find cob_bringup_sim )/launch/robot.launch">
         <arg name="robot"     value="$( arg robot )" />
@@ -37,7 +37,7 @@
         <arg name="scenarioFile"      value="$( arg scenarioFile )" />
         <arg name="robot"             value="$( arg robot )" />
         <arg name="navigation"        value="$( arg navigation )" />
-        <arg name="bag_path"          value="$( arg bag_path )" />
+        <arg name="bagPath"           value="$( arg bagPath )" />
         <arg name="repository"        value="$( arg repository )" />
         <arg name="setupRobotService" value="$( arg setupRobotService )" />
     </include>
