@@ -18,5 +18,4 @@ export ROS_MASTER_URI=http://localhost:22422
 rxconsole &
 rosrun rviz rviz &
 rostest navigation_test_samples $launch
-killall rxconsole
 killall rviz
