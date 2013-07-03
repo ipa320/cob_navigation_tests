@@ -9,6 +9,7 @@ import std_srvs, std_srvs.srv, std_msgs
 from watchDog import WatchDog, TimeoutException
 from navigationStatusPublisher                import NavigationStatusPublisher
 from navigation_test_helper.positionResolver  import PositionResolver
+from navigation_test_helper.positionResolver  import PositionMissedException
 from navigation_test_helper.metricsObserverTF import MetricsObserverTF
 from navigation_test_helper.tolerance         import Tolerance
 from navigation_test_helper.position          import Position
@@ -79,6 +80,7 @@ class TestNavigation( unittest.TestCase ):
         try:
             i = 0
             for goal in goals:
+                rospy.loginfo( "Moving to %s" % goal )
                 self._navigationStatusPublisher.nextWaypoint( goal )
                 targetPosition = Position( *goal )
 
@@ -88,15 +90,17 @@ class TestNavigation( unittest.TestCase ):
                     time.sleep( 3 )
 
                 resultWaiter.assertSucceeded()
+                self.positionResolver.assertInPosition( targetPosition,
+                        self.tolerance )
+
                 rospy.loginfo( "The current goal was reached" )
-
-                errorMsg = 'Position: %s does not match goal %s' % ( 
-                        self.positionResolver.getPosition(), goal )
-                self.assertTrue( self.positionResolver.inPosition( targetPosition, 
-                        self.tolerance ), errorMsg )
-
                 i += 1
         
+        except PositionMissedException, e:
+            rospy.loginfo( "The navigation missed the target. Exiting." )
+            self._navigationStatusPublisher.missed()
+            raise e
+
         except NavigationResignedException, e:
             rospy.loginfo( "The navigation resigned. Exiting." )
             self._navigationStatusPublisher.resigned()

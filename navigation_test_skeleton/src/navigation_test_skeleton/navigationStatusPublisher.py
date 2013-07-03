@@ -23,6 +23,10 @@ class NavigationStatusPublisher( object ):
         msg = self._createMsg( 'timeout' )
         self._publisher.publish( msg )
 
+    def missed( self ):
+        msg = self._createMsg( 'missed' )
+        self._publisher.publish( msg )
+
     def finished( self ):
         msg = self._createMsg( 'finished' )
         self._publisher.publish( msg )
