@@ -3,6 +3,52 @@ import rospy
 import geometry_msgs.msg
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from tf.transformations import quaternion_from_euler
+import threading
+
+class NavigationResignedException( Exception ):
+    def __init__( self, goal ):
+        Exception.__init__( self, 'Navigation resigned.' )
+
+class GoalResultWaiter( threading.Thread ):
+    def __init__( self, move_client, timeoutInS ):
+        threading.Thread.__init__( self )
+        self._move_client = move_client
+        self._timeoutInS  = timeoutInS
+        self._lock        = threading.Lock()
+        self._success     = False
+        self._started     = False
+        self._finished    = False
+
+    def run( self ):
+        with self._lock:
+            self._started = True
+
+        timeoutDuration = rospy.Duration( self._timeoutInS )
+        success = self._move_client.wait_for_result( timeoutDuration )
+
+        with self._lock:
+            self._success   = success
+            self._finished  = True
+
+    def block( self ):
+        self.join()
+        return self.wasSuccessfull()
+
+    def wasSuccessfull( self ):
+        with self._lock:
+            return self._finished
+
+    def assertSucceeded( self ):
+        if not self.wasSuccessfull():
+            raise NavigationResignedException()
+
+    def hasFinished( self ):
+        with self._lock:
+            return self._finished
+
+    def hasStarted( self ):
+        with self._lock:
+            return self._started
 
 class Navigator( object ):
     def __init__( self, action_name ):
@@ -11,12 +57,15 @@ class Navigator( object ):
                 MoveBaseAction)
         self.move_client.wait_for_server()
 
-    def goTo( self, goal ):
+    def goTo( self, goal, timeoutInS=0 ):
         goalMsg = self._createGoalMessage( goal )
         self.move_client.send_goal( goalMsg )
+        return self._waitForResultNonBlocking( timeoutInS )
     
-    def waitForResult( self, timeout=30.0 ):
-        return self.move_client.wait_for_result(rospy.Duration( timeout ))
+    def _waitForResultNonBlocking( self, timeoutInS=0 ):
+        waiter = GoalResultWaiter( self.move_client, timeoutInS )
+        waiter.start()
+        return waiter
 
     def _createGoalMessage( self, goal ):
         poseMsg = self._createPoseMessage( goal )

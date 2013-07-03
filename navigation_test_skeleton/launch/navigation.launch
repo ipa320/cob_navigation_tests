@@ -6,13 +6,17 @@
     <arg name="repository" />
     <arg name="scenarioFile" />
     <arg name="setupRobotService" />
+    <arg name="timeoutInS" />
 
     <include file="$( find navigation_test_skeleton )/launch/bag_record.launch">
         <arg name="bag_path" value="$( arg bag_path )" />
     </include>
 
+    <!-- Set time-limit practically to infinitiy and abort within the test script to shut
+         everything down properly -->
     <node name="navigation_test_skeleton" pkg="navigation_test_skeleton" type="navigation_test.py" output="screen">
         <rosparam file="$( arg scenarioFile )" command="load"/>
+        <param name="~timeoutInS" value="$( arg timeoutInS )" />
         <param name="~robot"      value="$( arg robot )" />
         <param name="~navigation" value="$( arg navigation )" />
         <param name="~repository" value="$( arg repository )" />

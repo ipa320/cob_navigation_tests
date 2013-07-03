@@ -15,8 +15,12 @@ class NavigationStatusPublisher( object ):
         msg = self._createMsg()
         self._publisher.publish( msg )
 
-    def navigationResigned( self ):
-        msg = self._createMsg( 'navigationResigned' )
+    def resigned( self ):
+        msg = self._createMsg( 'resigned' )
+        self._publisher.publish( msg )
+
+    def timedout( self ):
+        msg = self._createMsg( 'timeout' )
         self._publisher.publish( msg )
 
     def finished( self ):

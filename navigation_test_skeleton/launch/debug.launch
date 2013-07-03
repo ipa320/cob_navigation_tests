@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="setupRobotService" />
+    <arg name="timeoutInS" default="300" />
 
     <include file="$( find navigation_test_skeleton )/launch/navigation.launch">
+        <arg name="timeoutInS"   value="$( arg timeoutInS )" />
         <arg name="robot"        value="cob3-3" />
         <arg name="repository"   value="git@github.com:SimonEbner/navigation_test_results.git" />
         <arg name="bag_path"     value="/share/uhr-se/bagrecord/" />

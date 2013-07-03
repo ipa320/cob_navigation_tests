@@ -6,12 +6,14 @@ import os, logging, sys
 import cob_srvs.srv, time
 import unittest, rostest
 import std_srvs, std_srvs.srv, std_msgs
+from watchDog import WatchDog, TimeoutException
 from navigationStatusPublisher                import NavigationStatusPublisher
 from navigation_test_helper.positionResolver  import PositionResolver
 from navigation_test_helper.metricsObserverTF import MetricsObserverTF
 from navigation_test_helper.tolerance         import Tolerance
 from navigation_test_helper.position          import Position
 from navigation_test_helper.navigator         import Navigator
+from navigation_test_helper.navigator         import NavigationResignedException
 from navigation_test_helper.srv               import SetupRobotService
 
 
@@ -34,6 +36,7 @@ class TestNavigation( unittest.TestCase ):
 
         rospy.loginfo( 'Waiting for Bag Recorder' )
         self._stopBagRecording = self._waitForBagRecorder()
+        self._setupWatchdog()
 
 
     def _getSetting( self ):
@@ -43,6 +46,10 @@ class TestNavigation( unittest.TestCase ):
             'navigation': rospy.get_param( '~navigation' ),
             'repository': rospy.get_param( '~repository' )
         }
+
+    def _setupWatchdog( self ):
+        timeoutInS     = rospy.get_param( '~timeoutInS' )
+        self._watchDog = WatchDog( timeoutInS )
 
     def _setupRobotWhenReady( self ):
         setupRobotServiceName = rospy.get_param( '~setupRobotService' )
@@ -75,12 +82,13 @@ class TestNavigation( unittest.TestCase ):
                 self._navigationStatusPublisher.nextWaypoint( goal )
                 targetPosition = Position( *goal )
 
-                self.navigator.goTo( targetPosition ) 
-                succeeded = self.navigator.waitForResult( timeout=300.0 )
-                rospy.loginfo( "Goal reached: %s" % succeeded )
-                if not succeeded:
-                    self._navigationStatusPublisher.navigationResigned()
-                    raise Exception( 'Navigation resigned.' )
+                resultWaiter = self.navigator.goTo( targetPosition ) 
+                while not resultWaiter.hasFinished():
+                    self._watchDog.assertExecutionTimeLeft()
+                    time.sleep( 3 )
+
+                succeeded = resultWaiter.assertSucceeded()
+                rospy.loginfo( "The current goal was reached" )
 
                 errorMsg = 'Position: %s does not match goal %s' % ( 
                         self.positionResolver.getPosition(), goal )
@@ -89,6 +97,17 @@ class TestNavigation( unittest.TestCase ):
 
                 i += 1
         
+        except NavigationResignedException, e:
+            rospy.loginfo( "The current goal was not reached" )
+            self._navigationStatusPublisher.resigned()
+            raise e
+
+        except TimeoutException, e:
+            timeout = self._watchDog.timeoutInS
+            rospy.loginfo( "The test timed out after %ss" % timeout )
+            self._navigationStatusPublisher.timedout()
+            raise e
+
         finally:
             self._terminate()
 
