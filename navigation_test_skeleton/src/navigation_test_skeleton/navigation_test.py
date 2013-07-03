@@ -98,7 +98,7 @@ class TestNavigation( unittest.TestCase ):
                 i += 1
         
         except NavigationResignedException, e:
-            rospy.loginfo( "The current goal was not reached" )
+            rospy.loginfo( "The navigation resigned. Exiting." )
             self._navigationStatusPublisher.resigned()
             raise e
 
