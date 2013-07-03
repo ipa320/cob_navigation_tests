@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import roslib
-roslib.load_manifest( 'navigation_analysis' )
+roslib.load_manifest( 'navigation_test_analysis' )
 import rospy, os, re, subprocess, sys, time, datetime
 import navigation_test_helper.gazeboHelper, navigation_test_helper.msg
 import subprocess

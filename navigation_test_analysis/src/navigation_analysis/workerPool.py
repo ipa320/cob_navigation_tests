@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import roslib
-roslib.load_manifest( 'navigation_analysis' )
+roslib.load_manifest( 'navigation_test_analysis' )
 import rospy
 import os, re, subprocess, socket
 from navigation_test_helper.git              import Git

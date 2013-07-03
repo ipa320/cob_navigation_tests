@@ -57,7 +57,7 @@
 #
 #################################################################
 import roslib
-roslib.load_manifest('navigation_test')
+roslib.load_manifest( 'navigation_test_skeleton' )
 import rospy
 
 import rosbag

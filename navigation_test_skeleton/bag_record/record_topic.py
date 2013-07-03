@@ -58,7 +58,7 @@
 #################################################################
 
 import roslib
-PKG = "navigation_test"
+PKG = "navigation_test_skeleton"
 roslib.load_manifest(PKG)
 import rospy
 
