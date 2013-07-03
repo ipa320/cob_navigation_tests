@@ -1,8 +1,8 @@
 <launch>
   <!-- send table urdf to param server -->
-  <param name="table_description" command="$(find xacro)/xacro.py $(find navigation_test_samples_gazebo_objects)/objects/box_blocking_side_room.urdf.xacro" />
+  <param name="box_blocking_side_room_description" command="$(find xacro)/xacro.py $(find navigation_test_samples_gazebo_objects)/objects/box_blocking_side_room.urdf.xacro" />
 
   <!-- push table_description to factory and spawn robot in gazebo -->
-  <node name="spawn_table" pkg="gazebo" type="spawn_model" args="-urdf -param table_description -model box_blocking_side_room" respawn="false" output="screen" />
+  <node name="spawn_box_blocking_side_room" pkg="gazebo" type="spawn_model" args="-urdf -param box_blocking_side_room_description -model box_blocking_side_room" respawn="false" output="screen" />
 </launch>
 
