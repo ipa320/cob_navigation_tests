@@ -29,7 +29,7 @@
 
     <include file="$(find navigation_test_skeleton)/launch/navigation.test">
         <arg name="scenarioName" value="timeout_exception" />
-        <arg name="timeoutInS"   value="300" />
+        <arg name="timeoutInS"   value="10" />
         <arg name="scenarioFile" value="$(find navigation_test_samples)/routes/1.yaml" />
         <arg name="robot"        value="$( arg robot )" />
         <arg name="navigation"   value="$( arg navigation )" />
