@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-    <node name="analyse_remaining_bag_files" pkg="navigation_test_analysis" type="worker.py" output="screen" required="true">
+    <node name="analyse_bag_file" pkg="navigation_test_analysis" type="worker.py" output="screen" required="true">
         <param name="~filepath" value="$(arg filepath)" />
     </node>
 </launch>
