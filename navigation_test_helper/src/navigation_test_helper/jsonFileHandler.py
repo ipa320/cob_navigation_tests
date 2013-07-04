@@ -6,6 +6,11 @@ class JsonFileHandler( object ):
         self._values = {}
 
     def write( self, data ):
+        content = [ data ]
+        with open( self._filename, 'w' ) as f:
+            f.write( json.dumps( content ))
+
+    def append( self, data ):
         content = self.read()
         content.append( data )
         with open( self._filename, 'w' ) as f:
