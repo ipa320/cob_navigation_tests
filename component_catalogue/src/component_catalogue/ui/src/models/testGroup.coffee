@@ -18,7 +18,10 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       'stdDev.distance': 'N/A'
       'stdDev.rotation': 'N/A'
       indexesByCid:       {}
-      errors:            ''
+      errorsCombined:    0
+      errorsResigned:    0
+      errorsMissed:      0
+      errorsTimedout:    0
 
     constructor: ( args, options )->
       if !(args?)
@@ -104,11 +107,25 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       @set( 'mean.' + attr, if num > 0 then sum/num else 'N/A' )
       
     updateErrorCount: ->
-      errors = 0
+      errorsCombined = 0
+      errorsResigned = 0
+      errorsMissed   = 0
+      errorsTimedout = 0
+
       erroneous = @get( 'tests' ).forEach ( model )->
-        errors++ if model.get 'error'
-      @set 'errors', errors
-  
+        return if not model.get 'error'
+        errorsCombined++
+        switch model.get 'error'
+          when 'resigned' then errorsResigned++
+          when 'missed'   then errorsMissed++
+          when 'timedout' then errorsTimedout++
+
+      @set 'errorsCombined', errorsCombined
+      @set 'errorsResigned', errorsResigned
+      @set 'errorsMissed',   errorsMissed
+      @set 'errorsTimedout', errorsTimedout
+
+
     updateStdDevAttribute: ( attr )->
       mean = @get 'mean.' + attr
       sum = num = 0

@@ -12,7 +12,10 @@ define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixed
       testGroups: null
       columns:
         'count':          '#'
-        'errors':         '# errors'
+        'errorsCombined': '#ERR'
+        'errorsResigned': '#RSGND'
+        'errorsMissed':   '#MISS'
+        'errorsTimedout': '#TO'
         'robot':          'Roboter'
         'navigation':     'Navigation'
         'scenario':       'Scenario'
