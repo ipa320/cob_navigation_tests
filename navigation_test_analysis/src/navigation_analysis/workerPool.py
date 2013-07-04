@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import roslib
-roslib.load_manifest( 'navigation_test_analysis' )
+PKG = 'navigation_test_analysis'
+roslib.load_manifest( PKG )
 import rospy
 import os, re, subprocess, socket
 from navigation_test_helper.git              import Git
@@ -72,9 +73,8 @@ class WorkerPool( object ):
         env[ 'ROS_MASTER_URI' ] = 'http://localhost:%s' % newPort
         args = [
             'roslaunch',
-            'navigation_analysis',
-            'analyse_bag_file.launch',
-            'filepath:=%s'      % bagInfo.filepath
+            PKG, 'analyse_bag_file.launch',
+            'filepath:=%s' % bagInfo.filepath
         ]
         print args
         p = subprocess.Popen( args, env=env )
