@@ -28,14 +28,18 @@ class Worker( object ):
             self.saveResults( data )
             self.bagInfo.setAnalyzed()
 
+
         except BagAnalyzer.NoStatusReceivedError:
-            self._errorOccured( 'No Status topic received.' )
+            self._errorOccured( 'No status topic received.' )
+
+        except BagAnalyzer.NoFinishedStatusReceivedError:
+            self._errorOccured( 'No finished status topic received.' )
 
         except BagAnalyzer.NoRepositoryNameReceivedError:
             self._errorOccured( 'No Repository name received.' )
 
         except subprocess.CalledProcessError,e:
-            if not bagInfo.isFixed():
+            if not self.bagInfo.isFixed():
                 self._fixBagFile()
             else:
                 self._errorOccured( 'Bag-File corrupted' )
@@ -47,7 +51,7 @@ class Worker( object ):
         print
         print 'BAG-FILE ERROR OCCURED. TRYING TO RECOVER'
         print '-----------------------------------------'
-        patcher = BagFilePatcher( self._bagInfo.filepath )
+        patcher = BagFilePatcher( self.bagInfo.filepath )
         patcher.patch()
         self.bagInfo.setFixed()
         
@@ -85,12 +89,18 @@ class BagReplayer( object ):
         self._filepath = filepath
 
     def play( self ):
+        self._assertFileExists()
         print 'Playing %s' % self._filepath
         p = subprocess.check_call([ 'rosbag', 'play', self._filepath ])
+
+    def _assertFileExists( self ):
+        if not os.path.isfile( self._filepath ):
+            raise IOError( 'File %s does not exist' % self._filepath )
 
 class BagAnalyzer( object ):
     class NoStatusReceivedError( Exception ): pass
     class NoRepositoryNameReceivedError( Exception ): pass
+    class NoFinishedStatusReceivedError( Exception ): pass
 
     def __init__( self, filename ):
         print 'Initializing Analyzer'
@@ -101,6 +111,8 @@ class BagAnalyzer( object ):
         self._active                 = False
         self._setting                = {}
         self._expectedNextWaypointId = 0
+        self._finishedStatusReceived = False
+        self._error                  = ''
         self.setupStatusListener()
 
     def setupStatusListener( self ):
@@ -126,7 +138,7 @@ class BagAnalyzer( object ):
     def serialize( self ):
         self._assertNoUnrecoverableErrorOccured()
         data = self._metricsObserver.serialize()
-        data[ 'error'     ] = self._getError()
+        data[ 'error'     ] = self._error
         data[ 'duration'  ] = self._duration
         data[ 'filename'  ] = self._filename
         data[ 'localtime' ] = self._localtime
@@ -137,11 +149,8 @@ class BagAnalyzer( object ):
     def _assertNoUnrecoverableErrorOccured( self ):
         if not self._startTime:
             raise BagAnalyzer.NoStatusReceivedError()
-
-    def _getError( self ):
-        if self._duration == 'N/A':
-            return 'Test timed out'
-        return ''
+        if not self._finishedStatusReceived:
+            raise BagAnalyzer.NoFinishedStatusReceivedError()
 
     def _localtimeFormatted( self ):
         print 'Localtime: %s' % self._localtime
@@ -159,8 +168,12 @@ class BagAnalyzer( object ):
             self._setting[ 'scenario' ]   = msg.setting.scenario
             self._setting[ 'repository' ] = msg.setting.repository
         
+        # first error wins
+        if msg.error and not self._error:
+            self._error = msg.error
 
         if msg.info == 'finished':
+            self._finishedStatusReceived = True
             self._duration = ( msg.header.stamp - self._startTime ).to_sec()
             self.stop()
             return
