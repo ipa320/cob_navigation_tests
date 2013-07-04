@@ -96,14 +96,14 @@ def printInfoMessage( bagInfo ):
 
 if __name__ == '__main__':
     rospy.init_node( 'analyze_remaining_bag_files' )
-    bagDir = rospy.get_param( '~bagDir' )
+    bagPath = rospy.get_param( '~bagPath' )
 
-    print 'Reading %s' % bagDir
+    print 'Reading %s' % bagPath
     path = os.path.dirname(os.path.abspath(__file__))
 
     pool = WorkerPool()
 
-    directoryReader = BagDirectoryReader( bagDir )
+    directoryReader = BagDirectoryReader( bagPath )
     while directoryReader.hasUnanalyzedBagFilenames():
         bagInfo = directoryReader.nextUnanalyzedBagFilename()
         printInfoMessage( bagInfo )
