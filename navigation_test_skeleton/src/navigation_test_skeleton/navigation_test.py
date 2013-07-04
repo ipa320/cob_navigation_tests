@@ -76,6 +76,8 @@ class TestNavigation( unittest.TestCase ):
         self._initialize()
         goals = rospy.get_param( '~goals' )
         self._metricsObserver.start()
+        positionResolver = self.positionResolver
+        tolerance        = self.tolerance
 
         try:
             i = 0
@@ -90,8 +92,7 @@ class TestNavigation( unittest.TestCase ):
                     time.sleep( 3 )
 
                 resultWaiter.assertSucceeded()
-                self.positionResolver.assertInPosition( targetPosition,
-                        self.tolerance )
+                positionResolver.assertInPosition( targetPosition, tolerance )
 
                 rospy.loginfo( "The current goal was reached" )
                 i += 1
