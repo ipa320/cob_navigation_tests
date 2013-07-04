@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="bagDir"        default="/share/uhr-se/bag_record" />
-    <node name="analyse_remaining_bag_files" pkg="navigation_analysis" type="workerPool.py" output="screen">
+    <arg name="bagDir" default="/share/uhr-se/bag_record" />
+    <node name="analyse_remaining_bag_files" pkg="navigation_test_analysis" type="workerPool.py" output="screen">
         <param name="~bagDir" value="$( arg bagDir )" />
     </node>
 </launch>
