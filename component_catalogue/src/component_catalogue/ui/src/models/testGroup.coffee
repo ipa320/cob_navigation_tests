@@ -17,7 +17,9 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       'stdDev.duration': 'N/A'
       'stdDev.distance': 'N/A'
       'stdDev.rotation': 'N/A'
-      indexesByCid:       {}
+      'mean.collisions': 'N/A'
+      'std.collisions':  'N/A'
+      indexesByCid:      {}
       errorsCombined:    0
       errorsResigned:    0
       errorsMissed:      0
@@ -74,7 +76,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
     refreshAttributes: ->
       for attr in [ 'robot', 'scenario', 'navigation' ]
         @updateUniqAttribute attr
-      for attr in [ 'duration', 'distance', 'rotation' ]
+      for attr in [ 'duration', 'distance', 'rotation', 'collisions' ]
         @updateMedianAttribute attr
         @updateStdDevAttribute attr
       do @updateErrorCount

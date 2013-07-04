@@ -11,17 +11,18 @@ define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixed
     options:
       testGroups: null
       columns:
-        'count':          '#'
-        'errorsCombined': '#ERR'
-        'errorsResigned': '#RSGND'
-        'errorsMissed':   '#MISS'
-        'errorsTimedout': '#TO'
-        'robot':          'Roboter'
-        'navigation':     'Navigation'
-        'scenario':       'Scenario'
-        'mean.duration':  'Duration (&empty; in s)'
-        'mean.distance':  'Distance (&empty; in m)'
-        'mean.rotation':  'Rotation (&empty; in deg)'
+        'count':           '#'
+        'errorsCombined':  '#ERR'
+        'errorsResigned':  '#RSGND'
+        'errorsMissed':    '#MISS'
+        'errorsTimedout':  '#TO'
+        'mean.collisions': '#Col'
+        'robot':           'Roboter'
+        'navigation':      'Navigation'
+        'scenario':        'Scenario'
+        'mean.duration':   'Duration (&empty; in s)'
+        'mean.distance':   'Distance (&empty; in m)'
+        'mean.rotation':   'Rotation (&empty; in deg)'
 
     render: ->
       data = do @options.testGroups.toJSON
