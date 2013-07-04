@@ -113,13 +113,25 @@ class BagAnalyzer( object ):
         self._expectedNextWaypointId = 0
         self._finishedStatusReceived = False
         self._error                  = ''
+        self._subscribers            = []
+        self._collisions             = 0
         self.setupStatusListener()
+        self.setupCollisionsListener()
 
     def setupStatusListener( self ):
         print 'Listening to /navigation_test/status'
-        self._statusSubscriber = rospy.Subscriber( '/navigation_test/status', 
-                navigation_test_helper.msg.Status, self._callback )
-        print self._statusSubscriber
+        self._subscribers.append( rospy.Subscriber(
+                '/navigation_test/status', 
+                navigation_test_helper.msg.Status,
+                self._statusCallback ))
+
+    def setupCollisionsListener( self ):
+        print 'Listening to /navigation_test/collisions'
+        self._subscribers.append( rospy.Subscriber(
+                '/navigation_test/collisions',
+                navigation_test_helper.msg.Collision,
+                self._collisionCallback ))
+
 
     def start( self ):
         print 'Starting Analyzer'
@@ -132,16 +144,21 @@ class BagAnalyzer( object ):
         print 'Stopping MetricsObserver'
         if self._active:
             self._active = False
-            self._statusSubscriber.unregister()
+            self._unregisterSubscribers()
             self._metricsObserver.stop()
+
+    def _unregisterSubscribers( self ):
+        for subscriber in self._subscribers:
+            subscriber.unregister()
 
     def serialize( self ):
         self._assertNoUnrecoverableErrorOccured()
         data = self._metricsObserver.serialize()
-        data[ 'error'     ] = self._error
-        data[ 'duration'  ] = self._duration
-        data[ 'filename'  ] = self._filename
-        data[ 'localtime' ] = self._localtime
+        data[ 'error'      ] = self._error
+        data[ 'duration'   ] = self._duration
+        data[ 'filename'   ] = self._filename
+        data[ 'localtime'  ] = self._localtime
+        data[ 'collisions' ] = self._collisions
         data[ 'localtimeFormatted' ] = self._localtimeFormatted()
         data = dict( data.items() + self._setting.items() )
         return data
@@ -157,7 +174,10 @@ class BagAnalyzer( object ):
         d = datetime.datetime.fromtimestamp( self._localtime )
         return d.strftime( '%Y-%m-%d' )
 
-    def _callback( self, msg ):
+    def _collisionCallback( self, msg ):
+        self._collisions += 1
+
+    def _statusCallback( self, msg ):
         if not self._active: return
 
         if not self._startTime:
