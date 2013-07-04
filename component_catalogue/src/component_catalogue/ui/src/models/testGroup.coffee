@@ -88,7 +88,6 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
     updateUniqAttribute: ( attr )->
       uniqueValues = []
       @get( 'tests' ).forEach ( model )->
-        return if model.get( 'error' )
         value = model.get attr
         uniqueValues.push value if value? and value not in uniqueValues
 
