@@ -13,7 +13,7 @@ class CameraUpdater( threading.Thread ):
     def __init__( self, updateRate, z ):
         threading.Thread.__init__( self )
         self._active     = True
-        self._updateRate = z
+        self._updateRate = updateRate
         self._z          = z
 
     def run( self ):
@@ -30,7 +30,7 @@ class CameraUpdater( threading.Thread ):
 if __name__ == '__main__':
     rospy.init_node( 'camera_position_updater' )
     z          = rospy.get_param( '~z' )
-    updateRate = rospy.get_param( '~updateRate' )
+    updateRate = float( rospy.get_param( '~updateRate' ))
     updater    = CameraUpdater( updateRate, z )
 
     updater.start()

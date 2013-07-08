@@ -34,11 +34,11 @@ class ModelStateSetter( object ):
         modelState = gazebo_msgs.srv.SetModelState()
 
         start_pose = geometry_msgs.msg.Pose()
-        start_pose.position.x = position2d.x
-        start_pose.position.y = position2d.y
+        start_pose.position.x = position.x
+        start_pose.position.y = position.y
         start_pose.position.z = z
 
-        quaternion = quaternion_from_euler( 0, 0, position2d.theta )
+        quaternion = quaternion_from_euler( 0, 0, position.theta )
         start_pose.orientation.x = quaternion[ 0 ]
         start_pose.orientation.y = quaternion[ 1 ]
         start_pose.orientation.z = quaternion[ 2 ]
