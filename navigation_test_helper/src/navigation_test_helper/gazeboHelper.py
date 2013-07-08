@@ -45,9 +45,9 @@ class ModelStateSetter( object ):
         start_pose.orientation.w = quaternion[ 3 ]
 
         start_twist = geometry_msgs.msg.Twist()
-        start_twist.linear.x = 0.0
-        start_twist.linear.y = 0.0
-        start_twist.linear.z = 0.0
+        start_twist.linear.x  = 0.0
+        start_twist.linear.y  = 0.0
+        start_twist.linear.z  = 0.0
         start_twist.angular.x = 0.0
         start_twist.angular.y = 0.0
         start_twist.angular.z = 0.0
