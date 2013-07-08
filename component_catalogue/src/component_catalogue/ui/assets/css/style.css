@@ -61,10 +61,11 @@ table.display tr.disabled.odd td{
 table.display tr.disabled.even td{
     background-color: #fafafa !important;
 }
-table.display td{
+table.display td, table.display th{
     padding: 6px 10px;
     color: #222;
     font-size: 13px;
+    text-align: left;
 }
 table.display thead th div{
     position: absolute;

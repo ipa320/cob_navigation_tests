@@ -1,4 +1,4 @@
-define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixedHeaderTable )->
+define [ 'backbone', 'jquery-tipTip', 'templates/resultList' ], ( Backbone, tiptip, resultListTmpl, fixedHeaderTable )->
 
   ResultList  = Backbone.View.extend
     id: 'resultList',
@@ -11,18 +11,20 @@ define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixed
     options:
       testGroups: null
       columns:
-        'count':           '#'
-        'errorsCombined':  '#ERR'
-        'errorsResigned':  '#RSGND'
-        'errorsMissed':    '#MISS'
-        'errorsTimedout':  '#TO'
-        'mean.collisions': '#Col'
-        'robot':           'Roboter'
-        'navigation':      'Navigation'
-        'scenario':        'Scenario'
-        'mean.duration':   'Duration (&empty; in s)'
-        'mean.distance':   'Distance (&empty; in m)'
-        'mean.rotation':   'Rotation (&empty; in deg)'
+        'count':           [ '#',          'Total number of tests' ]
+        'errorsCombined':  [ '#ERR',       'Total number of all errors combined' ]
+        'errorsResigned':  [ '#RSGND',     'Error: Numer of times the navigation resigned, ' +
+          'i.e. simple_action_client.wait_for_result returned false' ]
+        'errorsMissed':    [ '#MISS',      'Error: Number of time the navigation returned success ' +
+          'but the actual position did not match the goal position' ]
+        'errorsTimedout':  [ '#TO',        'Error: Number of times the navigation timed out' ]
+        'mean.collisions': [ '#Col',       'Number of collisions' ]
+        'robot':           [ 'Roboter',    'The robot used in the simulation' ]
+        'navigation':      [ 'Navigation', 'The navigation used in the simulation' ]
+        'scenario':        [ 'Scenario',   'The scenarion used in the simulation' ]
+        'mean.duration':   [ 'Duration',   'Duration &empty; in s' ]
+        'mean.distance':   [ 'Distance',   'Distance the robot moved &empty; in m' ]
+        'mean.rotation':   [ 'Rotation',   'Number of degree the robot rotated &empty; in deg' ]
 
     render: ->
       data = do @options.testGroups.toJSON
@@ -32,6 +34,8 @@ define [ 'backbone', 'templates/resultList' ], ( Backbone, resultListTmpl, fixed
         columns: @options.columns
         data: data
       @$el.html table
+      console.log @$el.find( 'th div' ).size(), $.fn.tipTip
+      @$el.find( 'th div' ).tipTip()
       #table.dataTable().appendTo( this.$el )
       this
 

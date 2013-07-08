@@ -6,7 +6,7 @@
             <tr>
                 <th></th>
                 <% for columnKey, columnLabel of @columns: %>
-                <th><div><%- columnLabel %></div></th>
+                <th><div title="<%- columnLabel[ 1 ]%>"><%- columnLabel[ 0 ] %></div></th>
                 <% end %>
             </tr>
         </thead>
