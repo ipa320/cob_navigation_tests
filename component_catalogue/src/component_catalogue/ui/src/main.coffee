@@ -24,6 +24,9 @@ require.config
     'jquery-numeric':
       deps: [ 'jquery' ],
       exports: 'jQuery.fn'
+    'jquery-tipTip':
+      deps: [ 'jquery' ],
+      exports: 'jQuery.tipTip'
   paths:
     'templates':         '../templates',
     'backbone':          '../vendor/backbone',
@@ -35,6 +38,7 @@ require.config
     'chosen':            '../vendor/chosen.jquery',
     'jquery-ui':         '../vendor/jquery-ui-1.10.2.custom',
     'jquery-numeric':    '../vendor/numeric'
+    'jquery-tipTip':     '../vendor/jquery.tipTip.minified'
 
 define [ 'app', 'backbone' ], ( app, Backbone )->
   do Backbone.history.start

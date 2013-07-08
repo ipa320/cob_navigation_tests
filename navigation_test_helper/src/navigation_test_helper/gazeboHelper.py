@@ -1,35 +1,13 @@
 import sys, threading, signal
-import actionlib
-import rostest
 import rospy, rospy.exceptions
-import tf
 
-from math import *
+import std_srvs
+import std_msgs
+import geometry_msgs.msg
+import gazebo_msgs.msg
+import gazebo_msgs.srv
+from tf.transformations import quaternion_from_euler
 
-import time,json
-
-from tf.msg import tfMessage 
-from tf.transformations import euler_from_quaternion
-
-from move_base_msgs.msg import MoveBaseActionResult
-from move_base_msgs.msg import MoveBaseActionGoal
-from actionlib_msgs.msg import GoalID
-
-from geometry_msgs.msg import PoseStamped
-from geometry_msgs.msg import PoseWithCovarianceStamped
-from geometry_msgs.msg import Twist
-from nav_msgs.msg import *
-from nav_msgs.srv import *
-
-from gazebo.srv import *
-from gazebo_msgs.srv import *
-from gazebo_msgs.msg import *
-
-# Pkg: cob_script_server
-from simple_script_server import *
-import std_srvs.srv
-import yaml
-import std_msgs.msg
 
 std = sys.stdout
 
@@ -49,25 +27,43 @@ def resetSimulation():
     service()
 
 
+class ModelStateSetter( object ):
+    def set( self, modelName, position, z ):
+        service = self._getServiceProxy()
 
+        modelState = gazebo_msgs.srv.SetModelState()
 
+        start_pose = geometry_msgs.msg.Pose()
+        start_pose.position.x = position.x
+        start_pose.position.y = position.y
+        start_pose.position.z = z
 
+        quaternion = quaternion_from_euler( 0, 0, position.theta )
+        start_pose.orientation.x = quaternion[ 0 ]
+        start_pose.orientation.y = quaternion[ 1 ]
+        start_pose.orientation.z = quaternion[ 2 ]
+        start_pose.orientation.w = quaternion[ 3 ]
 
-class SimpleFileWriter( object ):
-    def __init__( self, filename ):
-        self._filename = filename
-        self._values = {}
+        start_twist = geometry_msgs.msg.Twist()
+        start_twist.linear.x  = 0.0
+        start_twist.linear.y  = 0.0
+        start_twist.linear.z  = 0.0
+        start_twist.angular.x = 0.0
+        start_twist.angular.y = 0.0
+        start_twist.angular.z = 0.0
 
-    def write( self, key, value ):
-        self._values[ key ] = value
+        modelstate = gazebo_msgs.msg.ModelState
+        modelstate.model_name = modelName
+        modelstate.reference_frame = "/map";
+        modelstate.pose =  start_pose;
+        modelstate.twist = start_twist;
+        return service( modelstate )
 
-    def flush( self ):
-        if not self._values:
-            return
-
-        with open( self._filename, 'a+'  ) as f:
-            for key, value in self._values.items():
-                f.write( '%s: %s, ' % ( key, value ))
-            f.write( '\n' )
-        self._values = {}
-
+    # Lazy loading, get service proxy only when required
+    def _getServiceProxy( self ):
+        if hasattr( self, '_serviceProxy' ):
+            return self._serviceProxy
+        rospy.wait_for_service( '/gazebo/set_model_state' )
+        self._serviceProxy = rospy.ServiceProxy( '/gazebo/set_model_state', \
+                gazebo_msgs.srv.SetModelState )
+        return self._serviceProxy

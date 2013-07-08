@@ -1,0 +1,16 @@
+<package>
+  <description brief="navigation_test_camera">
+
+     navigation_test_camera
+
+  </description>
+  <author>Simon Ebner</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/navigation_test_camera</url>
+  <depend package="navigation_test_helper" />
+  <depend package="gazebo_msgs" />
+
+</package>
+
+

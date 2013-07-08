@@ -2,7 +2,7 @@
 import roslib
 roslib.load_manifest( 'navigation_test_analysis' )
 import rospy, os, re, subprocess, sys, time, datetime
-import navigation_test_helper.gazeboHelper, navigation_test_helper.msg
+import navigation_test_helper.msg
 import subprocess
 from navigation_test_helper.metricsObserverTF import MetricsObserverTF
 from navigation_test_helper.jsonFileHandler   import JsonFileHandler
