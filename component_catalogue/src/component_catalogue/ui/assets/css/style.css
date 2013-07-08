@@ -216,6 +216,7 @@ table{
     border: 1px solid #ccc;
     margin: 5px 5px 0;
     cursor: pointer;
+    list-style: none;
 }
 .devView .tabs li:hover{
     text-decoration: underline;
