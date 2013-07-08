@@ -47,27 +47,3 @@ def resetWorld():
 def resetSimulation():
     service = rospy.ServiceProxy( '/gazebo/reset_simulation', std_srvs.srv.Empty )
     service()
-
-
-
-
-
-
-class SimpleFileWriter( object ):
-    def __init__( self, filename ):
-        self._filename = filename
-        self._values = {}
-
-    def write( self, key, value ):
-        self._values[ key ] = value
-
-    def flush( self ):
-        if not self._values:
-            return
-
-        with open( self._filename, 'a+'  ) as f:
-            for key, value in self._values.items():
-                f.write( '%s: %s, ' % ( key, value ))
-            f.write( '\n' )
-        self._values = {}
-
