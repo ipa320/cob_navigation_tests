@@ -28,7 +28,7 @@ def resetSimulation():
 
 
 class ModelStateSetter( object ):
-    def set( self, modelName, position2d, z ):
+    def set( self, modelName, position, z ):
         service = self._getServiceProxy()
 
         modelState = gazebo_msgs.srv.SetModelState()
@@ -59,6 +59,7 @@ class ModelStateSetter( object ):
         modelstate.twist = start_twist;
         return service( modelstate )
 
+    # Lazy loading, get service proxy only when required
     def _getServiceProxy( self ):
         if hasattr( self, '_serviceProxy' ):
             return self._serviceProxy
