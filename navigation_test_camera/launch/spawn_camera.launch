@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <launch>
   <!-- send table urdf to param server -->
   <param name="camera_description" command="$(find xacro)/xacro.py $( find navigation_test_camera )/camera.urdf.xacro" />
