@@ -11,5 +11,12 @@
 
   <depend package="navigation_test_helper"/>
   <depend package="rostest" />
+  <depend package="cob_script_server" /> <!-- rosbag -->
+  <depend package="kinematics_msgs" /><!-- rosbag -->
+  <depend package="std_msgs" /><!-- rosbag -->
+  <depend package="sensor_msgs" /><!-- rosbag -->
+  <depend package="move_base_msgs" /><!-- rosbag -->
+  <depend package="visualization_msgs" /><!-- rosbag -->
+  <depend package="nav_msgs" /><!-- rosbag -->
 
 </package>
