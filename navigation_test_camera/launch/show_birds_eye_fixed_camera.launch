@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="zOffset"    default="7" />
+    <arg name="zOffset"    default="15" />
     <arg name="updateRate" default="0.1" />
 
     <include file="$( find navigation_test_camera)/launch/spawn_camera.launch" />

@@ -4,7 +4,7 @@ roslib.load_manifest( 'navigation_test_camera' )
 
 import rospy
 import tf
-import time, threading
+import time, threading, math
 import gazebo_msgs.msg
 from navigation_test_helper.positionResolver import PositionResolver
 from navigation_test_helper.gazeboHelper import ModelStateSetter
@@ -21,7 +21,8 @@ class CameraUpdater( threading.Thread ):
         modelStateSetter = ModelStateSetter()
         while self._active and not rospy.is_shutdown():
             position = positionResolver.getPosition()
-            modelStateSetter.set( 'camera_model', position, z=self._zOffset )
+            modelStateSetter.set( 'camera_model', position, z=self._zOffset,
+                    P=math.pi/2 )
             time.sleep( self._updateRate )
 
     def stop( self ):

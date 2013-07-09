@@ -28,7 +28,7 @@ def resetSimulation():
 
 
 class ModelStateSetter( object ):
-    def set( self, modelName, position, z ):
+    def set( self, modelName, position, z=0, R=0, P=0 ):
         service = self._getServiceProxy()
 
         modelState = gazebo_msgs.srv.SetModelState()
@@ -38,7 +38,7 @@ class ModelStateSetter( object ):
         start_pose.position.y = position.y
         start_pose.position.z = z
 
-        quaternion = quaternion_from_euler( 0, 0, position.theta )
+        quaternion = quaternion_from_euler( R, P, position.theta )
         start_pose.orientation.x = quaternion[ 0 ]
         start_pose.orientation.y = quaternion[ 1 ]
         start_pose.orientation.z = quaternion[ 2 ]
