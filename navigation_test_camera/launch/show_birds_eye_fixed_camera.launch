@@ -6,7 +6,7 @@
     <include file="$( find navigation_test_camera)/launch/spawn_camera.launch" />
 
     <node name="navigation_test_camera_top" pkg="image_view" type="image_view" output="screen">
-        <remap from="image" to="/my_stereo/left/image_raw" />
+        <remap from="image" to="/top_camera/image_raw" />
     </node>
 
     <node name="navigation_test_camera_keep_track" pkg="navigation_test_camera" type="positionUpdater.py" output="screen">

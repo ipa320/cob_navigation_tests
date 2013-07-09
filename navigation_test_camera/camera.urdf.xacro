@@ -5,57 +5,70 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
        xmlns:xacro="http://ros.org/wiki/xacro">
 
-	<property name="M_PI" value="3.1415926535897931" />
-    <include filename="$(find navigation_test_camera)/prosilica.urdf.xacro" />
+	<property name="M_PI"        value="3.1415926535897931" />
+	<property name="ros_topic"   value="top_camera" />
+	<property name="name"        value="top_camera" />
+	<property name="update_rate" value="10" />
+    <!--<include filename="$(find navigation_test_camera)/prosilica.urdf.xacro" />-->
 
-    <material name="IPA/Black">
-        <color rgba="${255/255} ${108/255} ${10/255} 1.0"/>
-    </material>
-    <material name="Gazebo/LightWood">
-        <color rgba="${255/255} ${108/255} ${10/255} 1.0"/>
-    </material>
-    <material name="IPA/LightGrey">
-        <color rgba="${255/255} ${108/255} ${10/255} 1.0"/>
-    </material>
+    <link name="${name}_link">
+        <inertial>
+            <mass value="0.1"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001" />
+        </inertial>
 
-	<xacro:macro name="cob_head_v3" params="name">
+        <visual>
+            <geometry>
+                <box size="1 1 1"/>
+            </geometry>
+        </visual>
 
-		<!-- joint between torso_upper_neck_tilt_link and head_axis_link -->
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <box size="1 1 1"/>
+            </geometry>
+        </collision>
+    </link>
+    <gazebo reference="${name}_link">
+        <turnGravityOff>true</turnGravityOff>
+        <material>Gazebo/Wood</material>
 
-		<link name="${name}_axis_link">
-			<inertial>
-				<origin xyz="1 1 4" rpy="0 0 0"/>
-				<mass value="0.1"/>
-				<inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001" />
-			</inertial>
+        <sensor type="depth" name="${name}_sensor">
+            <always_on>true</always_on>
+            <update_rate>10.0</update_rate>
+            <camera>
+                <horizontal_fov>0.58</horizontal_fov>	<!--opening angle of Fujinon HF9HA-1B-->
+                <image>
+                    <format>R8G8B8</format>
+                    <width>1360</width>
+                    <height>1024</height>
+                </image>
+                <clip>
+                    <near>0.1</near>
+                    <far>100</far>
+                </clip>
+            </camera>
+            <plugin name="${name}_controller" filename="libgazebo_ros_prosilica.so">
+                <alwaysOn>true</alwaysOn>
+                <updateRate>10.0</updateRate>
+                <topicName>${ros_topic}_image_data</topicName>
+                <imageTopicName>/${ros_topic}/image_raw</imageTopicName>
+                <cameraInfoTopicName>/${ros_topic}/camera_info</cameraInfoTopicName>
+                <pollServiceName>/${name}/request_image</pollServiceName>
+                <frameName>/${name}_link</frameName>
+                <CxPrime>697.69</CxPrime>
+                <Cx>697.69</Cx>
+                <Cy>530.51</Cy>
+                <focal_length>1450</focal_length>   <!--image_width / (2*tan(hfov_radian /2))-->
+                <distortion_k1>0.00000001</distortion_k1>
+                <distortion_k2>0.00000001</distortion_k2>
+                <distortion_k3>0.00000001</distortion_k3>
+                <distortion_t1>0.00000001</distortion_t1>
+                <distortion_t2>0.00000001</distortion_t2>
+            </plugin>
+        </sensor>
+    </gazebo>
 
-			<visual>
-				<origin xyz="0 0 6" rpy="0 0 0" />
-				<geometry>
-					<box size="0.01 0.01 0.01"/>
-				</geometry>
-                <material name="Gazebo/LightWood" />
-			</visual>
-
-			<collision>
-				<origin xyz="0 0 6" rpy="0 0 0" />
-				<geometry>
-					<box size="0.01 0.01 0.01"/>
-				</geometry>
-			</collision>
-		</link>
-
-		<!-- left camera -->
-		<xacro:navigation_test_prosilica_gazebo name="${name}_color_camera_l" ros_topic="my_stereo/left" parent="${name}_axis_link">
-            <origin xyz="0 0 15" rpy="${M_PI} 0 0" />
-		</xacro:navigation_test_prosilica_gazebo>
-
-		<!-- extensions -->
-		<gazebo reference="${name}_axis_link">
-			<material>IPA/Black</material>
-			<turnGravityOff>false</turnGravityOff>
-		</gazebo> 
-	</xacro:macro>
-    <xacro:cob_head_v3 name="head"></xacro:cob_head_v3>
 
 </robot>

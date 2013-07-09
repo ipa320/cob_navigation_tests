@@ -4,6 +4,6 @@
   <param name="camera_description" command="$(find xacro)/xacro.py $( find navigation_test_camera )/camera.urdf.xacro" />
 
   <!-- push table_description to factory and spawn robot in gazebo -->
-  <node name="spawn_camera" pkg="gazebo" type="spawn_model" args="-urdf -param camera_description -model camera_model" respawn="false" output="screen" />
+  <node name="spawn_camera" pkg="gazebo" type="spawn_model" args="-urdf -param camera_description -z 15 -P 1.57 -model camera_model" respawn="false" output="screen" />
 </launch>
 
