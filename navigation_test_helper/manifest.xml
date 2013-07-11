@@ -9,6 +9,7 @@
 
   <depend package="rospy" />
   <depend package="actionlib" />
+  <depend package="actionlib_msgs" />
   <depend package="move_base_msgs" />
   <depend package="tf" />
   <depend package="gazebo"/>
