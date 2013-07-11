@@ -9,7 +9,6 @@ Navigation Test
 - Distinguish between failure and error in rostset
 - Move generic launchfile settings into seperate yaml file. 
   Eventually only the four arguments robot, navigation, scenario_name, yaml_config are passed to navigation_test_skeleton
-- Transform navigation_test into an anonymous node
 - Fix application developer view in component_catalogue
 - Enhance bag_recorder to ignore non-published topics
 
