@@ -6,7 +6,7 @@ Navigation Test
 #### High Priority
 - Include video and map topics into bag file
 - ~~Distinguish between navigation component results (aborted and other)~~
-- Distinguish between failure and error in rostset
+- ~~Distinguish between failure and error in rostset~~
 - Move generic launchfile settings into seperate yaml file. 
   Eventually only the four arguments robot, navigation, scenario_name, yaml_config are passed to navigation_test_skeleton
 - Fix application developer view in component_catalogue

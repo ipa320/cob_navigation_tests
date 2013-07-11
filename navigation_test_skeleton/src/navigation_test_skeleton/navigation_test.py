@@ -78,6 +78,7 @@ class TestNavigation( unittest.TestCase ):
         self._metricsObserver.start()
         positionResolver = self.positionResolver
         tolerance        = self.tolerance
+        failureMsg       = ''
 
         try:
             i = 0
@@ -98,24 +99,27 @@ class TestNavigation( unittest.TestCase ):
                 i += 1
         
         except PositionMissedException, e:
-            rospy.loginfo( "The navigation missed the target. Exiting." )
+            failureMsg = "The navigation missed the target. Exiting."
             self._navigationStatusPublisher.missed()
-            raise e
+            failure = True
 
         except NavigationFailedException, e:
             errorCode = e.errorCode
-            rospy.loginfo( "The navigation failed: %s. Exiting." % errorCode )
+            failureMsg = "The navigation failed: %s. Exiting." % errorCode
             self._navigationStatusPublisher.failed( errorCode )
-            raise e
+            failure = True
 
         except TimeoutException, e:
             timeout = self._watchDog.timeoutInS
-            rospy.loginfo( "The test timed out after %ss" % timeout )
+            failureMsg = "The test timed out after %ss" % timeout
             self._navigationStatusPublisher.timedout()
-            raise e
+            failure = True
 
         finally:
             self._terminate()
+
+        if failureMsg:
+            self.fail( failureMsg )
 
     def _terminate( self ):
         self._navigationStatusPublisher.finished()
