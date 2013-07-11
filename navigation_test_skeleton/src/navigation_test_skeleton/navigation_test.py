@@ -14,7 +14,7 @@ from navigation_test_helper.metricsObserverTF import MetricsObserverTF
 from navigation_test_helper.tolerance         import Tolerance
 from navigation_test_helper.position          import Position
 from navigation_test_helper.navigator         import Navigator
-from navigation_test_helper.navigator         import NavigationResignedException
+from navigation_test_helper.navigator         import NavigationFailedException
 from navigation_test_helper.srv               import SetupRobotService
 
 
@@ -102,9 +102,10 @@ class TestNavigation( unittest.TestCase ):
             self._navigationStatusPublisher.missed()
             raise e
 
-        except NavigationResignedException, e:
-            rospy.loginfo( "The navigation resigned. Exiting." )
-            self._navigationStatusPublisher.resigned()
+        except NavigationFailedException, e:
+            errorCode = e.errorCode
+            rospy.loginfo( "The navigation failed: %s. Exiting." % errorCode )
+            self._navigationStatusPublisher.failed( errorCode )
             raise e
 
         except TimeoutException, e:

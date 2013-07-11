@@ -27,7 +27,8 @@
         'std.collisions': 'N/A',
         indexesByCid: {},
         errorsCombined: 0,
-        errorsResigned: 0,
+        errorsAborted: 0,
+        errorsFailed: 0,
         errorsMissed: 0,
         errorsTimedout: 0
       },
@@ -124,9 +125,6 @@
         this.get('tests').forEach(function(model) {
           var value;
 
-          if (model.get('error')) {
-            return;
-          }
           value = model.get(attr);
           if ((value != null) && __indexOf.call(uniqueValues, value) < 0) {
             return uniqueValues.push(value);
@@ -161,30 +159,39 @@
         return this.set('mean.' + attr, num > 0 ? sum / num : 'N/A');
       },
       updateErrorCount: function() {
-        var erroneous, errorsCombined, errorsMissed, errorsResigned, errorsTimedout;
+        var erroneous, errorKeys, errors, errorsCombined, key, _i, _j, _len, _len1, _results;
 
         errorsCombined = 0;
-        errorsResigned = 0;
-        errorsMissed = 0;
-        errorsTimedout = 0;
+        errorKeys = ['Aborted', 'Failed', 'Missed', 'Timedout'];
+        errors = {};
+        for (_i = 0, _len = errorKeys.length; _i < _len; _i++) {
+          key = errorKeys[_i];
+          errors[key] = 0;
+        }
         erroneous = this.get('tests').forEach(function(model) {
+          var _j, _len1, _results;
+
           if (!model.get('error')) {
             return;
           }
           errorsCombined++;
-          switch (model.get('error')) {
-            case 'resigned':
-              return errorsResigned++;
-            case 'missed':
-              return errorsMissed++;
-            case 'timedout':
-              return errorsTimedout++;
+          _results = [];
+          for (_j = 0, _len1 = errorKeys.length; _j < _len1; _j++) {
+            key = errorKeys[_j];
+            if (key.lower() === model.get('error').lower()) {
+              _results.push(errors[key]++);
+            } else {
+              _results.push(void 0);
+            }
           }
+          return _results;
         });
-        this.set('errorsCombined', errorsCombined);
-        this.set('errorsResigned', errorsResigned);
-        this.set('errorsMissed', errorsMissed);
-        return this.set('errorsTimedout', errorsTimedout);
+        _results = [];
+        for (_j = 0, _len1 = errorKeys.length; _j < _len1; _j++) {
+          key = errorKeys[_j];
+          _results.push(this.set('errors' + key, errors[key]));
+        }
+        return _results;
       },
       updateStdDevAttribute: function(attr) {
         var mean, num, sum,

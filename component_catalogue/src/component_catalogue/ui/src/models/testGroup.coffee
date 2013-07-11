@@ -21,7 +21,8 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       'std.collisions':  'N/A'
       indexesByCid:      {}
       errorsCombined:    0
-      errorsResigned:    0
+      errorsAborted:     0
+      errorsFailed:      0
       errorsMissed:      0
       errorsTimedout:    0
 
@@ -109,22 +110,19 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       
     updateErrorCount: ->
       errorsCombined = 0
-      errorsResigned = 0
-      errorsMissed   = 0
-      errorsTimedout = 0
+      errorKeys     = [ 'Aborted', 'Failed', 'Missed', 'Timedout' ]
+      errors        = {}
+      errors[ key ] = 0 for key in errorKeys
 
       erroneous = @get( 'tests' ).forEach ( model )->
         return if not model.get 'error'
         errorsCombined++
-        switch model.get 'error'
-          when 'resigned' then errorsResigned++
-          when 'missed'   then errorsMissed++
-          when 'timedout' then errorsTimedout++
+        for key in errorKeys
+          if key.lower() == model.get( 'error' ).lower()
+            errors[ key ]++
 
-      @set 'errorsCombined', errorsCombined
-      @set 'errorsResigned', errorsResigned
-      @set 'errorsMissed',   errorsMissed
-      @set 'errorsTimedout', errorsTimedout
+      for key in errorKeys
+        @set 'errors' + key, errors[ key ]
 
 
     updateStdDevAttribute: ( attr )->

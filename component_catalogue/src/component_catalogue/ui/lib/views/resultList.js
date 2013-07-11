@@ -15,7 +15,8 @@
         columns: {
           'count': ['#', 'Total number of tests'],
           'errorsCombined': ['#ERR', 'Total number of all errors combined'],
-          'errorsResigned': ['#RSGND', 'Error: Numer of times the navigation resigned, ' + 'i.e. simple_action_client.wait_for_result returned false'],
+          'errorsAborted': ['#ABRTD', 'Error: Numer of times the navigation aborted, ' + 'i.e. simple_action_client.get_state() returned ABORTED'],
+          'errorsFailed': ['#FLD', 'Error: Numer of times the navigation failed, ' + 'i.e. simple_action_client.get_state() did neither return SUCCEEDED nor ABORTED'],
           'errorsMissed': ['#MISS', 'Error: Number of time the navigation returned success ' + 'but the actual position did not match the goal position'],
           'errorsTimedout': ['#TO', 'Error: Number of times the navigation timed out'],
           'mean.collisions': ['#Col', 'Number of collisions'],
@@ -39,7 +40,6 @@
           data: data
         }));
         this.$el.html(table);
-        console.log(this.$el.find('th div').size(), $.fn.tipTip);
         this.$el.find('th div').tipTip();
         return this;
       },

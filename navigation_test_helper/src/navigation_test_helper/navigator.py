@@ -2,12 +2,15 @@ import actionlib
 import rospy
 import geometry_msgs.msg
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from actionlib_msgs.msg import GoalStatus
 from tf.transformations import quaternion_from_euler
 import threading
 
-class NavigationResignedException( Exception ):
-    def __init__( self, goal ):
-        Exception.__init__( self, 'Navigation resigned.' )
+class NavigationFailedException( Exception ):
+    def __init__( self, errorCode ):
+        self.errorCode = errorCode
+        msg = 'Navigation failed to navigate. ErrorCode: %s' % errorCode
+        Exception.__init__( self, msg )
 
 class GoalResultWaiter( threading.Thread ):
     def __init__( self, move_client, timeoutInS ):
@@ -16,6 +19,7 @@ class GoalResultWaiter( threading.Thread ):
         self._timeoutInS  = timeoutInS
         self._lock        = threading.Lock()
         self._success     = False
+        self._errorCode   = ''
         self._started     = False
         self._finished    = False
 
@@ -24,10 +28,18 @@ class GoalResultWaiter( threading.Thread ):
             self._started = True
 
         timeoutDuration = rospy.Duration( self._timeoutInS )
-        success = self._move_client.wait_for_result( timeoutDuration )
+        self._move_client.wait_for_result( timeoutDuration )
+        state = self._move_client.get_state()
 
+        errorCodes = {
+                GoalStatus.SUCCEEDED: '',
+                GoalStatus.ABORTED:   'aborted',
+                'default':            'failed'
+        }
         with self._lock:
-            self._success  = success
+            errorKey = state if state in errorCodes else 'default'
+            self._success   = state == GoalStatus.SUCCEEDED
+            self._errorCode = errorCodes[ errorKey ]
             self._finished = True
 
     def block( self ):
@@ -40,7 +52,7 @@ class GoalResultWaiter( threading.Thread ):
 
     def assertSucceeded( self ):
         if not self.wasSuccessfull():
-            raise NavigationResignedException()
+            raise NavigationFailedException( self._errorCode )
 
     def hasFinished( self ):
         with self._lock:

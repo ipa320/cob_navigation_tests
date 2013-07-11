@@ -13,8 +13,10 @@ define [ 'backbone', 'jquery-tipTip', 'templates/resultList' ], ( Backbone, tipt
       columns:
         'count':           [ '#',          'Total number of tests' ]
         'errorsCombined':  [ '#ERR',       'Total number of all errors combined' ]
-        'errorsResigned':  [ '#RSGND',     'Error: Numer of times the navigation resigned, ' +
-          'i.e. simple_action_client.wait_for_result returned false' ]
+        'errorsAborted':   [ '#ABRTD',     'Error: Numer of times the navigation aborted, ' +
+          'i.e. simple_action_client.get_state() returned ABORTED' ]
+        'errorsFailed':    [ '#FLD',       'Error: Numer of times the navigation failed, ' +
+          'i.e. simple_action_client.get_state() did neither return SUCCEEDED nor ABORTED' ]
         'errorsMissed':    [ '#MISS',      'Error: Number of time the navigation returned success ' +
           'but the actual position did not match the goal position' ]
         'errorsTimedout':  [ '#TO',        'Error: Number of times the navigation timed out' ]
@@ -34,7 +36,6 @@ define [ 'backbone', 'jquery-tipTip', 'templates/resultList' ], ( Backbone, tipt
         columns: @options.columns
         data: data
       @$el.html table
-      console.log @$el.find( 'th div' ).size(), $.fn.tipTip
       @$el.find( 'th div' ).tipTip()
       #table.dataTable().appendTo( this.$el )
       this
