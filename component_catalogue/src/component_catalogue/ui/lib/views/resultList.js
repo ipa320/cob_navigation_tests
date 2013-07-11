@@ -40,7 +40,6 @@
           data: data
         }));
         this.$el.html(table);
-        console.log(this.$el.find('th div').size(), $.fn.tipTip);
         this.$el.find('th div').tipTip();
         return this;
       },

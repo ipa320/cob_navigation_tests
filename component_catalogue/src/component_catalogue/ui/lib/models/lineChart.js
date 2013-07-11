@@ -56,7 +56,6 @@
         }
         data = testGroup != null ? testGroup.getDetailedDataPointsForKey(this.get('key')) : void 0;
         this.formatErrorPoints(data);
-        console.log(data);
         return {
           name: nameChunks.join(' / '),
           id: testGroup.id,
@@ -74,7 +73,6 @@
           }
           previousY = +((_ref = data[i - 1]) != null ? _ref.y : void 0) || 0;
           next = this.findNextValue(data, i);
-          console.log('search next value', i, next, previousY);
           if (next) {
             current.y = (next.y - previousY) / (next.index - i + 1) + previousY;
           } else {

@@ -36,7 +36,6 @@ define [ 'backbone', 'jquery-tipTip', 'templates/resultList' ], ( Backbone, tipt
         columns: @options.columns
         data: data
       @$el.html table
-      console.log @$el.find( 'th div' ).size(), $.fn.tipTip
       @$el.find( 'th div' ).tipTip()
       #table.dataTable().appendTo( this.$el )
       this

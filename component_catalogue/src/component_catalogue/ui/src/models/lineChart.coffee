@@ -45,7 +45,6 @@ define [ 'backbone', 'models/noErroneousFilter'  ], ( Backbone, NoErroneousFilte
 
       data = testGroup?.getDetailedDataPointsForKey( @get 'key' )
       this.formatErrorPoints data
-      console.log( data )
       name:  nameChunks.join ' / '
       id:    testGroup.id
       data:  data
@@ -56,7 +55,6 @@ define [ 'backbone', 'models/noErroneousFilter'  ], ( Backbone, NoErroneousFilte
 
         previousY = +data[ i - 1 ]?.y || 0
         next      = @findNextValue data, i
-        console.log 'search next value', i, next, previousY
         if next
           current.y = ( next.y - previousY ) / ( next.index - i + 1 ) + previousY
         else
