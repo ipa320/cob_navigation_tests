@@ -12,7 +12,7 @@
         filter: null
       },
       initialize: function() {
-        this;        return this.on('change:testGroups', this.testGroupsChanged);
+        return this.on('change:testGroups', this.testGroupsChanged);
       },
       testGroupsChanged: function() {
         var testGroup, _i, _len, _ref;
@@ -57,8 +57,8 @@
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           testGroup = _ref[_i];
           data = [];
-          mean = testGroup.get('mean.' + key);
-          stdDev = testGroup.get('stdDev.' + key);
+          mean = (+testGroup.get('mean.' + key)) || 0;
+          stdDev = (+testGroup.get('stdDev.' + key)) || 0;
           data.push([mean - stdDev, mean + stdDev]);
           series.push({
             name: testGroup.get(this.get('variableKey')),

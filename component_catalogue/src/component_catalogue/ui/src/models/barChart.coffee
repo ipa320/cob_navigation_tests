@@ -11,7 +11,6 @@ define [ 'backbone'  ], ( Backbone )->
       filter:          null
 
     initialize: ->
-      @
       @on  'change:testGroups', @testGroupsChanged
       
     testGroupsChanged: ->
@@ -37,13 +36,13 @@ define [ 'backbone'  ], ( Backbone )->
       key    = @get 'key'
       for testGroup in @get 'testGroups'
         data = []
-        mean   = testGroup.get 'mean.'   + key
-        stdDev = testGroup.get 'stdDev.' + key
+        mean   = ( +testGroup.get 'mean.'   + key ) || 0
+        stdDev = ( +testGroup.get 'stdDev.' + key ) || 0
         data.push [ mean - stdDev, mean + stdDev ]
 
         series.push
           name:  testGroup.get @get 'variableKey'
           id:    testGroup.id
           data:  data
-
+          
       series

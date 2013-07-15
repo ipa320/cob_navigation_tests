@@ -178,7 +178,7 @@
           _results = [];
           for (_j = 0, _len1 = errorKeys.length; _j < _len1; _j++) {
             key = errorKeys[_j];
-            if (key.lower() === model.get('error').lower()) {
+            if (key.toLowerCase() === model.get('error').toLowerCase()) {
               _results.push(errors[key]++);
             } else {
               _results.push(void 0);

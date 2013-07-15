@@ -118,7 +118,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
         return if not model.get 'error'
         errorsCombined++
         for key in errorKeys
-          if key.lower() == model.get( 'error' ).lower()
+          if key.toLowerCase() == model.get( 'error' ).toLowerCase()
             errors[ key ]++
 
       for key in errorKeys
