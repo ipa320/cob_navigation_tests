@@ -7,7 +7,7 @@ def getByUri( uri ):
         return LocalCopyHandler( uri )
 
 class CopyException( Exception ):
-    def __init__( self, source, target, err ):
+    def __init__( self, source, target, err='' ):
         msg = 'Could not copy file %s to %s' % ( source, target )
         if err: msg += 'Err:\n%s' % err
         Exception.__init__( self, msg )
@@ -56,7 +56,7 @@ class SSHCopyHandler():
         args = self._scpCommandArgs( localFilepath )
         success, stdout = self._execute( args )
         if not success:
-            target= "%s@%s:%s/" % ( self.username, self.host, self.path )
+            target = "%s@%s:%s/" % ( self.username, self.host, self.path )
             raise CopyException( localFilepath, target )
 
     def _scpCommandArgs( self, localFilepath ):
