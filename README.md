@@ -10,7 +10,7 @@ Navigation Test
 - Move generic launchfile settings into seperate yaml file. 
   Eventually only the four arguments robot, navigation, scenario_name, yaml_config are passed to navigation_test_skeleton
 - Fix application developer view in component_catalogue
-- Enhance bag_recorder to ignore non-published topics
+- ~~Enhance bag_recorder to ignore non-published topics~~
 
 ##### Mid Priority
 - Update component catalogue filter to display the last x results globally ( not for each series )

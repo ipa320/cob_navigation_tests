@@ -9,15 +9,18 @@
   <review status="unreviewed" notes=""/>
   <url></url>
 
+  <depend package="rospy" />
   <depend package="navigation_test_helper"/>
   <depend package="rostest" />
   <depend package="navigation_test_camera" />
-  <depend package="cob_script_server" /> <!-- rosbag -->
-  <depend package="kinematics_msgs" /><!-- rosbag -->
-  <depend package="std_msgs" /><!-- rosbag -->
-  <depend package="sensor_msgs" /><!-- rosbag -->
-  <depend package="move_base_msgs" /><!-- rosbag -->
-  <depend package="visualization_msgs" /><!-- rosbag -->
-  <depend package="nav_msgs" /><!-- rosbag -->
+
+  <!-- rosbag -->
+  <depend package="cob_script_server" /> <!-- Trigger -->
+  <depend package="tf" />
+  <depend package="rostopic" />
+  <depend package="rosbag" />
+
+  <!-- bag_record.yaml -->
+  <depend package="sensor_msgs" />
 
 </package>
