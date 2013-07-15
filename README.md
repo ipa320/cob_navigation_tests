@@ -15,7 +15,7 @@ Navigation Test
 ##### Mid Priority
 - ~~Update component catalogue filter to display the last x results globally ( not for each series )~~
 - In case of an error, display the actual metrics of the test ( distance, duration, rotation )
-- Make navigation_test_analysis a daemon waiting for new bag files
+- ~~Make navigation_test_analysis a daemon waiting for new bag files~~
 - Adjustable video frequency
 - Record video file in navigation_test_analysis and upload to seperate fileserver
 - Create navigation_test_video_publisher that serves as a gateway between fileserver and webserver
