@@ -4,7 +4,7 @@ Navigation Test
 ## Todo
 
 #### High Priority
-- Include video and map topics into bag file
+- Include ~~video and~~ map topics into bag file
 - Move generic launchfile settings into seperate yaml file. 
   Eventually only the four arguments robot, navigation, scenario_name, yaml_config are passed to navigation_test_skeleton
 
