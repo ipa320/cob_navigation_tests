@@ -2,19 +2,21 @@
 (function() {
   define(['collections/textFilter', 'collections/tests', 'views/resultList', 'views/devView', 'models/testGroup', 'collections/testGroups', 'models/dateFilter', 'models/numberFilter', 'views/filterView'], function(TextFilter, Tests, ResultList, DevView, TestGroup, TestGroups, DateFilter, NumberFilter, FilterView) {
     return function(testData) {
-      var dateFilter, filters, groupedTests, numberFilter, renderDevView, renderFilterView, renderResultListView, resultListView, testGroups, tests, textFilter;
+      var dateFilter, filters, groupedTests, numberFilter, renderDevView, renderFilterView, renderResultListView, resultListView, testCollection, testGroups, tests, textFilter;
 
-      tests = new TestGroup({
-        tests: new Tests(testData)
-      });
+      testCollection = new Tests(testData);
       textFilter = new TextFilter;
       dateFilter = new DateFilter;
-      numberFilter = new NumberFilter;
+      numberFilter = new NumberFilter({
+        tests: testCollection
+      });
       filters = [textFilter, dateFilter, numberFilter];
-      groupedTests = tests.groupBy(['robot', 'navigation', 'scenario']);
-      testGroups = new TestGroups(groupedTests, {
+      tests = new TestGroup({
+        tests: testCollection,
         filters: filters
       });
+      groupedTests = tests.groupBy(['robot', 'navigation', 'scenario']);
+      testGroups = new TestGroups(groupedTests);
       resultListView = null;
       renderResultListView = function() {
         resultListView = new ResultList({

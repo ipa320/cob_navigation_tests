@@ -4,7 +4,7 @@ define [ 'backbone' ], ( Backbone )->
       start: ''
       end:   ''
 
-    complies: ( number, test )->
+    complies: ( test )->
       date  = test.get 'date'
       start = @get 'start'
       end   = @get 'end'

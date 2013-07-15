@@ -4,7 +4,4 @@ define [ 'backbone', 'models/testGroup' ], ( Backbone, TestGroup )->
 
     constructor: ( models, options )->
       Backbone.Collection.apply @, arguments
-
-      for model in @models
-        model.set 'filters', options.filters
       this

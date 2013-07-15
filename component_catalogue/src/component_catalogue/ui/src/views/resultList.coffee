@@ -41,8 +41,8 @@ define [ 'backbone', 'jquery-tipTip', 'templates/resultList' ], ( Backbone, tipt
       this
 
     initialize: ->
-      @listenTo @options.testGroups, 'change:enabled',  @enableChanged.bind @
-      @listenTo @options.testGroups, 'change:count',    @refreshTable.bind @
+      @listenTo @options.testGroups, 'change:enabled', @enableChanged
+      @listenTo @options.testGroups, 'change:count',   @refreshTable
       @setSelectionMode @options.selectionMode
 
     refreshTable: ->

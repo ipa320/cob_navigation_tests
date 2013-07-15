@@ -13,7 +13,7 @@ Navigation Test
 - ~~Enhance bag_recorder to ignore non-published topics~~
 
 ##### Mid Priority
-- Update component catalogue filter to display the last x results globally ( not for each series )
+- ~~Update component catalogue filter to display the last x results globally ( not for each series )~~
 - In case of an error, display the actual metrics of the test ( distance, duration, rotation )
 - Make navigation_test_analysis a daemon waiting for new bag files
 - Adjustable video frequency

@@ -31,34 +31,6 @@
           return new Tests(models);
         });
       },
-      filter: function(filters) {
-        var compliedCount, filtered, model, _i, _len, _ref;
-
-        filtered = new Tests;
-        compliedCount = 0;
-        _ref = this.models;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          model = _ref[_i];
-          if (this.allFiltersComply(compliedCount, model, filters)) {
-            filtered.add(model, {
-              silent: true
-            });
-            compliedCount++;
-          }
-        }
-        return filtered;
-      },
-      allFiltersComply: function(number, model, filters) {
-        var filter, _i, _len;
-
-        for (_i = 0, _len = filters.length; _i < _len; _i++) {
-          filter = filters[_i];
-          if (!filter.complies(number, model)) {
-            return false;
-          }
-        }
-        return true;
-      },
       getIndexesByCid: function() {
         var index, indexesByCid, model, _ref;
 
@@ -69,6 +41,17 @@
           indexesByCid[model.cid] = index;
         }
         return indexesByCid;
+      },
+      applyFilters: function(filters) {
+        var model, _i, _len, _ref, _results;
+
+        _ref = this.models;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          model = _ref[_i];
+          _results.push(model.applyFilters(filters));
+        }
+        return _results;
       }
     });
   });

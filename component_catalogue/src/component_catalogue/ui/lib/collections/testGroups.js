@@ -4,14 +4,7 @@
     return Backbone.Collection.extend({
       model: TestGroup,
       constructor: function(models, options) {
-        var model, _i, _len, _ref;
-
         Backbone.Collection.apply(this, arguments);
-        _ref = this.models;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          model = _ref[_i];
-          model.set('filters', options.filters);
-        }
         return this;
       }
     });

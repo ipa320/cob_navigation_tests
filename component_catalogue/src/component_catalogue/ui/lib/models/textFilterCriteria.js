@@ -8,7 +8,7 @@
         value: '',
         link: ''
       },
-      complies: function(number, test) {
+      complies: function(test) {
         var comparator, fieldsOfInterest;
 
         if (!this.get('value')) {
