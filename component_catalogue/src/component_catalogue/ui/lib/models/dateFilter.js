@@ -6,7 +6,7 @@
         start: '',
         end: ''
       },
-      complies: function(number, test) {
+      complies: function(test) {
         var date, end, start;
 
         date = test.get('date');

@@ -63,55 +63,34 @@ roslib.load_manifest(PKG)
 import rospy
 
 import rosbag
-from std_msgs.msg import Int32, String
-
-import tf
-from tf.msg import *
+from tf.msg             import *
 from tf.transformations import euler_from_quaternion
-
-from simple_script_server import *
-sss = simple_script_server()
-
-from kinematics_msgs.srv import *
-from std_msgs.msg import *
-from sensor_msgs.msg import *
-from move_base_msgs.msg import *
-from visualization_msgs.msg import *
-
-import math
 import rostopic
-import time
-
-import os
-import sys, subprocess
-
-import joint_states_aggregator
-import tf_aggregator
-
 import global_lock
 
 class record_topic():
 
-    def __init__(self, topic_name, bagfile, continuous=False):
-          # this gets the topics type using the roslib
-        the_type = rostopic.get_topic_type(topic_name, blocking=True)[0]
+    def __init__(self, topic_info, bagfile, continuous=False):
+        self.msg             = None
+        self.topic_name      = topic_info[ 'topic' ]
+        self.topic_type_info = topic_info[ 'type' ]
+        self.continuous      = continuous
+        self.bagfile         = bagfile
 
-        the_type = the_type.split("/")
-        the_type[0] += ".msg"
-        
-        # this imports the necessary modules and instantiates the necessary object
-        mod = __import__(the_type[0], fromlist=[the_type[1]])
-        cls = getattr( mod , the_type[1] )
-        
-        self.msg = None
-        self.topic_name = topic_name 
-        self.topic_type = cls
-        self.continuous = continuous
-        self.bagfile = bagfile
-
-        # this creates the subscriber for the specific topic
-        rospy.Subscriber(self.topic_name, self.topic_type, self.callback)
+        self._setupSubscriber()
         global_lock.locked = False
+        
+    def _setupSubscriber( self ):
+        parts       = self.topic_type_info.split( '/' )
+        name        = parts.pop()
+        module_name = '.'.join( parts ) + '.msg'
+
+        # Import the topic type and setup the topic
+        module  = __import__( module_name, fromlist=[ name ])
+        self.topic_type   = getattr( module, name )
+        rospy.Subscriber( self.topic_name, self.topic_type, self.callback )
+
+        rospy.loginfo( 'Recording topic "%s"' % self.topic_name )
         
     def lock(self):
         global_lock.locked = True
@@ -134,21 +113,3 @@ class record_topic():
                         self.unlock()
                 except KeyError, e:
                     rospy.loginfo(self.msg)
-        
-if __name__ == "__main__":
-
-	rospy.init_node('record_topic')
-	topics_list = ["/tf", "/collision_velocity_filter/velocity_limited_marker", "/joint_states"]
-	topics_c = []
-	
-	for top in topics_list:
-	    topic_r = record_topic(top)
-	    
-	    topics_c.append(topic_r)
-	
-	while not rospy.is_shutdown():
-	
-	    for tops_c in topics_c:
-	        rospy.loginfo(tops_c.msg)
-	    rospy.sleep(2)
-	

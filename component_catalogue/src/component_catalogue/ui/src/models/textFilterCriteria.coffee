@@ -6,7 +6,7 @@ define [ 'backbone' ], ( Backbone )->
       value: ''
       link:  ''
 
-    complies: ( number, test )->
+    complies: ( test )->
       return null if !@get 'value'
       fieldsOfInterest = @getFieldsOfInterest test
       comparator = do @getComparator

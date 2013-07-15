@@ -1,14 +1,15 @@
 define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'views/devView', 'models/testGroup', 'collections/testGroups',  'models/dateFilter', 'models/numberFilter', 'views/filterView' ], ( TextFilter, Tests, ResultList, DevView, TestGroup, TestGroups, DateFilter, NumberFilter, FilterView )->
 
   ( testData )->
-    tests = new TestGroup tests: new Tests testData
+    testCollection = new Tests( testData ) # find better names for testCollection and tests
     textFilter   = new TextFilter
     dateFilter   = new DateFilter
-    numberFilter = new NumberFilter
+    numberFilter = new NumberFilter tests: testCollection
     filters = [ textFilter, dateFilter, numberFilter ]
 
+    tests = new TestGroup tests: testCollection, filters: filters
     groupedTests = tests.groupBy [ 'robot', 'navigation', 'scenario' ]
-    testGroups = new TestGroups groupedTests, filters: filters
+    testGroups   = new TestGroups groupedTests
 
     resultListView = null
 

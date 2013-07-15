@@ -44,8 +44,8 @@
         return this;
       },
       initialize: function() {
-        this.listenTo(this.options.testGroups, 'change:enabled', this.enableChanged.bind(this));
-        this.listenTo(this.options.testGroups, 'change:count', this.refreshTable.bind(this));
+        this.listenTo(this.options.testGroups, 'change:enabled', this.enableChanged);
+        this.listenTo(this.options.testGroups, 'change:count', this.refreshTable);
         return this.setSelectionMode(this.options.selectionMode);
       },
       refreshTable: function() {

@@ -60,118 +60,22 @@
 import roslib
 PKG = "navigation_test_skeleton"
 roslib.load_manifest(PKG)
-import rospy
-
-import rosbag
-from std_msgs.msg import Int32, String
+import rospy, rosbag, rostopic
 
 import tf
-from tf.msg import *
-from tf.transformations import euler_from_quaternion
+import global_lock, record_topic
 
-from simple_script_server import *
-sss = simple_script_server()
-
-from kinematics_msgs.srv import *
-from std_msgs.msg import *
-from sensor_msgs.msg import *
-from move_base_msgs.msg import *
-from visualization_msgs.msg import *
-
-import global_lock
-import rostopic, record_topic
-import math, uuid, re, tempfile, time, os, sys, subprocess, itertools, shutil
-
-class CopyException( Exception ):
-    def __init__( self, source, target, err ):
-        msg = 'Could not copy file %s to %s' % ( source, target )
-        if err: msg += 'Err:\n%s' % err
-        Exception.__init__( self, msg )
-
-class SSHCopier():
-    pattern = '([^@]+)@([^:]+):(.+)'
-
-    @staticmethod
-    def matcher( uri ):
-        return re.match( SSHCopier.pattern, uri ) 
-
-    @staticmethod
-    def matches( uri ):
-        return SSHCopier.matcher( uri ) != None
-
-    def __init__( self, uri ):
-        matcher       = SSHCopier.matcher( uri )
-        self.username = matcher.group( 1 )
-        self.host     = matcher.group( 2 )
-        self.path     = matcher.group( 3 )
-
-    def _sshOptions( self ):
-        return ' '.join([
-                '-o ConnectTimeout=30s',
-                '-o PasswordAuthentication=no',
-                '-o StrictHostKeyChecking=no' ])
-
-    def _wrapBySsh( self, cmd ):
-        ssh = 'ssh %s %s@%s' % ( self._sshOptions(), self.username, self.host )
-        sshArgs = ssh.split( ' ' )
-        cmdArgs = cmd.split( ' ' )
-        return sshArgs + cmdArgs
-
-    def assertWritable( self ):
-        args = self._wrapBySsh( 'touch %s/.connection_test' % self.path )
-        success, stdout = self._execute( args )
-        if not success:
-            msg  = "Couldn't write to directory %s as %s on host %s," % ( \
-                    self.path, self.username, self.host )
-            msg += "\n\ncmd: %s" % args
-            msg += "\n\nstdout+sterr: %s" % stdout
-            raise Exception( msg )
-        return True
-
-    def copyFile( self, localFilepath ):
-        args = self._scpCommandArgs( localFilepath )
-        success, stdout = self._execute( args )
-        if not success:
-            target= "%s@%s:%s/" % ( self.username, self.host, self.path )
-            raise CopyException( localFilepath, target )
-
-    def _scpCommandArgs( self, localFilepath ):
-        filename = os.path.basename( localFilepath )
-        cmd = 'scp %s %s %s@%s:%s/%s' % ( self._sshOptions(), localFilepath,
-                self.username, self.host, self.path, filename )
-        return cmd.split( ' ' )
-
-    def _execute( self, args ):
-        PIPE = subprocess.PIPE
-        p    = subprocess.Popen( args, stdout=PIPE, stderr=PIPE )
-        stdin, stdout = p.communicate()
-        success       = p.returncode == 0
-        return success, stdout
-
-
-class LocalCopier():
-    def __init__( self, path ):
-        self.path = path
-
-    def assertWritable( self ):
-        if not os.access( self.path, os.W_OK ):
-            raise Exception( 'Cannot write to local filesystem on %s' %
-                self.path )
-        return True
-
-    def copyFile( self, localFilepath ):
-        filename       = os.path.basename( localFilepath )
-        targetFilepath = '%s/%s' % ( self.path, filename )
-        try:
-            shutil.copyfile( localFilepath, targetFilepath )
-        except IOError,e:
-            raise CopyException( localFilepath, targetFilepath )
+from tf.transformations     import euler_from_quaternion
+from simple_script_server   import Trigger, TriggerResponse
+from navigation_test_helper import copyHandlers
+from navigation_test_helper.copyHandlers import CopyException
+import math, uuid, re, tempfile, time, os, sys, itertools
 
 class topics_bag():
 
     def __init__(self):
         self.loadParams()
-        self.setupFileCopier()
+        self.setupBagfileCopyHandler()
         self.openBagfile()
         
         while(rospy.rostime.get_time() == 0.0):
@@ -202,17 +106,15 @@ class topics_bag():
 
         global_lock.active_bag = True
 
-    def setupFileCopier( self ):
-        if SSHCopier.matches( self.bag_target_path ):
-            self._fileCopier = SSHCopier( self.bag_target_path )
-        else:
-            self._fileCopier = LocalCopier( self.bag_target_path )
-        self._fileCopier.assertWritable()
+    def setupBagfileCopyHandler( self ):
+        uri = self.bag_target_path
+        self._bagfileCopyHandler = copyHandlers.getByUri( uri )
+        self._bagfileCopyHandler.assertWritable()
 
     def close( self ):
         self.bag.close()
         try:
-            self._fileCopier.copyFile( self.bag_local_filepath )
+            self._bagfileCopyHandler.copyFile( self.bag_local_filepath )
             os.remove( self.bag_local_filepath )
         except CopyException,e:
             sys.stderr.write( 'An exception occured copying the file. The \
@@ -225,18 +127,18 @@ class topics_bag():
         # this defines the variables according to the ones specified at the yaml
         # file. The triggers, the wanted tfs, the wanted topics and where they are going
         # to be written, more specifically at the file named as self.bag.
-        self.trigger_record_translation = self.requiredParam('~trigger_record_translation')
-        self.trigger_record_rotation    = self.requiredParam('~trigger_record_rotation')
-        self.trigger_timestep           = self.requiredParam('~trigger_timestep')
-        self.wanted_tfs                 = self.requiredParam('~wanted_tfs')
-        self.trigger_topics             = self.requiredParam("~trigger_topics")
-        self.continuous_topics          = self.requiredParam("~continuous_topics")
-        self.bag_target_path            = self.requiredParam("~bag_path")
+        self.trigger_record_translation = self.getRequiredParam('~trigger_record_translation')
+        self.trigger_record_rotation    = self.getRequiredParam('~trigger_record_rotation')
+        self.trigger_timestep           = self.getRequiredParam('~trigger_timestep')
+        self.wanted_tfs                 = self.getRequiredParam('~wanted_tfs')
+        self.trigger_topics             = self.getRequiredParam("~trigger_topics")
+        self.continuous_topics          = self.getRequiredParam("~continuous_topics")
+        self.bag_target_path            = self.getRequiredParam("~bag_path")
         self.bag_local_path             = tempfile.gettempdir()
         self.bag_filename               = '%s.bag' % uuid.uuid4()
         self.bag_local_filepath         = self.bag_local_path + '/' + self.bag_filename
 
-    def requiredParam( self, key ):
+    def getRequiredParam( self, key ):
         value = rospy.get_param( key )
         if value is None:
             raise Exception( 'Could not load paramter %s' % key )
@@ -262,7 +164,6 @@ class topics_bag():
         res.error_message.data = "Bagfile recording stopped"
         print res.error_message.data
         return res  
-
     def tf_trigger(self, reference_frame, target_frame, tfs):
         #  this function is responsible for setting up the triggers for recording
         # on the bagfile.
@@ -322,7 +223,7 @@ if __name__ == "__main__":
     rospy.init_node('topics_bag')
     bagR = topics_bag()
     rospy.sleep(2)
-    time_step = rospy.Duration.from_sec(bagR.trigger_timestep)
+    time_step  = rospy.Duration.from_sec( bagR.trigger_timestep )
     start_time = rospy.Time.now()
 
     with bagR.bag as bagfile:
@@ -330,19 +231,18 @@ if __name__ == "__main__":
         topics_t = []
         topics_c = []	
         for tfs in bagR.trigger_topics:
-            topic_r = record_topic.record_topic(tfs, bagfile)
+            topic_r = record_topic.record_topic( tfs, bagfile )
             topics_t.append(topic_r)
         for tfc in bagR.continuous_topics:
-            topic_r = record_topic.record_topic(tfc, bagfile, continuous=True)
+            topic_r = record_topic.record_topic( tfc, bagfile, continuous=True )
             topics_c.append(topic_r)
         rospy.sleep(2)
         sleep_interrupted = False
-        wasActive = False
-        while ( not wasActive or bagR.active()) and not rospy.is_shutdown() and not sleep_interrupted:
+
+        if not rospy.is_shutdown():
+            bagR.init_stop_service()
+        while bagR.active() and not rospy.is_shutdown() and not sleep_interrupted:
             if bagR.active()==1:
-                if not wasActive:
-                    bagR.init_stop_service()
-                wasActive = True
                 # listen to tf changes
                 for tfs in bagR.wanted_tfs:
                     triggers = bagR.bag_processor(tfs)

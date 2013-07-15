@@ -43,33 +43,21 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
 
     initialize: ->
       do @reset
-      @set 'originalTests',  @get 'tests'
-      @set 'tests',          @get( 'tests' ).clone()
-      @set 'indexesByCid',   @get( 'tests' ).getIndexesByCid()
-      @once 'change:filters', ->
-        do @setupFilters
+      @listenTo @get( 'tests' ), 'change:active', _.debounce @activeChanged, 100
+      @set 'tests',         @get( 'tests' )
+      @set 'indexesByCid',  @get( 'tests' ).getIndexesByCid()
+      do @setupFilters if @get 'filters'
 
     setupFilters: ()->
       for filter in @get 'filters'
         @listenTo filter, 'change', @filterChanged
 
-    filterChanged: ->
-      do @updateTestsLists
+    activeChanged: ->
       do @refreshAttributes
 
-    updateTestsLists: ->
-      @applyFilters @get 'filters'
-
-    filter: ( filter )->
-      clone   = do @clone
-      filters = clone.get( 'filters' ).concat filter
-      clone.applyFilters filters
-      clone
-
-    applyFilters: ( filters )->
-      newTests = @get( 'originalTests' ).filter filters
-      @set 'tests', newTests
-
+    filterChanged: ->
+      filters = @get 'filters'
+      @get( 'tests' ).applyFilters filters
 
     reset: ->
       do @refreshAttributes
@@ -82,13 +70,18 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
         @updateStdDevAttribute attr
       do @updateErrorCount
 
-      count = @get( 'tests' ).length
-      @set 'count', count
-      @set 'empty', count == 0
+      do @updateCount
+      @set 'empty',  @get 'count' == 0
+
+    updateCount: ( attr )->
+      activeTests = @get( 'tests' ).filter ( test )->
+        test.get 'active'
+      @set 'count', activeTests.length
 
     updateUniqAttribute: ( attr )->
       uniqueValues = []
       @get( 'tests' ).forEach ( model )->
+        return if not model.get 'active'
         value = model.get attr
         uniqueValues.push value if value? and value not in uniqueValues
 
@@ -101,12 +94,13 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
     updateMedianAttribute: ( attr )->
       sum = num = 0
       @get( 'tests' ).forEach ( model )->
-        return if model.get( 'error' )
+        return if not model.get 'active'
+        return if model.get 'error'
         value = +model.get( attr )
         if !isNaN( value )
           num++
           sum += value
-      @set( 'mean.' + attr, if num > 0 then sum/num else 'N/A' )
+      @set 'mean.' + attr, if num > 0 then sum/num else 'N/A'
       
     updateErrorCount: ->
       errorsCombined = 0
@@ -118,7 +112,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
         return if not model.get 'error'
         errorsCombined++
         for key in errorKeys
-          if key.lower() == model.get( 'error' ).lower()
+          if key.toLowerCase() == model.get( 'error' ).toLowerCase()
             errors[ key ]++
 
       for key in errorKeys

@@ -77,25 +77,30 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
         categories:  [ 'Duration', 'Distance', 'Rotation' ]
 
     redrawElements: ->
+      lineHeight = 2
+
       if @elements.length
         for element in @elements
           element.destroy()
         @elements = []
 
       for series in @chart.series
+        fillColor = 'white'
         points = series.points
         plotLeft = @chart.plotLeft
         plotTop  = @chart.plotTop
 
         for point in points
           shape = point.shapeArgs
+          fillColor = 'red' if lineHeight > shape.height
+
           rect = @chart.renderer.rect(
             shape.x + plotLeft,
             shape.y + plotTop + shape.height/2,
-            shape.width, 2 )
+            shape.width, lineHeight )
 
           rect.attr({
             'stroke-width': 0,
-            'fill': 'white'
+            'fill': fillColor
           }).add().toFront()
           @elements.push rect

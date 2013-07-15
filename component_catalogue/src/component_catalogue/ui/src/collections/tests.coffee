@@ -19,24 +19,13 @@ define [ 'underscore', 'backbone', 'models/test' ], ( _, Backbone, Test )->
       _( groupedSiblings ).values().map ( models )->
         new Tests models
 
-    filter: ( filters )->
-      filtered      = new Tests
-      compliedCount = 0
-      for model in @models
-        if @allFiltersComply compliedCount, model, filters
-          filtered.add model, silent: true
-          compliedCount++
-      filtered
-
-    allFiltersComply: ( number, model, filters )->
-      for filter in filters
-        if !filter.complies number, model
-          return false
-      true
-
 
     getIndexesByCid: ->
       indexesByCid = {}
       for index, model of @models
         indexesByCid[ model.cid ] = index
       return indexesByCid
+
+    applyFilters: ( filters )->
+      for model in @models
+        model.applyFilters filters

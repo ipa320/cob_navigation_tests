@@ -112,8 +112,9 @@
         };
       },
       redrawElements: function() {
-        var element, plotLeft, plotTop, point, points, rect, series, shape, _i, _j, _len, _len1, _ref, _ref1, _results;
+        var element, fillColor, lineHeight, plotLeft, plotTop, point, points, rect, series, shape, _i, _j, _len, _len1, _ref, _ref1, _results;
 
+        lineHeight = 2;
         if (this.elements.length) {
           _ref = this.elements;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -126,6 +127,7 @@
         _results = [];
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           series = _ref1[_j];
+          fillColor = 'white';
           points = series.points;
           plotLeft = this.chart.plotLeft;
           plotTop = this.chart.plotTop;
@@ -136,10 +138,13 @@
             for (_k = 0, _len2 = points.length; _k < _len2; _k++) {
               point = points[_k];
               shape = point.shapeArgs;
-              rect = this.chart.renderer.rect(shape.x + plotLeft, shape.y + plotTop + shape.height / 2, shape.width, 2);
+              if (lineHeight > shape.height) {
+                fillColor = 'red';
+              }
+              rect = this.chart.renderer.rect(shape.x + plotLeft, shape.y + plotTop + shape.height / 2, shape.width, lineHeight);
               rect.attr({
                 'stroke-width': 0,
-                'fill': 'white'
+                'fill': fillColor
               }).add().toFront();
               _results1.push(this.elements.push(rect));
             }

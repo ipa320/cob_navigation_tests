@@ -3,7 +3,7 @@ import roslib
 PKG = 'navigation_test_analysis'
 roslib.load_manifest( PKG )
 import rospy
-import os, re, subprocess, socket
+import os, re, subprocess, socket, time, threading
 from navigation_test_helper.git              import Git
 from navigation_test_helper.jsonFileHandler  import JsonFileHandler
 from navigation_test_helper.resultRepository import ResultRepository
@@ -94,19 +94,33 @@ def printInfoMessage( bagInfo ):
     print '-' * lineLength
     print ''
 
+
+class AnalyserDaemon( threading.Thread ):
+    def __init__( self, bagPath ):
+        threading.Thread.__init__( self )
+        self._bagPath = bagPath
+        self._active  = True
+
+    def stop( self ):
+        self._active = False
+
+    def run( self ):
+        print 'Starting analysis daemon on: %s' % self._bagPath
+        directoryReader = BagDirectoryReader( bagPath )
+        pool = WorkerPool()
+        while self._active:
+            if directoryReader.hasUnanalyzedBagFilenames():
+                bagInfo = directoryReader.nextUnanalyzedBagFilename()
+                printInfoMessage( bagInfo )
+                pool.newInstance( bagInfo )
+
+            time.sleep( 3 )
+
 if __name__ == '__main__':
     rospy.init_node( 'analyze_remaining_bag_files' )
-    bagPath = rospy.get_param( '~bagPath' )
-
-    print 'Reading %s' % bagPath
-    path = os.path.dirname(os.path.abspath(__file__))
-
-    pool = WorkerPool()
-
-    directoryReader = BagDirectoryReader( bagPath )
-    while directoryReader.hasUnanalyzedBagFilenames():
-        bagInfo = directoryReader.nextUnanalyzedBagFilename()
-        printInfoMessage( bagInfo )
-        pool.newInstance( bagInfo )
-
-    print 'All files analyzed, Saving.'
+    bagPath = os.path.expanduser( rospy.get_param( '~bagPath' ))
+    daemon  = AnalyserDaemon( bagPath )
+    daemon.start()
+    rospy.spin()
+    daemon.stop()
+    print 'Stopping daemon, please wait'

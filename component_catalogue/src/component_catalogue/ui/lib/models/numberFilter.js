@@ -5,11 +5,22 @@
       defaults: {
         count: -1
       },
-      complies: function(number, test) {
-        var count;
+      complies: function(test) {
+        var count, minDate;
 
         count = this.get('count');
-        return !number || !(count > 0) || number < count;
+        if (count < 0) {
+          return true;
+        }
+        minDate = this.getMinDate();
+        return test.get('date') >= minDate;
+      },
+      getMinDate: function() {
+        var count, tests;
+
+        tests = this.get('tests');
+        count = this.get('count');
+        return tests.at(tests.length - count).get('date');
       }
     });
   });

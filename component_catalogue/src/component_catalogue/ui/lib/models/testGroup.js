@@ -57,12 +57,12 @@
       },
       initialize: function() {
         this.reset();
-        this.set('originalTests', this.get('tests'));
-        this.set('tests', this.get('tests').clone());
+        this.listenTo(this.get('tests'), 'change:active', _.debounce(this.activeChanged, 100));
+        this.set('tests', this.get('tests'));
         this.set('indexesByCid', this.get('tests').getIndexesByCid());
-        return this.once('change:filters', function() {
+        if (this.get('filters')) {
           return this.setupFilters();
-        });
+        }
       },
       setupFilters: function() {
         var filter, _i, _len, _ref, _results;
@@ -75,32 +75,20 @@
         }
         return _results;
       },
-      filterChanged: function() {
-        this.updateTestsLists();
+      activeChanged: function() {
         return this.refreshAttributes();
       },
-      updateTestsLists: function() {
-        return this.applyFilters(this.get('filters'));
-      },
-      filter: function(filter) {
-        var clone, filters;
+      filterChanged: function() {
+        var filters;
 
-        clone = this.clone();
-        filters = clone.get('filters').concat(filter);
-        clone.applyFilters(filters);
-        return clone;
-      },
-      applyFilters: function(filters) {
-        var newTests;
-
-        newTests = this.get('originalTests').filter(filters);
-        return this.set('tests', newTests);
+        filters = this.get('filters');
+        return this.get('tests').applyFilters(filters);
       },
       reset: function() {
         return this.refreshAttributes();
       },
       refreshAttributes: function() {
-        var attr, count, _i, _j, _len, _len1, _ref, _ref1;
+        var attr, _i, _j, _len, _len1, _ref, _ref1;
 
         _ref = ['robot', 'scenario', 'navigation'];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -114,9 +102,16 @@
           this.updateStdDevAttribute(attr);
         }
         this.updateErrorCount();
-        count = this.get('tests').length;
-        this.set('count', count);
-        return this.set('empty', count === 0);
+        this.updateCount();
+        return this.set('empty', this.get('count' === 0));
+      },
+      updateCount: function(attr) {
+        var activeTests;
+
+        activeTests = this.get('tests').filter(function(test) {
+          return test.get('active');
+        });
+        return this.set('count', activeTests.length);
       },
       updateUniqAttribute: function(attr) {
         var uniqueValues;
@@ -125,6 +120,9 @@
         this.get('tests').forEach(function(model) {
           var value;
 
+          if (!model.get('active')) {
+            return;
+          }
           value = model.get(attr);
           if ((value != null) && __indexOf.call(uniqueValues, value) < 0) {
             return uniqueValues.push(value);
@@ -147,6 +145,9 @@
         this.get('tests').forEach(function(model) {
           var value;
 
+          if (!model.get('active')) {
+            return;
+          }
           if (model.get('error')) {
             return;
           }
@@ -178,7 +179,7 @@
           _results = [];
           for (_j = 0, _len1 = errorKeys.length; _j < _len1; _j++) {
             key = errorKeys[_j];
-            if (key.lower() === model.get('error').lower()) {
+            if (key.toLowerCase() === model.get('error').toLowerCase()) {
               _results.push(errors[key]++);
             } else {
               _results.push(void 0);
