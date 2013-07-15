@@ -1,9 +1,17 @@
 <?xml version="1.0"?>
 <launch>
-  <!-- send table urdf to param server -->
-  <param name="camera_description" command="$(find xacro)/xacro.py $( find navigation_test_camera )/camera.urdf.xacro" />
+    <arg name="zOffset"    default="15" />
+    <arg name="updateRate" default="0.1" />
 
-  <!-- push table_description to factory and spawn robot in gazebo -->
-  <node name="spawn_camera" pkg="gazebo" type="spawn_model" args="-urdf -param camera_description -z 15 -P 1.57 -model camera_model" respawn="false" output="screen" />
+    <!-- send table urdf to param server -->
+    <param name="camera_description" command="$(find xacro)/xacro.py $( find navigation_test_camera )/camera.urdf.xacro" />
+
+    <!-- push table_description to factory and spawn robot in gazebo -->
+    <node name="spawn_camera" pkg="gazebo" type="spawn_model" args="-urdf -param camera_description -z 15 -P 1.57 -model camera_model" respawn="false" output="screen" />
+
+    <node name="navigation_test_camera_keep_track" pkg="navigation_test_camera" type="positionUpdater.py" output="screen">
+        <param name="~zOffset"    value="$( arg zOffset )" />
+        <param name="~updateRate" value="$( arg updateRate )" />
+    </node>
 </launch>
 

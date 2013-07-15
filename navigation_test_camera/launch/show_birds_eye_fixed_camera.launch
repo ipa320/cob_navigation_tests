@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="zOffset"    default="15" />
-    <arg name="updateRate" default="0.1" />
 
     <include file="$( find navigation_test_camera)/launch/spawn_camera.launch" />
 
@@ -9,8 +7,4 @@
         <remap from="image" to="/top_camera/image_raw" />
     </node>
 
-    <node name="navigation_test_camera_keep_track" pkg="navigation_test_camera" type="positionUpdater.py" output="screen">
-        <param name="~zOffset"    value="$( arg zOffset )" />
-        <param name="~updateRate" value="$( arg updateRate )" />
-    </node>
 </launch>
