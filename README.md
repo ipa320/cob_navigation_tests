@@ -17,7 +17,7 @@ Navigation Test
 - In case of an error, display the actual metrics of the test ( distance, duration, rotation )
 - ~~Make navigation_test_analysis a daemon waiting for new bag files~~
 - Adjustable video frequency
-- Record video file in navigation_test_analysis and upload to seperate fileserver
+- ~~Record video file in navigation_test_analysis and upload to seperate fileserver~~
 - Create navigation_test_video_publisher that serves as a gateway between fileserver and webserver
 - Include ros dependency for avconv in github.org/ros/rosdistro
 - Sometimes a collision is detected on initial simulation startup due to the robot falling on the ground
