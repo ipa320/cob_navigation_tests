@@ -99,7 +99,7 @@ if __name__ == '__main__':
     bagPath = rospy.get_param( '~bagPath' )
 
     print 'Reading %s' % bagPath
-    path = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.dirname( os.path.expanduser( os.path.abspath(__file__)))
 
     pool = WorkerPool()
 
