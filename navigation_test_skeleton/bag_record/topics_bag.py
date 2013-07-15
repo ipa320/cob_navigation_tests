@@ -60,30 +60,16 @@
 import roslib
 PKG = "navigation_test_skeleton"
 roslib.load_manifest(PKG)
-import rospy
-
-import rosbag
-from std_msgs.msg import Int32, String
+import rospy, rosbag, rostopic
 
 import tf
-from tf.msg import *
-from tf.transformations import euler_from_quaternion
+import global_lock, record_topic
 
-from simple_script_server import *
-sss = simple_script_server()
-
-from kinematics_msgs.srv import *
-from std_msgs.msg import *
-from sensor_msgs.msg import *
-from move_base_msgs.msg import *
-from visualization_msgs.msg import *
-
-import global_lock
-import rostopic, record_topic
-import math, uuid, re, tempfile, time, os, sys, subprocess, itertools
-
+from tf.transformations     import euler_from_quaternion
+from simple_script_server   import Trigger, TriggerResponse
 from navigation_test_helper import copyHandlers
 from navigation_test_helper.copyHandlers import CopyException
+import math, uuid, re, tempfile, time, os, sys, itertools
 
 class topics_bag():
 
@@ -141,18 +127,18 @@ class topics_bag():
         # this defines the variables according to the ones specified at the yaml
         # file. The triggers, the wanted tfs, the wanted topics and where they are going
         # to be written, more specifically at the file named as self.bag.
-        self.trigger_record_translation = self.requiredParam('~trigger_record_translation')
-        self.trigger_record_rotation    = self.requiredParam('~trigger_record_rotation')
-        self.trigger_timestep           = self.requiredParam('~trigger_timestep')
-        self.wanted_tfs                 = self.requiredParam('~wanted_tfs')
-        self.trigger_topics             = self.requiredParam("~trigger_topics")
-        self.continuous_topics          = self.requiredParam("~continuous_topics")
-        self.bag_target_path            = self.requiredParam("~bag_path")
+        self.trigger_record_translation = self.getRequiredParam('~trigger_record_translation')
+        self.trigger_record_rotation    = self.getRequiredParam('~trigger_record_rotation')
+        self.trigger_timestep           = self.getRequiredParam('~trigger_timestep')
+        self.wanted_tfs                 = self.getRequiredParam('~wanted_tfs')
+        self.trigger_topics             = self.getRequiredParam("~trigger_topics")
+        self.continuous_topics          = self.getRequiredParam("~continuous_topics")
+        self.bag_target_path            = self.getRequiredParam("~bag_path")
         self.bag_local_path             = tempfile.gettempdir()
         self.bag_filename               = '%s.bag' % uuid.uuid4()
         self.bag_local_filepath         = self.bag_local_path + '/' + self.bag_filename
 
-    def requiredParam( self, key ):
+    def getRequiredParam( self, key ):
         value = rospy.get_param( key )
         if value is None:
             raise Exception( 'Could not load paramter %s' % key )
@@ -178,7 +164,6 @@ class topics_bag():
         res.error_message.data = "Bagfile recording stopped"
         print res.error_message.data
         return res  
-
     def tf_trigger(self, reference_frame, target_frame, tfs):
         #  this function is responsible for setting up the triggers for recording
         # on the bagfile.
@@ -238,7 +223,7 @@ if __name__ == "__main__":
     rospy.init_node('topics_bag')
     bagR = topics_bag()
     rospy.sleep(2)
-    time_step = rospy.Duration.from_sec(bagR.trigger_timestep)
+    time_step  = rospy.Duration.from_sec( bagR.trigger_timestep )
     start_time = rospy.Time.now()
 
     with bagR.bag as bagfile:
@@ -246,19 +231,18 @@ if __name__ == "__main__":
         topics_t = []
         topics_c = []	
         for tfs in bagR.trigger_topics:
-            topic_r = record_topic.record_topic(tfs, bagfile)
+            topic_r = record_topic.record_topic( tfs, bagfile )
             topics_t.append(topic_r)
         for tfc in bagR.continuous_topics:
-            topic_r = record_topic.record_topic(tfc, bagfile, continuous=True)
+            topic_r = record_topic.record_topic( tfc, bagfile, continuous=True )
             topics_c.append(topic_r)
         rospy.sleep(2)
         sleep_interrupted = False
-        wasActive = False
-        while ( not wasActive or bagR.active()) and not rospy.is_shutdown() and not sleep_interrupted:
+
+        if not rospy.is_shutdown():
+            bagR.init_stop_service()
+        while bagR.active() and not rospy.is_shutdown() and not sleep_interrupted:
             if bagR.active()==1:
-                if not wasActive:
-                    bagR.init_stop_service()
-                wasActive = True
                 # listen to tf changes
                 for tfs in bagR.wanted_tfs:
                     triggers = bagR.bag_processor(tfs)
