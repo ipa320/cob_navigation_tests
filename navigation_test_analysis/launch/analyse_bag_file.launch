@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <launch>
+    <include file="$( find navigation_test_analysis )/launch/playback_video_and_record.launch" />
     <node name="analyse_bag_file" pkg="navigation_test_analysis" type="worker.py" output="screen" required="true">
         <param name="~filepath" value="$(arg filepath)" />
     </node>

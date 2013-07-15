@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+    <node name="navigation_test_camera_top" pkg="image_view" type="image_view" output="screen">
+        <remap from="image" to="/top_camera/image_raw" />
+    </node>
+    <include file="$( find navigation_test_analysis )/launch/screenRecorder.launch" />
+</launch>
