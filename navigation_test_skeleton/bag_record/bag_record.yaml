@@ -1,7 +1,7 @@
 ################
 # continuous recording
 #continuous_topics: [/tf, /joint_states, /base_controller/command, /scan_front, /scan_rear, /scan_top, /navigation_test/status]
-continuous_topics: [/tf, /navigation_test/status, /navigation_test/collisions ]
+continuous_topics: [/tf, /navigation_test/status, /navigation_test/collisions, /top_camera/image_raw ]
 
 ################
 # triggered recording
