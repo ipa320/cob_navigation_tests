@@ -20,10 +20,6 @@ class MyServer( SocketServer.TCPServer ):
     def updateRepository( self ):
         self._repository.pull()
 
-    def walkRepository( self ):
-        for path, filename in self._repository.walk():
-            yield path, filename
-
     def concatedResults( self ):
         rep = ResultRepository( self._repository )
         return rep.concated()
