@@ -1,0 +1,1 @@
+[{"distance": 4.022547142163716, "scenario": "collision", "repository": "git@github.com:SimonEbner/navigation_test_result", "collisions": 0, "robot": "cob3-3", "filename": "a1932c2e-d7bb-411d-80ce-da65bf24b5c7.bag", "duration": 29.172, "error": "", "localtimeFormatted": "2013-07-09", "rotation": 441.6518670158496, "navigation": "2dnav_ros_dwa", "localtime": 1373368977.80462}]
