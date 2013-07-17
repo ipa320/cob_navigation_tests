@@ -33,6 +33,7 @@ class MyHandler( SimpleHTTPRequestHandler ):
 
         elif self.path == '/data':
             self.send_response( 200 )
+            self.send_header( 'Content-Type', 'application/json' )
             self.end_headers()
             self.server.updateRepository()
             data = self.server.concatedResults()
