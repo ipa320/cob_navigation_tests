@@ -23,9 +23,10 @@ class MyHandler( SimpleHTTPRequestHandler ):
 
         elif self.path == '/data':
             self.send_response( 200 )
+            self.send_header( 'Content-Type', 'application/json' )
             self.end_headers()
             data = self.server.concatedResults()
-            self.wfile.write( json.dumps( data ))
+            self.wfile.write( data )
         else:
             SimpleHTTPRequestHandler.do_GET( self )
 
