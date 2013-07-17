@@ -65,7 +65,10 @@
       dataType: 'json',
       success: function(data) {
         $('#loading').fadeOut(700);
-        return app(data);
+        return app({
+          testData: data.testData,
+          videoServer: data.videoServer
+        });
       },
       error: function() {
         return alert('Could not load data');

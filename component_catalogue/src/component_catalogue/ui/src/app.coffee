@@ -1,10 +1,12 @@
-define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'views/devView', 'models/testGroup', 'collections/testGroups',  'models/dateFilter', 'models/numberFilter', 'views/filterView' ], ( TextFilter, Tests, ResultList, DevView, TestGroup, TestGroups, DateFilter, NumberFilter, FilterView )->
+define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'views/devView', 'models/testGroup', 'collections/testGroups',  'models/dateFilter', 'models/numberFilter', 'views/filterView', 'views/videoPlayback' ], ( TextFilter, Tests, ResultList, DevView, TestGroup, TestGroups, DateFilter, NumberFilter, FilterView, VideoPlayback )->
 
-  ( testData )->
-    testCollection = new Tests( testData ) # find better names for testCollection and tests
-    textFilter   = new TextFilter
-    dateFilter   = new DateFilter
-    numberFilter = new NumberFilter tests: testCollection
+  ( options )->
+    testCollection = new Tests( options.testData ) # find better names for testCollection and tests
+    textFilter     = new TextFilter
+    dateFilter     = new DateFilter
+    numberFilter   = new NumberFilter tests: testCollection
+
+
     filters = [ textFilter, dateFilter, numberFilter ]
 
     tests = new TestGroup tests: testCollection, filters: filters

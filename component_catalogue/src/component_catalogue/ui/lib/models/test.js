@@ -14,7 +14,8 @@
         testResults: null,
         duration: null,
         distance: null,
-        rotation: null
+        rotation: null,
+        video: 'lol'
       },
       initialize: function() {
         var date;

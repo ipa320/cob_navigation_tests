@@ -41,6 +41,10 @@
         label: 'Rotation',
         title: 'Number of degree the robot rotated in deg',
         formatter: 'float'
+      },
+      'video': {
+        label: 'Video',
+        title: 'Watch a recorded video of the test if available'
       }
     };
   });
