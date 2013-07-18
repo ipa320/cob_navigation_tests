@@ -1,7 +1,20 @@
-define [ 'backbone' ], ( Backbone )->
+define [ 'backbone', 'templates/videoPlayback' ], ( Backbone, videoPlaybackTmpl  )->
   Backbone.View.extend
+    events:
+      'click .close': 'hide'
     options:
       online: false
+
+    render: ->
+      html = do videoPlaybackTmpl
+      @$el.html html
+      @
+
+    show: ->
+      do @$el.show
+      
+    hide: ->
+      do @$el.hide
 
     videoExists: ( filename )->
       dfd = @videosExist([ filename ])

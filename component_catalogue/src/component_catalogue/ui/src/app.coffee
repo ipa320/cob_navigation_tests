@@ -16,7 +16,11 @@ define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'vie
     resultListView = null
 
     renderResultListView = ->
-      resultListView = new ResultList testGroups: testGroups
+      videoOverlay   = new VideoPlayback
+      $( 'body' ).prepend videoOverlay.render().el
+      resultListView = new ResultList
+        testGroups:    testGroups
+        videoPlayback: videoOverlay
       $( '#resultListView' ).html resultListView.render().el
 
     renderDevView = ->
