@@ -32,7 +32,8 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
         'bPaginate':       false
         'bScrollCollapse': true
         'bSortCellsTop':   true
-      table.find( 'th' ).tipTip()
+      table.find( 'th' ).tipTip
+        defaultPosition: 'left'
     , 50
 
     initialize: ->
