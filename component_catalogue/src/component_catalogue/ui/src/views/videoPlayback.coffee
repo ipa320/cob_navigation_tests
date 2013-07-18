@@ -3,12 +3,6 @@ define [ 'backbone' ], ( Backbone )->
     options:
       online: false
 
-    initialize: ->
-      dfd = @query ping: 'onlineCheck'
-      dfd.done => 
-        console.log 'online'
-        @options.online = true
-
     videoExists: ( filename )->
       dfd = @videosExist([ filename ])
       return dfd.pipe ( results )-> results[ 0 ]
