@@ -26,9 +26,9 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
 
       this
 
-    enhanceTable: _.debounce ( table, sorting=[] )->
+    enhanceTable: _.debounce ( table, sorting=[] )=>
       table.children( 'table' ).dataTable
-        'sScrollY':        '200px'
+        'sScrollY':        '100%'
         'bPaginate':       false
         'bScrollCollapse': true
         'bSortCellsTop':   true
