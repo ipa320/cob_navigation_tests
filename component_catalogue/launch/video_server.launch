@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="videoPath" />
+    <arg name="port"        default="8000" />
+    <node name="videoServer" pkg="component_catalogue" type="videoServer.py" output="screen">
+        <param name="~port"       value="$( arg port )" />
+        <param name="~videoPath " value="$( arg videoPath )" />
+    </node>
+</launch>
