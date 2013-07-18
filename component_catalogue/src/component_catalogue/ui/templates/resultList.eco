@@ -1,34 +1,29 @@
-<div class="fixed-table-container">
-    <div class="header-background"></div>
-    <div class="table-inner">
-        <table class="display" cellspacing="0" cellpadding="0">
-        <thead>
-            <tr>
-                <th></th>
-                <% for columnKey, columnLabel of @columns: %>
-                <th><div title="<%- columnLabel[ 1 ]%>"><%- columnLabel[ 0 ] %></div></th>
-                <% end %>
-            </tr>
-        </thead>
-        <tbody>
-            <% for row in @data: %>
-            <tr id="<%=row.id%>" class="row">
-                <% if row.selected: %>
-                    <td><input type="checkbox" class=="selected" checked="checked"/></td>
-                <% else: %>
-                    <td><input type="checkbox" class=="selected" /></td>
-                <% end %>
-                <% for columnKey, columName of@columns: %>
-                    <td><% if helper.isNumber row[ columnKey]: %>
-                        <%= helper.formatDecimals row[ columnKey ], 2 %>
-                    <% else: %>
-                        <%= row[ columnKey ]%>
-                    <%end%></td>
-                <% end %>
-            </tr>
-            <% end %>
-        <tbody>
-        </tbody>
-        </table>
-    </div>
+<div class="table-container">
+  <table class="display" cellspacing="0" cellpadding="0">
+  <thead>
+      <tr>
+          <th class="checkbox"></th>
+          <th class="zoom"></th>
+          <% for columnKey, colData of @columns: %>
+          <th title="<%- colData.title%>"><%- colData.label %></th>
+          <% end %>
+      </tr>
+  </thead>
+  <tbody>
+      <% for i, row of @data: %>
+      <tr id="<%=row.id%>" class="row <%= if i % 2==0 then 'odd' else 'even' %>">
+          <% if row.selected: %>
+              <td class="checkbox"><input type="checkbox" class=="selected" checked="checked"/></td>
+          <% else: %>
+              <td class="checkbox"><input type="checkbox" class=="selected" /></td>
+          <% end %>
+          <td class="zoom"><span class="icon contracted"></span></td>
+          <% for columnKey, columnData of@columns: %>
+              <td><%-helper.format row[ columnKey ], columnData.formatter%></td>
+          <% end %>
+      </tr>
+      <% end %>
+  <tbody>
+  </tbody>
+  </table>
 </div>

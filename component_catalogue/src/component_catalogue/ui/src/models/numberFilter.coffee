@@ -5,7 +5,7 @@ define [ 'backbone' ], ( Backbone )->
 
     complies: ( test )->
       count = @get 'count'
-      return true if count < 0
+      return true if count < 0 || !count
 
       minDate = do @getMinDate
       return test.get( 'date' ) >= minDate
@@ -13,4 +13,5 @@ define [ 'backbone' ], ( Backbone )->
     getMinDate: ->
       tests = @get 'tests'
       count = @get 'count'
-      tests.at( tests.length - count ).get 'date'
+      test = tests.at( tests.length - count )
+      return if test then test.get( 'date' ) else 0

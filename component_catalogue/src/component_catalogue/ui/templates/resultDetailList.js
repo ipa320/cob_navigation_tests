@@ -1,6 +1,6 @@
 define( [ 'ecoHelper' ], function( helper ){(function() {
   this.ecoTemplates || (this.ecoTemplates = {});
-  this.ecoTemplates["resultList"] = function(__obj) {
+  this.ecoTemplates["resultDetailList"] = function(__obj) {
     if (!__obj) __obj = {};
     var __out = [], __capture = function(callback) {
       var out = __out, result;
@@ -41,7 +41,11 @@ define( [ 'ecoHelper' ], function( helper ){(function() {
       (function() {
         var colData, columnData, columnKey, i, row, _ref, _ref1, _ref2;
       
-        __out.push('<div class="table-container">\n  <table class="display" cellspacing="0" cellpadding="0">\n  <thead>\n      <tr>\n          <th class="checkbox"></th>\n          <th class="zoom"></th>\n          ');
+        __out.push('<div class="table-container">\n  <div class="detail">Test-Details for ');
+      
+        __out.push(__sanitize(this.title));
+      
+        __out.push('</div>\n  <table class="display" cellspacing="0" cellpadding="0">\n  <thead>\n      <tr>\n          ');
       
         _ref = this.columns;
         for (columnKey in _ref) {
@@ -60,21 +64,13 @@ define( [ 'ecoHelper' ], function( helper ){(function() {
           row = _ref1[i];
           __out.push('\n      <tr id="');
           __out.push(__sanitize(row.id));
-          __out.push('" class="row ');
-          __out.push(__sanitize(i % 2 === 0 ? 'odd' : 'even'));
-          __out.push('">\n          ');
-          if (row.selected) {
-            __out.push('\n              <td class="checkbox"><input type="checkbox" class=="selected" checked="checked"/></td>\n          ');
-          } else {
-            __out.push('\n              <td class="checkbox"><input type="checkbox" class=="selected" /></td>\n          ');
-          }
-          __out.push('\n          <td class="zoom"><span class="icon contracted"></span></td>\n          ');
+          __out.push('" class="row">\n          ');
           _ref2 = this.columns;
           for (columnKey in _ref2) {
             columnData = _ref2[columnKey];
             __out.push('\n              <td>');
             __out.push(helper.format(row[columnKey], columnData.formatter));
-            __out.push('</td>\n          ');
+            __out.push('&nbsp;</td>\n          ');
           }
           __out.push('\n      </tr>\n      ');
         }
@@ -88,4 +84,4 @@ define( [ 'ecoHelper' ], function( helper ){(function() {
     return __out.join('');
   };
 }).call(this);
-return this.ecoTemplates[ 'resultList' ];});
+return this.ecoTemplates[ 'resultDetailList' ];});

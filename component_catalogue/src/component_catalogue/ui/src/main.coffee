@@ -27,12 +27,15 @@ require.config
     'jquery-tipTip':
       deps: [ 'jquery' ],
       exports: 'jQuery.tipTip'
+    'jquery.dataTables':
+      deps: [ 'jquery' ],
+      exports: 'jQuery.fn'
   paths:
     'templates':         '../templates',
     'backbone':          '../vendor/backbone',
     'underscore':        '../vendor/underscore',
     'jquery':            '../vendor/jquery-1.9.1',
-    'jquery.dataTables': '../vendor/jquery.dataTables',
+    'jquery.dataTables': '../vendor/jquery.dataTables.min',
     'highcharts':        '../vendor/highcharts',
     'highcharts-more':   '../vendor/highcharts-more',
     'chosen':            '../vendor/chosen.jquery',
