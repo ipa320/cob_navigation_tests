@@ -11,47 +11,60 @@ class MissingParameterException( Exception ):
 
 class Handler( BaseHTTPRequestHandler ):
 
-    def do_POST(self):
-        try:
-            parsedUrl  = urlparse.urlparse( self.path )
-            path   = parsedUrl.path
-            params = urlparse.parse_qs( parsedUrl.query )
-
-            if path == '/videosExist':
-                data     = self.getPostVar( 'filenames' )
-                jsonData = json.loads( data )
-                result   = map( self.getVideoPathForBagfile, jsonData )
-                self.sendJson( result )
-
-            elif 'play' in params:
-                size = os.path.getsize( 'sample_iPod.m4v' )
-                self.send_response( 200 )
-                self.send_header( 'Content-Type',   'video/x-m4v' )
-                self.send_header( 'Connection',     'close' )
-                self.send_header( 'Content-Length', size )
-                self.send_header( 'Cache-Control',  'max-age=31536000' )
-                self.end_headers()
-                with open( 'videoServer/sample_iPod.m4v', 'rb' ) as f:
-                    self.wfile.write( f.read() )
-
-            else:
-                self.send_response( 404 )
-                self.end_headers()
-
-        except MissingParameterException, e:
-            self.send_response( 400 )
-            self.send_header( 'Content-Type', 'text/plain' )
+    def do_POST( self ):
+        path, params = self.parseUrl()
+        if path == '/videosExist':
+            data     = self.getPostVar( 'filenames' )
+            jsonData = json.loads( data )
+            result   = map( self.getVideoRemotePathForBagfile, jsonData )
+            self.sendJson( result )
+        else:
+            self.send_response( 404 )
             self.end_headers()
-            self.wfile.write( str( e ))
 
 
-    def getVideoPathForBagfile( self, filename ):
-        print filename
-        filename  = filename + '.m4v'
-        videoPath = self.server.videoPath
-        absPath   = '%s/%s' % ( videoPath, filename )
-        if os.path.isfile( absPath ):
+    def do_GET( self ):
+        path, params = self.parseUrl()
+        bagFilename  = path.lstrip( '/' )
+        absPath      = self.getVideoLocalPathForBagfile( bagFilename )
+        if absPath == False:
+            self.send_response( 404 )
+            self.end_headers()
+            self.wfile.write( 'File not found\n' )
+        else:
+            self.sendVideo( absPath )
+
+
+    def sendVideo( self, absPath ):
+        size = os.path.getsize( absPath )
+        self.send_response( 200 )
+        self.send_header( 'Content-Type',   'video/x-m4v' )
+        self.send_header( 'Connection',     'close' )
+        self.send_header( 'Content-Length', size )
+        self.send_header( 'Cache-Control',  'max-age=31536000' )
+        self.end_headers()
+        with open( absPath, 'rb' ) as f:
+            self.wfile.write( f.read() )
+
+    def parseUrl( self ):
+        parsedUrl  = urlparse.urlparse( self.path )
+        path   = parsedUrl.path
+        params = urlparse.parse_qs( parsedUrl.query )
+        return path, params
+
+
+    def getVideoRemotePathForBagfile( self, filename ):
+        absPath = self.getVideoLocalPathForBagfile( filename )
+        if absPath:
             return '/%s' % filename
+        return False
+
+    def getVideoLocalPathForBagfile( self, filename ):
+        filename   = filename + '.m4v'
+        videoPath  = self.server.videoPath
+        absPath    = '%s/%s' % ( videoPath, filename )
+        if os.path.isfile( absPath ):
+            return absPath
         return False
 
 
