@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import SimpleHTTPServer, SocketServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler
-import os, json, sys, urlparse, urllib2
+import os, json, sys, urlparse, urllib2, urllib
 
 os.chdir( os.path.dirname( os.path.realpath( __file__ )))
 
@@ -18,15 +18,28 @@ class MyServer( SocketServer.TCPServer ):
         self.insertVideoUrl( data )
         return data
 
-    def insertVideoUrl( self, data ):
-        filenames = map( lambda x: x[ 'filename' ], data )
+    def insertVideoUrl( self, tests ):
+        filenames  = map( lambda x: x[ 'filename' ], tests )
+        postfields = { 'filenames': json.dumps( filenames )}
         req = urllib2.Request( url  = '%s/videosExist' % self.videoServer,
-                data = json.dumps( filenames ))
+                data = urllib.urlencode( postfields ))
         try:
             f = urllib2.urlopen( req )
-            print f.read()
+            videoUrls = json.loads( f.read())
+            for i in xrange( len( videoUrls )):
+                test     = tests[ i ]
+                videoUrl = videoUrls[ i ]
+                if videoUrl:
+                    test[ 'video' ] = self.videoServer + videoUrl
+                else:
+                    test[ 'video' ] = 'No video available'
+
         except urllib2.HTTPError,e:
-            print 'server down'
+            for test in tests:
+                test[ 'video' ] = 'Video Server Error'
+        except urllib2.URLError,e:
+            for test in tests:
+                test[ 'video' ] = 'Could not connect to server'
         
 
 class MyHandler( SimpleHTTPRequestHandler ):
@@ -46,12 +59,6 @@ class MyHandler( SimpleHTTPRequestHandler ):
                 'videoServer': self.server.videoServer
             }
             self.sendJson( data )
-
-        elif path == '/video':
-            self.send_response( 302 )
-            self.send_header( 'Location', 'http://localhost:8000%s' % self.path )
-            self.end_headers()
-            self.wfile.write( 'test' )
 
         else:
             SimpleHTTPRequestHandler.do_GET( self )

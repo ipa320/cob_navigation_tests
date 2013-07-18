@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
@@ -18,19 +18,18 @@ class Handler( BaseHTTPRequestHandler ):
             params = urlparse.parse_qs( parsedUrl.query )
 
             if path == '/videosExist':
-                data = self.getPostVars()
-                self.sendJson( data )
-                #if not 'files' in self.params:
-                    #raise MissingArgumentError( 'files' )
-                #files = 
+                data     = self.getPostVar( 'filenames' )
+                jsonData = json.loads( data )
+                result   = map( self.getVideoPathForBagfile, jsonData )
+                self.sendJson( result )
 
             elif 'play' in params:
                 size = os.path.getsize( 'sample_iPod.m4v' )
                 self.send_response( 200 )
-                self.send_header( 'Content-Type', 'video/x-m4v' )
-                self.send_header( 'Connection', 'close' )
+                self.send_header( 'Content-Type',   'video/x-m4v' )
+                self.send_header( 'Connection',     'close' )
                 self.send_header( 'Content-Length', size )
-                self.send_header( 'Cache-Control', 'max-age=31536000' )
+                self.send_header( 'Cache-Control',  'max-age=31536000' )
                 self.end_headers()
                 with open( 'videoServer/sample_iPod.m4v', 'rb' ) as f:
                     self.wfile.write( f.read() )
@@ -45,7 +44,18 @@ class Handler( BaseHTTPRequestHandler ):
             self.end_headers()
             self.wfile.write( str( e ))
 
-    def getPostVars( self ):
+
+    def getVideoPathForBagfile( self, filename ):
+        print filename
+        filename  = filename + '.m4v'
+        videoPath = self.server.videoPath
+        absPath   = '%s/%s' % ( videoPath, filename )
+        if os.path.isfile( absPath ):
+            return '/%s' % filename
+        return False
+
+
+    def getPostVar( self, fieldname ):
         ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
         if ctype == 'multipart/form-data':
             postvars = cgi.parse_multipart(self.rfile, pdict)
@@ -54,7 +64,8 @@ class Handler( BaseHTTPRequestHandler ):
             postvars = cgi.parse_qs(self.rfile.read(length), keep_blank_values=1)
         else:
             postvars = {}
-        return postvars
+        return postvars[ fieldname ][ 0 ] if fieldname in postvars else None
+
 
     def sendJson( self, data ):
         self.send_response( 200 )
@@ -62,7 +73,12 @@ class Handler( BaseHTTPRequestHandler ):
         self.end_headers()
         self.wfile.write( json.dumps( data ))
 
+
 class ThreadedHTTPServer( HTTPServer ):#ThreadingMixIn, HTTPServer ):
+    def __init__( self, *args ):
+        self.videoPath = os.path.dirname( os.path.abspath( __file__ ))
+        HTTPServer.__init__( self, *args )
+
     """Handle requests in a separate thread."""
     def finish_request( self, *args ):
         try:
