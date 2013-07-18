@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="bagPath" />
+    <arg name="videoConfig" />
     <node name="analyse_remaining_bag_files" pkg="navigation_test_analysis" type="workerPool.py" output="screen">
         <param name="~bagPath" value="$( arg bagPath )" />
+        <param name="~videoConfig" value="$( arg videoConfig )" />
     </node>
 </launch>

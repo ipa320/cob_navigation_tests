@@ -2,13 +2,9 @@
 <launch>
     <arg name="videoConfig" />
 
-    <include file="$( find navigation_test_analysis )/launch/playback_video.launch">
+    <include file="$( find navigation_test_analysis )/launch/replay_video_and_record.launch">
         <arg name="videoConfig" value="$( arg videoConfig )" />
     </include>
-
-    <node name="screen_recorder" pkg="navigation_test_analysis" type="screenRecorder.py" output="screen">
-        <rosparam command="load" file="$( arg videoConfig )" />
-    </node>
 
     <node name="analyse_bag_file" pkg="navigation_test_analysis" type="worker.py" output="screen" required="true">
         <param name="~filepath" value="$(arg filepath)" />
