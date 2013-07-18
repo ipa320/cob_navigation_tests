@@ -2,6 +2,7 @@
     "name": "Bachelor_Arbeit",
     "dependencies": {
         "watchr": "*",
-        "coffee-script": "*"
+        "coffee-script": "*",
+        "eco": "*"
     }
 }

@@ -39,53 +39,47 @@ define( [ 'ecoHelper' ], function( helper ){(function() {
     }
     (function() {
       (function() {
-        var columName, columnKey, columnLabel, row, _i, _len, _ref, _ref1, _ref2;
+        var colData, columnData, columnKey, i, row, _ref, _ref1, _ref2;
       
-        __out.push('<div class="fixed-table-container">\n    <div class="header-background"></div>\n    <div class="table-inner">\n        <table class="display" cellspacing="0" cellpadding="0">\n        <thead>\n            <tr>\n                <th></th>\n                ');
+        __out.push('<div class="table-container">\n  <table class="display" cellspacing="0" cellpadding="0">\n  <thead>\n      <tr>\n          <th class="checkbox"></th>\n          <th class="zoom"></th>\n          ');
       
         _ref = this.columns;
         for (columnKey in _ref) {
-          columnLabel = _ref[columnKey];
-          __out.push('\n                <th><div title="');
-          __out.push(columnLabel[1]);
+          colData = _ref[columnKey];
+          __out.push('\n          <th title="');
+          __out.push(colData.title);
           __out.push('">');
-          __out.push(columnLabel[0]);
-          __out.push('</div></th>\n                ');
+          __out.push(colData.label);
+          __out.push('</th>\n          ');
         }
       
-        __out.push('\n            </tr>\n        </thead>\n        <tbody>\n            ');
+        __out.push('\n      </tr>\n  </thead>\n  <tbody>\n      ');
       
         _ref1 = this.data;
-        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-          row = _ref1[_i];
-          __out.push('\n            <tr id="');
+        for (i in _ref1) {
+          row = _ref1[i];
+          __out.push('\n      <tr id="');
           __out.push(__sanitize(row.id));
-          __out.push('" class="row">\n                ');
+          __out.push('" class="row ');
+          __out.push(__sanitize(i % 2 === 0 ? 'odd' : 'even'));
+          __out.push('">\n          ');
           if (row.selected) {
-            __out.push('\n                    <td><input type="checkbox" class=="selected" checked="checked"/></td>\n                ');
+            __out.push('\n              <td class="checkbox"><input type="checkbox" class=="selected" checked="checked"/></td>\n          ');
           } else {
-            __out.push('\n                    <td><input type="checkbox" class=="selected" /></td>\n                ');
+            __out.push('\n              <td class="checkbox"><input type="checkbox" class=="selected" /></td>\n          ');
           }
-          __out.push('\n                ');
+          __out.push('\n          <td class="zoom"><span class="icon contracted"></span></td>\n          ');
           _ref2 = this.columns;
           for (columnKey in _ref2) {
-            columName = _ref2[columnKey];
-            __out.push('\n                    <td>');
-            if (helper.isNumber(row[columnKey])) {
-              __out.push('\n                        ');
-              __out.push(__sanitize(helper.formatDecimals(row[columnKey], 2)));
-              __out.push('\n                    ');
-            } else {
-              __out.push('\n                        ');
-              __out.push(__sanitize(row[columnKey]));
-              __out.push('\n                    ');
-            }
-            __out.push('</td>\n                ');
+            columnData = _ref2[columnKey];
+            __out.push('\n              <td>');
+            __out.push(helper.format(row[columnKey], columnData.formatter));
+            __out.push('</td>\n          ');
           }
-          __out.push('\n            </tr>\n            ');
+          __out.push('\n      </tr>\n      ');
         }
       
-        __out.push('\n        <tbody>\n        </tbody>\n        </table>\n    </div>\n</div>\n');
+        __out.push('\n  <tbody>\n  </tbody>\n  </table>\n</div>\n');
       
       }).call(this);
       

@@ -27,18 +27,25 @@ require.config
     'jquery-tipTip':
       deps: [ 'jquery' ],
       exports: 'jQuery.tipTip'
+    'jquery.dataTables':
+      deps: [ 'jquery' ],
+      exports: 'jQuery.fn'
+    'flowplayer':
+      deps: [ 'jquery' ],
+      exports: 'jQuery.fn'
   paths:
     'templates':         '../templates',
     'backbone':          '../vendor/backbone',
     'underscore':        '../vendor/underscore',
     'jquery':            '../vendor/jquery-1.9.1',
-    'jquery.dataTables': '../vendor/jquery.dataTables',
+    'jquery.dataTables': '../vendor/jquery.dataTables.min',
     'highcharts':        '../vendor/highcharts',
     'highcharts-more':   '../vendor/highcharts-more',
     'chosen':            '../vendor/chosen.jquery',
     'jquery-ui':         '../vendor/jquery-ui-1.10.2.custom',
     'jquery-numeric':    '../vendor/numeric'
     'jquery-tipTip':     '../vendor/jquery.tipTip.minified'
+    'flowplayer':        '../assets/flowplayer/flowplayer.min'
 
 define [ 'app', 'backbone' ], ( app, Backbone )->
   do Backbone.history.start
@@ -46,6 +53,6 @@ define [ 'app', 'backbone' ], ( app, Backbone )->
     url: '/data'
     dataType: 'json'
     success: ( data )->
-      $( '#loading' ).fadeOut( 700 )
-      app( data )
+      $( '#loading' ).fadeOut 700
+      app testData: data
     error: -> alert( 'Could not load data' )

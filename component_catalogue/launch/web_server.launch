@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="videoServer" default="http://localhost:8000" />
+    <arg name="repository"  default="git@github.com:SimonEbner/navigation_test_results" />
+    <arg name="port"        default="9000" />
+    <node name="server" pkg="component_catalogue" type="webServer.py" output="screen">
+        <param name="~repository"  value="$( arg repository )" />
+        <param name="~port"        value="$( arg port )" />
+        <param name="~videoServer" value="$( arg videoServer )" />
+    </node>
+</launch>

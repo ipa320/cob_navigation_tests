@@ -9,18 +9,23 @@
         var count, minDate;
 
         count = this.get('count');
-        if (count < 0) {
+        if (count < 0 || !count) {
           return true;
         }
         minDate = this.getMinDate();
         return test.get('date') >= minDate;
       },
       getMinDate: function() {
-        var count, tests;
+        var count, test, tests;
 
         tests = this.get('tests');
         count = this.get('count');
-        return tests.at(tests.length - count).get('date');
+        test = tests.at(tests.length - count);
+        if (test) {
+          return test.get('date');
+        } else {
+          return 0;
+        }
       }
     });
   });

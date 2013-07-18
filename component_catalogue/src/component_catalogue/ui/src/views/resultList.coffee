@@ -1,32 +1,20 @@
-define [ 'backbone', 'jquery-tipTip', 'templates/resultList' ], ( Backbone, tiptip, resultListTmpl, fixedHeaderTable )->
+define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList', 'templates/resultDetailList', 'views/columnsResultList', 'views/columnsDetailResultList' ], ( Backbone, tiptip, dataTables, resultListTmpl, resultDetailListTmpl, columnsResultList, columnsDetailResultList )->
 
   ResultList  = Backbone.View.extend
     id: 'resultList',
     tagName: 'div',
     events:
       #'click table tr': 'selectRow'
-      'click input':  'changeSelected'
-      'click tr':     'triggerInputClick'
+      'click input':      'changeSelected'
+      'click tr':         'triggerInputClick'
+      'click td.zoom':    'toggleRow'
+      'click td.video a': 'playVideo'
+      'click a.back':     'backToGroups'
 
     options:
-      testGroups: null
-      columns:
-        'count':           [ '#',          'Total number of tests' ]
-        'errorsCombined':  [ '#ERR',       'Total number of all errors combined' ]
-        'errorsAborted':   [ '#ABRTD',     'Error: Numer of times the navigation aborted, ' +
-          'i.e. simple_action_client.get_state() returned ABORTED' ]
-        'errorsFailed':    [ '#FLD',       'Error: Numer of times the navigation failed, ' +
-          'i.e. simple_action_client.get_state() did neither return SUCCEEDED nor ABORTED' ]
-        'errorsMissed':    [ '#MISS',      'Error: Number of time the navigation returned success ' +
-          'but the actual position did not match the goal position' ]
-        'errorsTimedout':  [ '#TO',        'Error: Number of times the navigation timed out' ]
-        'mean.collisions': [ '#Col',       'Number of collisions' ]
-        'robot':           [ 'Roboter',    'The robot used in the simulation' ]
-        'navigation':      [ 'Navigation', 'The navigation used in the simulation' ]
-        'scenario':        [ 'Scenario',   'The scenarion used in the simulation' ]
-        'mean.duration':   [ 'Duration',   'Duration &empty; in s' ]
-        'mean.distance':   [ 'Distance',   'Distance the robot moved &empty; in m' ]
-        'mean.rotation':   [ 'Rotation',   'Number of degree the robot rotated &empty; in deg' ]
+      testGroups:    null
+      columns:       columnsResultList
+      columnsDetail: columnsDetailResultList
 
     render: ->
       data = do @options.testGroups.toJSON
@@ -36,9 +24,20 @@ define [ 'backbone', 'jquery-tipTip', 'templates/resultList' ], ( Backbone, tipt
         columns: @options.columns
         data: data
       @$el.html table
-      @$el.find( 'th div' ).tipTip()
-      #table.dataTable().appendTo( this.$el )
+      @enhanceTable table, [[ 10, 'asc' ], [ 9, 'asc' ], [ 11, 'asc' ]]
+
       this
+
+    enhanceTable: _.debounce ( table, sorting=[] )=>
+      height = table.find( 'table' ).parent().height() - 50
+      table.find( 'table' ).dataTable
+        'sScrollY':        "#{height}px"
+        'bPaginate':       false
+        'bScrollCollapse': true
+        'bSortCellsTop':   true
+      table.find( 'th' ).tipTip
+        defaultPosition: 'left'
+    , 50
 
     initialize: ->
       @listenTo @options.testGroups, 'change:enabled', @enableChanged
@@ -99,3 +98,36 @@ define [ 'backbone', 'jquery-tipTip', 'templates/resultList' ], ( Backbone, tipt
       target = $ e.target
       return if target.is 'input'
       target.parent().find( 'input' ).trigger 'click'
+
+    toggleRow: ( e )->
+      e.preventDefault()
+      e.stopImmediatePropagation()
+      icon = $( e.currentTarget ).find '.icon'
+      row  = $( e.currentTarget ).closest '.row'
+      id   = row.attr 'id'
+      icon.toggleClass 'expanded contracted'
+      testGroup = @options.testGroups.get id
+      @expandTestGroup testGroup
+
+    expandTestGroup: ( testGroup )->
+      row = @$ '#' + testGroup.id
+      @$el.children().hide()
+      detailTable = $ resultDetailListTmpl
+        # change naming convention, totally confusing
+        title:         testGroup.get 'title'
+        columns:       @options.columnsDetail
+        columnsDetail: @options.columnsDetail
+        detail:  do testGroup.toJSON
+        data:    do testGroup.get( 'tests' ).toJSON
+      @enhanceTable detailTable, [[ 0, 'asc' ]]
+      @$el.prepend detailTable
+
+    playVideo: ( e )->
+      a   = $ e.currentTarget
+      src = a.attr 'href'
+      do e.preventDefault
+      @options.videoPlayback.play src
+
+    backToGroups: ( e )->
+      do @$( '.details' ).remove
+      do @$el.children().show

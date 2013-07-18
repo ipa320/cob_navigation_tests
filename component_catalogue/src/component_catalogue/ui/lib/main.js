@@ -37,6 +37,14 @@
       'jquery-tipTip': {
         deps: ['jquery'],
         exports: 'jQuery.tipTip'
+      },
+      'jquery.dataTables': {
+        deps: ['jquery'],
+        exports: 'jQuery.fn'
+      },
+      'flowplayer': {
+        deps: ['jquery'],
+        exports: 'jQuery.fn'
       }
     },
     paths: {
@@ -44,13 +52,14 @@
       'backbone': '../vendor/backbone',
       'underscore': '../vendor/underscore',
       'jquery': '../vendor/jquery-1.9.1',
-      'jquery.dataTables': '../vendor/jquery.dataTables',
+      'jquery.dataTables': '../vendor/jquery.dataTables.min',
       'highcharts': '../vendor/highcharts',
       'highcharts-more': '../vendor/highcharts-more',
       'chosen': '../vendor/chosen.jquery',
       'jquery-ui': '../vendor/jquery-ui-1.10.2.custom',
       'jquery-numeric': '../vendor/numeric',
-      'jquery-tipTip': '../vendor/jquery.tipTip.minified'
+      'jquery-tipTip': '../vendor/jquery.tipTip.minified',
+      'flowplayer': '../assets/flowplayer/flowplayer.min'
     }
   });
 
@@ -61,7 +70,9 @@
       dataType: 'json',
       success: function(data) {
         $('#loading').fadeOut(700);
-        return app(data);
+        return app({
+          testData: data
+        });
       },
       error: function() {
         return alert('Could not load data');

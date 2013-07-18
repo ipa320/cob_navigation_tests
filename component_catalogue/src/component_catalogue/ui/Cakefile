@@ -13,13 +13,12 @@ task 'watch:build', ( options )->
     listener:
       change: ( e, filename )->
         try
-          process.stdout.write 'Changed: ' + filename + '  =>  '
           if filename.indexOf( 'src' ) == 0
+            process.stdout.write 'Changed: ' + filename + '  =>  '
             invoke 'build:coffee'
           else if filename.match '(.*)\.eco'
+            process.stdout.write 'Changed: ' + filename + '  =>  '
             invoke 'build:eco'
-          else
-            console.log 'Nothing to do'
         catch err
           console.log 'Error occured', err
       watching: ->

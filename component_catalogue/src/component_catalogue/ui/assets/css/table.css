@@ -8,19 +8,6 @@ table.dataTable {
 	width: 100%;
 }
 
-table.dataTable thead th {
-	padding: 3px 18px 3px 10px;
-	border-bottom: 1px solid black;
-	font-weight: bold;
-	cursor: pointer;
-	*cursor: hand;
-}
-
-table.dataTable tfoot th {
-	padding: 3px 18px 3px 10px;
-	border-top: 1px solid black;
-	font-weight: bold;
-}
 
 table.dataTable td {
 	padding: 3px 10px;
@@ -31,15 +18,11 @@ table.dataTable td.dataTables_empty {
 	text-align: center;
 }
 
-table.dataTable tr.odd { background-color: #E2E4FF; }
-table.dataTable tr.even { background-color: white; }
 
-table.dataTable tr.odd td.sorting_1 { background-color: #D3D6FF; }
-table.dataTable tr.odd td.sorting_2 { background-color: #DADCFF; }
-table.dataTable tr.odd td.sorting_3 { background-color: #E0E2FF; }
-table.dataTable tr.even td.sorting_1 { background-color: #EAEBFF; }
-table.dataTable tr.even td.sorting_2 { background-color: #F2F3FF; }
-table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
+table.dataTable tr.odd td.sorting_1 { background-color: #eeeeee; }
+table.dataTable tr.even td.sorting_1 { background-color: #f5f5f5; }
+/*table.dataTable tr.even td.sorting_2 { background-color: #F2F3FF; }*/
+/*table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }*/
 
 
 /*
@@ -64,8 +47,7 @@ table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
  * Filter
  */
 .dataTables_filter {
-	float: right;
-	text-align: right;
+    display: none;
 }
 
 
@@ -195,8 +177,8 @@ table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
  * Sorting
  */
 .sorting { background: url('../images/sort_both.png') no-repeat center right; }
-.sorting_asc { background: url('../images/sort_asc.png') no-repeat center right; }
-.sorting_desc { background: url('../images/sort_desc.png') no-repeat center right; }
+.sorting_asc { background: #f7f7f7 url('../images/sort_asc.png') no-repeat center right; }
+.sorting_desc { background: #f7f7f7 url('../images/sort_desc.png') no-repeat center right; }
 
 .sorting_asc_disabled { background: url('../images/sort_asc_disabled.png') no-repeat center right; }
 .sorting_desc_disabled { background: url('../images/sort_desc_disabled.png') no-repeat center right; }
@@ -219,3 +201,107 @@ table.dataTable thead td:active {
 	-webkit-overflow-scrolling: touch;
 }
 
+
+table{
+    font-size: 14px;
+    cursor: default !important;
+}
+table.display tr.disabled td{
+    color: #bbb !important;
+}
+table.display tr.disabled.odd td{
+    background-color: #efefef !important;
+}
+table.display tr.disabled.even td{
+    background-color: #fafafa !important;
+}
+table.display td, table.display th{
+    padding: 6px 10px;
+    color: #333;
+    font-size: 13px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+}
+table.display th.sorting:hover{
+    background-color: #f7f7f7 !important;
+}
+table.display tr:hover td, 
+table.display th.sorting_asc:hover,
+table.display th.sorting_desc:hover{
+    background-color: #eee !important;
+}
+table.display th{
+    padding: 16px 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+table.display thead tr.second-row th{
+    border: 1px solid #ddd;
+    border-width: 1px 0;
+}
+table.display thead tr th.zoom,
+table.display thead tr th.checkbox{
+    background: none !important;
+}
+table.display .checkbox{
+    width: 24px;
+    padding: 0 0 0 7px;
+}
+table.display .zoom{
+    width: 20px;
+    cursor: pointer;
+}
+table.display .zoom .icon{
+    background-image: url( '../images/zoom.png' );
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
+    display: block;
+    opacity: 0.5;
+}
+table.display .zoom:hover .icon{
+    opacity: 1;
+}
+table{
+    width: 100%;
+}
+.table-container{
+    top: 19px;
+    bottom: 0;
+    padding-top: 0;
+    position: absolute;
+    left: 300px;
+    right: 20px;
+}
+.row.odd td{
+    background-color: #f7f7f7;
+}
+.dataTables_info{
+    display: none;
+}
+
+.table-detail-container{
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: 27px;
+    bottom: 0;
+}
+.video a{
+    color: #333;
+    text-decoration: none;
+    border-bottom: 1px dashed #333;
+}
+.video a:hover{
+    color: black;
+}
+.video .invalidVideo{
+    color: #BBB;
+    font-style: italic;
+}
+
+.table-container .back{
+    padding-right: 6px;
+    position: relative;
+    top: 1px;
+}

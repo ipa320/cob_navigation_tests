@@ -15,6 +15,7 @@ Navigation Test
 - Include ros dependency for avconv in github.org/ros/rosdistro
 - Sometimes a collision is detected on initial simulation startup due to the robot falling on the ground
 - Pass array of bumper topics to navigation_test_collisions
+- Highlight error messages thrown during startup (e.g. bagPath not writable)
 
 #### Implemented
 - ~~Distinguish between navigation component results (aborted and other)~~

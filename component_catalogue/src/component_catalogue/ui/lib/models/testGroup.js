@@ -30,7 +30,8 @@
         errorsAborted: 0,
         errorsFailed: 0,
         errorsMissed: 0,
-        errorsTimedout: 0
+        errorsTimedout: 0,
+        title: ''
       },
       constructor: function(args, options) {
         if (!(args != null)) {
@@ -103,7 +104,11 @@
         }
         this.updateErrorCount();
         this.updateCount();
-        return this.set('empty', this.get('count' === 0));
+        this.set('empty', this.get('count' === 0));
+        return this.updateTitle();
+      },
+      updateTitle: function() {
+        return this.set('title', [this.get('robot'), '/', this.get('navigation'), '/', this.get('scenario')].join(' '));
       },
       updateCount: function(attr) {
         var activeTests;

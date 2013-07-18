@@ -12,6 +12,7 @@ define [ 'backbone' ], ( Backbone )->
       duration:    null
       distance:    null
       rotation:    null
+      video:       'lol'
 
     initialize: ->
       date = @get( 'localtime' )*1000

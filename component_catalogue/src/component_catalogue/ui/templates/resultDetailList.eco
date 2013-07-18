@@ -1,0 +1,25 @@
+<div class="table-container details">
+  <div class="detail"><a class="back" href="javascript:void(0)"><img src="/ui/assets/images/back.png" /></a>Test-Details for <%=@title%></div>
+  <div class="table-detail-container">
+    <table class="display" cellspacing="0" cellpadding="0">
+    <thead>
+        <tr>
+            <th title="Number">#</th>
+            <% for columnKey, colData of @columns: %>
+            <th title="<%- colData.title%>"><%- colData.label %></th>
+            <% end %>
+        </tr>
+    </thead>
+    <tbody>
+        <% for i, row of @data: %>
+        <tr id="<%=row.id%>" class="row">
+            <td><%=i%></td>
+            <% for columnKey, columnData of@columns: %>
+                <td class="<%=columnKey%>"><%-helper.format row[ columnKey ], columnData.formatter%>&nbsp;</td>
+            <% end %>
+        </tr>
+        <% end %>
+    </tbody>
+    </table>
+  </div>
+</div>

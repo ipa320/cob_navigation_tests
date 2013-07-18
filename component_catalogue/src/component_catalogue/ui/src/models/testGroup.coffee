@@ -25,6 +25,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       errorsFailed:      0
       errorsMissed:      0
       errorsTimedout:    0
+      title:             ''
 
     constructor: ( args, options )->
       if !(args?)
@@ -72,6 +73,16 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
 
       do @updateCount
       @set 'empty',  @get 'count' == 0
+      do @updateTitle
+
+    updateTitle: ->
+      @set 'title', [
+        @get( 'robot' )
+        '/'
+        @get( 'navigation' )
+        '/'
+        @get( 'scenario' )
+      ].join ' '
 
     updateCount: ( attr )->
       activeTests = @get( 'tests' ).filter ( test )->

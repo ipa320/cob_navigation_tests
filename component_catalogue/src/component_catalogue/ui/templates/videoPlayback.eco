@@ -1,0 +1,12 @@
+<div class="videoPlayback">
+  <div class="container">
+    <div class="close">Close x</div>
+    <div class="flowplayer minimalist" data-engine="flash">
+      <% if @src: %>
+      <video autoplay>
+        <source type="video/mp4" src="<%=@src%>">
+      </video>
+      <%end%>
+    </div>
+  </div>
+</div>
