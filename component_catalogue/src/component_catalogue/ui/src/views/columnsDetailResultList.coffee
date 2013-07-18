@@ -33,3 +33,4 @@ define [], ->
   'video':
     label: 'Video'
     title: 'Watch a recorded video of the test if available'
+    formatter: 'playVideo'

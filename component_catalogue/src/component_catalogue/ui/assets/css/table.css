@@ -279,3 +279,29 @@ table{
 .dataTables_info{
     display: none;
 }
+
+.table-detail-container{
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: 27px;
+    bottom: 0;
+}
+.video a{
+    color: #333;
+    text-decoration: none;
+    border-bottom: 1px dashed #333;
+}
+.video a:hover{
+    color: black;
+}
+.video .invalidVideo{
+    color: #BBB;
+    font-style: italic;
+}
+
+.table-container .back{
+    padding-right: 6px;
+    position: relative;
+    top: 1px;
+}

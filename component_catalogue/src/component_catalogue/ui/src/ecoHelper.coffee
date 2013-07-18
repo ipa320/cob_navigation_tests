@@ -2,6 +2,13 @@ define [], ()->
   formatDate: ( timestamp )->
     date = new Date( timestamp )
     "#{date.getDate()}-#{date.getMonth()}-#{date.getFullYear()}"
+
+  playVideoFormatter: ( url )->
+    src = $.trim url
+    if src.indexOf( 'http://' ) != 0
+      return "<span class=\"invalidVideo\">#{url}</span>"
+    return "<a href=\"#{url}\">Play Video</a>"
+
     
   formatNiceDate: ( timestamp )->
     d_names = [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ]
@@ -43,4 +50,6 @@ define [], ()->
       return @formatDate value
     else if formatter == 'niceDate'
       return @formatNiceDate value
+    else if formatter == 'playVideo'
+      return @playVideoFormatter value
     return value

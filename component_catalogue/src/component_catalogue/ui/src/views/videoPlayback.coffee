@@ -1,4 +1,4 @@
-define [ 'backbone', 'templates/videoPlayback' ], ( Backbone, videoPlaybackTmpl  )->
+define [ 'backbone', 'templates/videoPlayback', 'flowplayer' ], ( Backbone, videoPlaybackTmpl, flowplayer  )->
   Backbone.View.extend
     events:
       'click .close': 'hide'
@@ -8,13 +8,24 @@ define [ 'backbone', 'templates/videoPlayback' ], ( Backbone, videoPlaybackTmpl 
     render: ->
       html = do videoPlaybackTmpl
       @$el.html html
+      @$el.hide()
       @
 
+    play: ( src )->
+      html = videoPlaybackTmpl src: src
+      @$el.html html
+      _.defer =>
+        @$( '.flowplayer' ).flowplayer swf: "assets/flowplayer/flowplayer.swf"
+        console.log 'play'
+        do @show
+
     show: ->
+      console.log 'show'
       do @$el.show
       
     hide: ->
       do @$el.hide
+      @$el.html ''
 
     videoExists: ( filename )->
       dfd = @videosExist([ filename ])

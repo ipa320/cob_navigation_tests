@@ -5,9 +5,11 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
     tagName: 'div',
     events:
       #'click table tr': 'selectRow'
-      'click input':   'changeSelected'
-      'click tr':      'triggerInputClick'
-      'click td.zoom': 'toggleRow'
+      'click input':      'changeSelected'
+      'click tr':         'triggerInputClick'
+      'click td.zoom':    'toggleRow'
+      'click td.video a': 'playVideo'
+      'click a.back':     'backToGroups'
 
     options:
       testGroups:    null
@@ -117,5 +119,15 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
         columnsDetail: @options.columnsDetail
         detail:  do testGroup.toJSON
         data:    do testGroup.get( 'tests' ).toJSON
-      @enhanceTable detailTable, [[0, 'asc' ]]
+      @enhanceTable detailTable, [[ 0, 'asc' ]]
       @$el.prepend detailTable
+
+    playVideo: ( e )->
+      a   = $ e.currentTarget
+      src = a.attr 'href'
+      do e.preventDefault
+      @options.videoPlayback.play src
+
+    backToGroups: ( e )->
+      do @$( '.details' ).remove
+      do @$el.children().show

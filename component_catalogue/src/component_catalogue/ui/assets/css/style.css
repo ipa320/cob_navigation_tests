@@ -248,3 +248,47 @@ div.detail{
     margin: 0 0 15px;
     font-size: 20px;
 }
+
+/*
+ * Video Playback
+ */
+.videoPlayback{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba( 0,0,0, 0.5 );
+    z-index: 300;
+}
+.videoPlayback .container{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -400px;
+    margin-top: -300px;
+    width: 800px;
+    height: 600px;
+    background-color: white;
+    box-shadow: 0 0 20px rgba( 0,0,0,0.5 );
+    -webkit-box-shadow: 0 0 20px rgba( 0,0,0,0.5 );
+    -moz-box-shadow: 0 0 20px rgba( 0,0,0,0.5 );
+}
+.videoPlayback .close{
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    right: -66px;
+    padding: 8px;
+    width: 50px;
+    height: 20px;
+    color: white;
+    background-color: black;
+    border-radius: 0 3px 3px 0;
+    -webkit-border-radius: 0 3px 3px 0;
+    -moz-border-radius: 0 3px 3px 0;
+}
+.videoPlayback .flowplayer{
+    width: 100%;
+    height: 100%;
+}

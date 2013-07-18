@@ -30,6 +30,9 @@ require.config
     'jquery.dataTables':
       deps: [ 'jquery' ],
       exports: 'jQuery.fn'
+    'flowplayer':
+      deps: [ 'jquery' ],
+      exports: 'jQuery.fn'
   paths:
     'templates':         '../templates',
     'backbone':          '../vendor/backbone',
@@ -42,6 +45,7 @@ require.config
     'jquery-ui':         '../vendor/jquery-ui-1.10.2.custom',
     'jquery-numeric':    '../vendor/numeric'
     'jquery-tipTip':     '../vendor/jquery.tipTip.minified'
+    'flowplayer':        '../assets/flowplayer/flowplayer.min'
 
 define [ 'app', 'backbone' ], ( app, Backbone )->
   do Backbone.history.start
