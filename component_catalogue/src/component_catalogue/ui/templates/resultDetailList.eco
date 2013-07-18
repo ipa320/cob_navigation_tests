@@ -4,6 +4,7 @@
     <table class="display" cellspacing="0" cellpadding="0">
     <thead>
         <tr>
+            <th title="Number">#</th>
             <% for columnKey, colData of @columns: %>
             <th title="<%- colData.title%>"><%- colData.label %></th>
             <% end %>
@@ -12,6 +13,7 @@
     <tbody>
         <% for i, row of @data: %>
         <tr id="<%=row.id%>" class="row">
+            <td><%=i%></td>
             <% for columnKey, columnData of@columns: %>
                 <td class="<%=columnKey%>"><%-helper.format row[ columnKey ], columnData.formatter%>&nbsp;</td>
             <% end %>
