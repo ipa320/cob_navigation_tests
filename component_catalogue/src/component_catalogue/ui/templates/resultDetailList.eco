@@ -1,22 +1,23 @@
 <div class="table-container">
   <div class="detail">Test-Details for <%=@title%></div>
-  <table class="display" cellspacing="0" cellpadding="0">
-  <thead>
-      <tr>
-          <% for columnKey, colData of @columns: %>
-          <th title="<%- colData.title%>"><%- colData.label %></th>
-          <% end %>
-      </tr>
-  </thead>
-  <tbody>
-      <% for i, row of @data: %>
-      <tr id="<%=row.id%>" class="row">
-          <% for columnKey, columnData of@columns: %>
-              <td><%-helper.format row[ columnKey ], columnData.formatter%>&nbsp;</td>
-          <% end %>
-      </tr>
-      <% end %>
-  <tbody>
-  </tbody>
-  </table>
+  <div class="table-detail-container">
+    <table class="display" cellspacing="0" cellpadding="0">
+    <thead>
+        <tr>
+            <% for columnKey, colData of @columns: %>
+            <th title="<%- colData.title%>"><%- colData.label %></th>
+            <% end %>
+        </tr>
+    </thead>
+    <tbody>
+        <% for i, row of @data: %>
+        <tr id="<%=row.id%>" class="row">
+            <% for columnKey, columnData of@columns: %>
+                <td><%-helper.format row[ columnKey ], columnData.formatter%>&nbsp;</td>
+            <% end %>
+        </tr>
+        <% end %>
+    </tbody>
+    </table>
+  </div>
 </div>
