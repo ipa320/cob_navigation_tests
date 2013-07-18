@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="videoConfig" default="$( find navigation_test_analysis )/videoConfig.yaml" />
-    <arg name="uri"         default="~/Desktop" />
+    <arg name="videoConfig" />
 
     <node name="screen_recorder" pkg="navigation_test_analysis" type="screenRecorder.py" output="screen">
         <rosparam command="load" file="$( arg videoConfig )" />
-        <param name="uri" value="$( arg uri )" />
+        <param name="uri" value="$( arg videoPath )" />
     </node>
 </launch>

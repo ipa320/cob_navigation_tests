@@ -95,7 +95,7 @@ if __name__=='__main__':
     settings.size      = getParam( '~size', getFullscreenSize() )
     settings.frequency = getParam( '~frequency' )
     settings.offset    = getParam( '~offset' )
-    settings.targetUri = getParam( '~uri' )
+    settings.targetUri = getParam( '~videoPath' )
     settings.display   = getParam( '~display', os.environ[ 'DISPLAY' ])
 
     screenRecorder = ScreenRecorder( settings )
