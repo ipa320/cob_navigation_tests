@@ -50,5 +50,5 @@ define [ 'app', 'backbone' ], ( app, Backbone )->
     dataType: 'json'
     success: ( data )->
       $( '#loading' ).fadeOut 700
-      app testData: data.testData
+      app testData: data
     error: -> alert( 'Could not load data' )
