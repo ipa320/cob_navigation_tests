@@ -89,7 +89,26 @@ def getParam( key, default=None ):
         if not default: raise e
         return default
 
+def assertAvconvInstalled():
+    try:
+        args   = 'avconv --help'.split( ' ' )
+        p      = subprocess.Popen( args, stdout=subprocess.PIPE )
+        result = p.wait()
+    except OSError, e:
+        raise Exception( 'Avconv is not installed on your system' )
+
+def assertCodecInstalled():
+    args = 'avconv -codecs'.split(  ' ' )
+    p    = subprocess.Popen( args, stdout=subprocess.PIPE )
+    stdout, stderr = p.communicate()
+    if not stdout.find( 'lix264' ):
+        raise Exception( 'Codec libx264 not installed. You can try to install package "libavcodec-extra-53"' )
+
+
 if __name__=='__main__':
+    assertAvconvInstalled()
+    assertCodecInstalled()
+
     rospy.init_node( 'screen_recorder' )
     settings  = RecorderSettings()
     settings.size      = getParam( '~size', getFullscreenSize() )

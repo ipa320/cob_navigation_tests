@@ -104,28 +104,10 @@ def printUsageAndExit():
     print 'Usage: %s videoPath' % sys.argv[ 0 ]
     sys.exit( 1 )
 
-def assertAvconvInstalled():
-    try:
-        args   = 'avconv --help'.split( ' ' )
-        p      = subprocess.Popen( args, stdout=subprocess.PIPE )
-        result = p.wait()
-    except OSError, e:
-        raise Exception( 'Avconv is not installed on your system' )
-
-def assertCodecInstalled():
-    args = 'avconv -codecs'.split(  ' ' )
-    p    = subprocess.Popen( args, stdout=subprocess.PIPE )
-    stdout, stderr = p.communicate()
-    if not stdout.find( 'lix264' ):
-        raise Exception( 'Codec libx264 not installed. You can try to install package "libavcodec-extra-53"' )
-
 
 if __name__ == '__main__':
     if len( sys.argv ) != 2:
         printUsageAndExit()
-
-    assertAvconvInstalled()
-    assertCodecInstalled()
 
     path   = os.path.expanduser( sys.argv[ 1 ])
     server = ThreadedHTTPServer( 8000, sys.argv[ 1 ])
