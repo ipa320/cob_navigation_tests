@@ -59,7 +59,7 @@ class ScreenRecorder( threading.Thread ):
         return cmd.split( ' ' )
 
     def _convertCmd( self ):
-        cmd = 'avconv -i %s -c copy %s' % ( self.mkvAbsolutePath,
+        cmd = 'avconv -i grab.mkv -c:v libx264 %s' % ( self.mkvAbsolutePath,
                 self.mp4AbsolutePath )
         return cmd.split( ' ' )
 
