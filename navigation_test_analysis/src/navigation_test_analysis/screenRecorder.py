@@ -2,17 +2,18 @@
 import roslib
 roslib.load_manifest( 'navigation_test_analysis' )
 import rospy
-import subprocess, threading, os, gtk, tempfile
+import subprocess, threading, os, gtk, tempfile, os.path
 from subprocess import PIPE
 from navigation_test_helper import copyHandlers
 
 class RecorderSettings( object ):
     def __init__( self ):
-        self.targetUri = ''
-        self.display   = ':0'
-        self.offset    = [ 0, 0 ]
-        self.size      = [ 0, 0 ]
-        self.frequency = 0
+        self.targetUri   = ''
+        self.bagFilepath = ''
+        self.display     = ':0'
+        self.offset      = [ 0, 0 ]
+        self.size        = [ 0, 0 ]
+        self.frequency   = 0
 
     def sizeToString( self ):
         return '%s:%s' % tuple( self.size )
@@ -26,8 +27,11 @@ class ScreenRecorder( threading.Thread ):
         self._settings       = settings
         self._p              = None
         self.tmpPath         = tempfile.mkdtemp()
-        self.mkvAbsolutePath = self.tmpPath + '/video.mkv'
-        self.mp4AbsolutePath = self.tmpPath + '/video.m4v'
+
+        bagFilename = os.path.basename( settings.bagFilepath )
+        self.mkvAbsolutePath = '%s/%s.mkv' % ( self.tmpPath, bagFilename )
+        self.mp4AbsolutePath = '%s/%s.mp4' % ( self.tmpPath, bagFilename )
+
         self._setupCopyHandler()
 
     def run( self ):
@@ -59,7 +63,7 @@ class ScreenRecorder( threading.Thread ):
         return cmd.split( ' ' )
 
     def _convertCmd( self ):
-        cmd = 'avconv -i grab.mkv -c:v libx264 %s' % ( self.mkvAbsolutePath,
+        cmd = 'avconv -i %s -c:v libx264 %s' % ( self.mkvAbsolutePath,
                 self.mp4AbsolutePath )
         return cmd.split( ' ' )
 
@@ -111,11 +115,12 @@ if __name__=='__main__':
 
     rospy.init_node( 'screen_recorder' )
     settings  = RecorderSettings()
-    settings.size      = getParam( '~size', getFullscreenSize() )
-    settings.frequency = getParam( '~frequency' )
-    settings.offset    = getParam( '~offset' )
-    settings.targetUri = getParam( '~videoPath' )
-    settings.display   = getParam( '~display', os.environ[ 'DISPLAY' ])
+    settings.bagFilepath = getParam( '~bagFilepath' )
+    settings.size        = getParam( '~size', getFullscreenSize() )
+    settings.frequency   = getParam( '~frequency' )
+    settings.offset      = getParam( '~offset' )
+    settings.targetUri   = getParam( '~videoPath' )
+    settings.display     = getParam( '~display', os.environ[ 'DISPLAY' ])
 
     screenRecorder = ScreenRecorder( settings )
     screenRecorder.start()
