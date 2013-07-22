@@ -5,21 +5,8 @@ import rospy
 import subprocess, threading, os, gtk, tempfile, os.path
 from subprocess import PIPE
 from navigation_test_helper import copyHandlers
-
-class RecorderSettings( object ):
-    def __init__( self ):
-        self.targetUri   = ''
-        self.bagFilepath = ''
-        self.display     = ':0'
-        self.offset      = [ 0, 0 ]
-        self.size        = [ 0, 0 ]
-        self.frequency   = 0
-
-    def sizeToString( self ):
-        return '%s:%s' % tuple( self.size )
-
-    def offsetToString( self ):
-        return '%s,%s' % tuple( self.offset )
+from videoEncoder import RecorderSettings
+import videoEncoder
 
 class ScreenRecorder( threading.Thread ):
     def __init__( self, settings ):
@@ -52,18 +39,14 @@ class ScreenRecorder( threading.Thread ):
         #os.remove( '%s.mkv' % self._settings.absolutePath )
 
     def _startCmd( self ): 
-        cmd  = 'avconv -f x11grab -s %s -r %s -i %s+%s %s' % (
-                self._settings.sizeToString(),
-                self._settings.frequency,
-                self._settings.display,
-                self._settings.offsetToString(),
-                self.mkvAbsolutePath )
+        cmd = videoEncoder.recordToMkvFileCommand( self.mkvAbsolutePath, 
+                self._settings )
         print 'Recording to %s' % self.mkvAbsolutePath
         print 'Command %s' % cmd
         return cmd.split( ' ' )
 
     def _convertCmd( self ):
-        cmd = 'avconv -i %s -c:v libx264 %s' % ( self.mkvAbsolutePath,
+        cmd = videoEncoder.encodeToMp4Command( self.mkvAbsolutePath,
                 self.mp4AbsolutePath )
         return cmd.split( ' ' )
 
@@ -93,25 +76,8 @@ def getParam( key, default=None ):
         if not default: raise e
         return default
 
-def assertAvconvInstalled():
-    try:
-        args   = 'avconv --help'.split( ' ' )
-        p      = subprocess.Popen( args, stdout=subprocess.PIPE )
-        result = p.wait()
-    except OSError, e:
-        raise Exception( 'Avconv is not installed on your system' )
-
-def assertCodecInstalled():
-    args = 'avconv -codecs'.split(  ' ' )
-    p    = subprocess.Popen( args, stdout=subprocess.PIPE )
-    stdout, stderr = p.communicate()
-    if not stdout.find( 'lix264' ):
-        raise Exception( 'Codec libx264 not installed. You can try to install package "libavcodec-extra-53"' )
-
-
 if __name__=='__main__':
-    assertAvconvInstalled()
-    assertCodecInstalled()
+    videoEncoder.assertInstalled()
 
     rospy.init_node( 'screen_recorder' )
     settings  = RecorderSettings()

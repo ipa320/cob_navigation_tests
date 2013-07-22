@@ -9,6 +9,7 @@ from navigation_test_helper.jsonFileHandler  import JsonFileHandler
 from navigation_test_helper.resultRepository import ResultRepository
 from navigation_test_helper.bagInfo          import BagInfo
 from worker import Worker
+import videoEncoder
 
 
 class BagDirectoryReader( object ):
@@ -123,6 +124,8 @@ class AnalyserDaemon( threading.Thread ):
             time.sleep( 3 )
 
 if __name__ == '__main__':
+    videoEncoder.assertInstalled()
+
     rospy.init_node( 'analyze_remaining_bag_files' )
     bagPath     = os.path.expanduser( rospy.get_param( '~bagPath' ))
     videoConfig = rospy.get_param( '~videoConfig' )
