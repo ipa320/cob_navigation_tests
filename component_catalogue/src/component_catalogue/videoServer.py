@@ -65,7 +65,7 @@ class Handler( BaseHTTPRequestHandler ):
         return False
 
     def getVideoLocalPathForBagfile( self, filename ):
-        filename   = filename + '.m4v'
+        filename   = filename + '.mp4'
         videoPath  = self.server.videoPath
         absPath    = '%s/%s' % ( videoPath, filename )
         if os.path.isfile( absPath ):
