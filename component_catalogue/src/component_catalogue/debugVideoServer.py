@@ -3,7 +3,7 @@
 
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from SocketServer import ThreadingMixIn
-import threading, os, sys, urlparse, json, cgi
+import threading, os, sys, urlparse, json, cgi, subprocess
 
 class MissingParameterException( Exception ):
     def __init__( self, field ):
@@ -88,9 +88,9 @@ class Handler( BaseHTTPRequestHandler ):
 
 
 class ThreadedHTTPServer( HTTPServer ):#ThreadingMixIn, HTTPServer ):
-    def __init__( self, *args ):
-        self.videoPath = os.path.dirname( os.path.abspath( __file__ ))
-        HTTPServer.__init__( self, *args )
+    def __init__( self, port, videoPath ):
+        self.videoPath = videoPath
+        HTTPServer.__init__( self, ( '', port ), Handler )
 
     """Handle requests in a separate thread."""
     def finish_request( self, *args ):
@@ -100,7 +100,16 @@ class ThreadedHTTPServer( HTTPServer ):#ThreadingMixIn, HTTPServer ):
             if e.errno == errno.EPIPE: pass
             else: raise e
 
+def printUsageAndExit():
+    print 'Usage: %s videoPath' % sys.argv[ 0 ]
+    sys.exit( 1 )
+
+
 if __name__ == '__main__':
-    server = ThreadedHTTPServer(( 'localhost', 8000 ), Handler)
+    if len( sys.argv ) != 2:
+        printUsageAndExit()
+
+    path   = os.path.expanduser( sys.argv[ 1 ])
+    server = ThreadedHTTPServer( 8000, sys.argv[ 1 ])
     print 'Starting server, use <Ctrl-C> to stop'
     server.serve_forever()

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="videoConfig" />
+    <arg name="bagFilepath" />
+
+    <node name="navigation_test_camera_top" pkg="image_view" type="image_view" output="screen">
+        <remap from="image" to="/top_camera/image_raw" />
+    </node>
+
+    <node name="screen_recorder" pkg="navigation_test_analysis" type="screenRecorder.py" output="screen">
+        <param name="~bagFilepath" value="$( arg bagFilepath )" />
+        <rosparam command="load" file="$( arg videoConfig )" />
+    </node>
+</launch>

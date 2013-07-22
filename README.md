@@ -6,18 +6,19 @@ Navigation Test
 #### High Priority
 - Include ~~video and~~ map topics into bag file
 - Move generic launchfile settings into seperate yaml file. 
-  Eventually only the four arguments robot, navigation, scenario_name, yaml_config are passed to navigation_test_skeleton
+  Eventually only the four arguments exclude cob specific parameter, robot, navigation, scenario_name, yaml_config are passed to navigation_test_skeleton
+- In case of an error, display the actual metrics of the test ( distance, duration, rotation )
+- Start / Stop Service for bagrecorder and collision detection
 
 ##### Mid Priority
-- In case of an error, display the actual metrics of the test ( distance, duration, rotation )
 - Adjustable video frequency
-- Create navigation_test_video_publisher that serves as a gateway between fileserver and webserver
 - Include ros dependency for avconv in github.org/ros/rosdistro
 - Sometimes a collision is detected on initial simulation startup due to the robot falling on the ground
 - Pass array of bumper topics to navigation_test_collisions
 - Highlight error messages thrown during startup (e.g. bagPath not writable)
 
 #### Implemented
+- ~~Create navigation_test_video_publisher that serves as a gateway between fileserver and webserver~~
 - ~~Distinguish between navigation component results (aborted and other)~~
 - ~~Distinguish between failure and error in rostset~~
 - ~~Fix application developer view in component_catalogue~~

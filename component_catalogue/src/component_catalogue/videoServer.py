@@ -7,7 +7,7 @@ import rospy
 
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from SocketServer import ThreadingMixIn
-import threading, os, sys, urlparse, json, cgi
+import threading, os, sys, urlparse, json, cgi, errno
 
 class MissingParameterException( Exception ):
     def __init__( self, field ):
@@ -42,7 +42,8 @@ class Handler( BaseHTTPRequestHandler ):
     def sendVideo( self, absPath ):
         size = os.path.getsize( absPath )
         self.send_response( 200 )
-        self.send_header( 'Content-Type',   'video/x-m4v' )
+        self.send_header( 'Accept-Ranges',  'bytes' )
+        self.send_header( 'Content-Type',   'video/mp4' )
         self.send_header( 'Connection',     'close' )
         self.send_header( 'Content-Length', size )
         self.send_header( 'Cache-Control',  'max-age=31536000' )
@@ -64,7 +65,7 @@ class Handler( BaseHTTPRequestHandler ):
         return False
 
     def getVideoLocalPathForBagfile( self, filename ):
-        filename   = filename + '.m4v'
+        filename   = filename + '.mp4'
         videoPath  = self.server.videoPath
         absPath    = '%s/%s' % ( videoPath, filename )
         if os.path.isfile( absPath ):
@@ -101,7 +102,7 @@ class VideoServer( ThreadingMixIn, HTTPServer ):
         try:
             return HTTPServer.finish_request( self, *args )
         except IOError,e:
-            if e.errno == errno.EPIPE: pass
+            if hasattr( e, 'errno' ) and e.errno == errno.EPIPE: pass
             else: raise e
 
 if __name__ == '__main__':

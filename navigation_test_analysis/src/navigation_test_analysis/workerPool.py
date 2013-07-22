@@ -9,6 +9,7 @@ from navigation_test_helper.jsonFileHandler  import JsonFileHandler
 from navigation_test_helper.resultRepository import ResultRepository
 from navigation_test_helper.bagInfo          import BagInfo
 from worker import Worker
+import videoEncoder
 
 
 class BagDirectoryReader( object ):
@@ -67,7 +68,7 @@ class WorkerPool( object ):
 
         return self._lastPort
 
-    def newInstance( self, bagInfo ):
+    def newInstance( self, bagInfo, additionalRosArguments ):
         newPort = self.findNextAvailablePort()
         env = os.environ.copy()
         env[ 'ROS_MASTER_URI' ] = 'http://localhost:%s' % newPort
@@ -76,6 +77,9 @@ class WorkerPool( object ):
             PKG, 'analyse_bag_file.launch',
             'filepath:=%s' % bagInfo.filepath
         ]
+        for key, value in additionalRosArguments.items():
+            args.append( '%s:=%s' % ( key, value ))
+
         print args
         p = subprocess.Popen( args, env=env )
         p.wait()
@@ -96,10 +100,13 @@ def printInfoMessage( bagInfo ):
 
 
 class AnalyserDaemon( threading.Thread ):
-    def __init__( self, bagPath ):
+    def __init__( self, bagPath, videoConfig ):
         threading.Thread.__init__( self )
         self._bagPath = bagPath
         self._active  = True
+        self._additionalRosArguments = {
+            'videoConfig':  videoConfig
+        }
 
     def stop( self ):
         self._active = False
@@ -112,14 +119,17 @@ class AnalyserDaemon( threading.Thread ):
             if directoryReader.hasUnanalyzedBagFilenames():
                 bagInfo = directoryReader.nextUnanalyzedBagFilename()
                 printInfoMessage( bagInfo )
-                pool.newInstance( bagInfo )
+                pool.newInstance( bagInfo, self._additionalRosArguments )
 
             time.sleep( 3 )
 
 if __name__ == '__main__':
+    videoEncoder.assertInstalled()
+
     rospy.init_node( 'analyze_remaining_bag_files' )
-    bagPath = os.path.expanduser( rospy.get_param( '~bagPath' ))
-    daemon  = AnalyserDaemon( bagPath )
+    bagPath     = os.path.expanduser( rospy.get_param( '~bagPath' ))
+    videoConfig = rospy.get_param( '~videoConfig' )
+    daemon  = AnalyserDaemon( bagPath, videoConfig )
     daemon.start()
     rospy.spin()
     daemon.stop()
