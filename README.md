@@ -9,6 +9,7 @@ Navigation Test
   Eventually only the four arguments exclude cob specific parameter, robot, navigation, scenario_name, yaml_config are passed to navigation_test_skeleton
 - In case of an error, display the actual metrics of the test ( distance, duration, rotation )
 - Start / Stop Service for bagrecorder and collision detection
+- Include Dummy Prepare Robot Service that does nothing and set it as default
 
 ##### Mid Priority
 - Adjustable video frequency
