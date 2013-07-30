@@ -5,7 +5,6 @@ Navigation Test
 
 #### High Priority
 - Include ~~video and~~ map topics into bag file
-- In case of an error, display the actual metrics of the test ( distance, duration, rotation )
 - Start / Stop Service for bagrecorder and collision detection
 
 ##### Mid Priority
@@ -29,3 +28,4 @@ Navigation Test
   Eventually only the four arguments exclude cob specific parameter, robot, navigation, scenario_name, yaml_config are passed to navigation_test_skeleton~~
 - ~~Include Parameter to dynamically configure recorded camera topics~~
 - ~~Pass array of bumper topics to navigation_test_collisions~~
+- ~~In case of an error, display the actual metrics of the test ( distance, duration, rotation )~~
