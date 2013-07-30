@@ -7,7 +7,6 @@ Navigation Test
 - Include ~~video and~~ map topics into bag file
 - In case of an error, display the actual metrics of the test ( distance, duration, rotation )
 - Start / Stop Service for bagrecorder and collision detection
-- Include Parameter to dynamically configure recorded camera topics
 - Update Start- / Enddate in search to include all Test within the corresponding time window. I.e. start: dd/mm/yyyy 00:00, end: dd/mm/yyyy 23:59:59
 
 ##### Mid Priority
@@ -29,3 +28,4 @@ Navigation Test
 - ~~move_base_action set in yaml config~~
 - ~~Move generic launchfile settings into seperate yaml file.
   Eventually only the four arguments exclude cob specific parameter, robot, navigation, scenario_name, yaml_config are passed to navigation_test_skeleton~~
+- ~~Include Parameter to dynamically configure recorded camera topics~~
