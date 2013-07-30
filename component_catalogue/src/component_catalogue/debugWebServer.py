@@ -10,7 +10,7 @@ class MyServer( SocketServer.TCPServer ):
     def __init__( self, port, resultsData ):
         self._resultsData = json.loads( resultsData )
         self.videoServer  = 'http://localhost:8000'
-        #SocketServer.TCPServer.__init__( self, ( "", port ), MyHandler )
+        SocketServer.TCPServer.__init__( self, ( "", port ), MyHandler )
         self.concatedResults()
 
     def concatedResults( self ):
@@ -89,4 +89,4 @@ if __name__=='__main__':
     port        = 9000
     resultsData = getFilecontentFromArgs()
     server      = MyServer( port, resultsData )
-    #server.serve_forever()
+    server.serve_forever()
