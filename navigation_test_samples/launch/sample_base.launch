@@ -4,7 +4,7 @@
     <arg name="navigation"        default="2dnav_ros_dwa" />
     <arg name="robot"             default="cob3-3" />
     <arg name="robot_env"         default="ipa-apartment" />
-    <arg name="testConfig"        default="$( find navigation_test_samples )/sample_base_config.yaml" />
+    <arg name="testConfig"        default="$( find navigation_test_samples )/config/sample_base_config.yaml" />
 
     <!-- Robot Simulation -->
     <include file="$( find cob_bringup_sim )/launch/robot.launch">
