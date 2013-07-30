@@ -1,4 +1,5 @@
 import datetime
+import rospy
 
 class TimeoutException( Exception ):
     def __init__( self, timeoutInS ):
@@ -8,10 +9,10 @@ class TimeoutException( Exception ):
 class WatchDog( object ):
     def __init__( self, timeoutInS ):
         self.timeoutInS = timeoutInS
-        self._starttime  = datetime.datetime.now()
+        self._starttime = rospy.Time.now()
 
     def assertExecutionTimeLeft( self ):
-        now   = datetime.datetime.now()
-        delta = now - self._starttime
-        if delta.seconds > self.timeoutInS:
+        now    = rospy.Time.now()
+        deltaS = now.secs - self._starttime.secs
+        if deltaS > self.timeoutInS:
             raise TimeoutException( self.timeoutInS )
