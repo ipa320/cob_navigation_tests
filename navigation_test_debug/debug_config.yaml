@@ -4,6 +4,7 @@ bagPath:           /share/uhr-se/bagrecord
 setupRobotService: setup_robot
 collisionsTopic:   collisions
 cameraTopics:      [ /topCamera ]
+moveBaseAction:    /move_base
 route: 
     - [ 1.53, -1.385, 0 ]
     - [ 0, 0, 0 ]

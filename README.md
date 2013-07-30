@@ -28,3 +28,4 @@ Navigation Test
 - ~~Update component catalogue filter to display the last x results globally ( not for each series )~~
 - ~~Make navigation_test_analysis a daemon waiting for new bag files~~
 - ~~Record video file in navigation_test_analysis and upload to seperate fileserver~~
+- ~~move_base_action set in yaml config~~

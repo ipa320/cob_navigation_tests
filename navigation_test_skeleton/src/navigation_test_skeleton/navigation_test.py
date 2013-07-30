@@ -22,7 +22,8 @@ class TestNavigation( unittest.TestCase ):
     def _initialize( self ):
         rospy.loginfo( 'Setting navigator' )
 
-        self.navigator = Navigator( '/move_base' )
+        moveBaseAction = rospy.get_param( 'moveBaseAction' )
+        self.navigator = Navigator( moveBaseAction )
         self._metricsObserver = MetricsObserverTF()
 
         setting = self._getSetting()
@@ -79,6 +80,7 @@ class TestNavigation( unittest.TestCase ):
     def testNavigate( self ):
         self._initialize()
         self._metricsObserver.start()
+
         goals            = rospy.get_param( 'route' )
         positionResolver = self.positionResolver
         tolerance        = self.tolerance
