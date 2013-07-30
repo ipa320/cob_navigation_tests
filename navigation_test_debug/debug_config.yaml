@@ -1,0 +1,9 @@
+timeoutInS:        300
+repository:        git@github.com:SimonEbner/navigation_test_results
+bagPath:           /share/uhr-se/bagrecord
+setupRobotService: setup_robot
+collisionsTopic:   collisions
+cameraTopics:      [ /topCamera ]
+route: 
+    - [ 1.53, -1.385, 0 ]
+    - [ 0, 0, 0 ]

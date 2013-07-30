@@ -3,6 +3,5 @@
     <arg name="bagPath" />
     <node name="logger" pkg="navigation_test_skeleton" type="topics_bag.py" output="screen">
         <rosparam file="$( find navigation_test_skeleton )/bag_record/bag_record.yaml" command="load"/>
-        <param name="bag_path" value="$( arg bagPath )" />
     </node>
 </launch>

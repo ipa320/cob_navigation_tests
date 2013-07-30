@@ -74,7 +74,11 @@ if __name__ == '__main__':
     rospy.init_node( 'collision_detection' )
     bumperTopicName      = rospy.get_param( '~bumperTopic' )
     collisionMinInterval = rospy.get_param( '~collisionMinInterval' )
-    collisionsTopicName  = rospy.get_param( '~collisionsTopic' )
+    collisionsTopicName  = rospy.get_param( 'collisionsTopic' )
+
+    if not bumperTopicName or not collisionsTopicName:
+        rospy.loginfo( 'No bumperTopicName or collisionsTopicName found. Exiting.' )
+        sys.exit( 0 )
 
     detector  = CollisionDetector( bumperTopicName, collisionsTopicName,
             collisionMinInterval )

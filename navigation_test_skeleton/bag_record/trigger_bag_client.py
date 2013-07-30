@@ -65,16 +65,16 @@ import rosservice
 from std_msgs.msg import String
 
 def bag_service_client_start():
-    rospy.wait_for_service('/logger/start')
+    rospy.wait_for_service('logger/start')
     try:
-        rosservice.call_service('/logger/start', None)
+        rosservice.call_service('logger/start', None)
     except rospy.ServiceException, e:
         print "Service call failed: %s"%e
 
 def bag_service_client_stop():
-    rospy.wait_for_service('/logger/stop')
+    rospy.wait_for_service('logger/stop')
     try:
-        rosservice.call_service('/logger/stop', None)
+        rosservice.call_service('logger/stop', None)
     except rospy.ServiceException, e:
         print "Service call failed: %s"%e
 		

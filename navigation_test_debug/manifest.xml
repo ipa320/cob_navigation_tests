@@ -1,0 +1,17 @@
+<package>
+  <description brief="navigation_test_debug">
+
+     navigation_test_debug
+
+  </description>
+  <author>Simon Ebner</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/navigation_test_debug</url>
+
+  <depend package="navigation_test_skeleton" />
+  <depend package="navigation_test_prepare_robot" />
+  <depend package="navigation_test_collisions_detection" />
+</package>
+
+

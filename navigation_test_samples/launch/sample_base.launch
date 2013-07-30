@@ -4,14 +4,9 @@
     <arg name="navigation"        default="2dnav_ros_dwa" />
     <arg name="robot"             default="cob3-3" />
     <arg name="robot_env"         default="ipa-apartment" />
-    <arg name="setupRobotService" default="/navigation_test/setupRobot" />
-    <arg name="bumperTopic"       default="/base_bumper/state" />
-    <arg name="collisionsTopic"   default="/navigation_test/collisions" />
-    <arg name="timeoutInS"        default="300" />
-    <arg name="scenarioFile"      default="$( find navigation_test_samples)/routes/1.yaml" />
-    <arg name="repository"        default="git@github.com:SimonEbner/navigation_test_results" />
-    <arg name="bagPath"           default="/share/uhr-se/bagrecord" />
+    <arg name="testConfig"        default="$( find navigation_test_samples )/sample_base_config.yaml" />
 
+    <!-- Robot Simulation -->
     <include file="$( find cob_bringup_sim )/launch/robot.launch">
         <arg name="robot"     value="$( arg robot )" />
         <arg name="robot_env" value="$( arg robot_env )" />
@@ -22,23 +17,17 @@
         <arg name="robot_env" value="$( arg robot_env )" />
     </include>
 
-    <include file="$( find navigation_test_prepare_robot )/launch/prepare_robot_simulation.launch">
-        <arg name="setupRobotService" value="$( arg setupRobotService )" />
-    </include>
-
-    <include file="$( find navigation_test_collision_detection )/launch/collision_detection.launch">
-        <arg name="bumperTopic"     value="$( arg bumperTopic )" />
-        <arg name="collisionsTopic" value="$( arg collisionsTopic )" />
-    </include>
-
-    <include file="$(find navigation_test_skeleton)/launch/navigation.test">
-        <arg name="scenarioName"      value="$( arg scenarioName )" />
-        <arg name="timeoutInS"        value="$( arg timeoutInS )" />
-        <arg name="scenarioFile"      value="$( arg scenarioFile )" />
-        <arg name="robot"             value="$( arg robot )" />
-        <arg name="navigation"        value="$( arg navigation )" />
-        <arg name="bagPath"           value="$( arg bagPath )" />
-        <arg name="repository"        value="$( arg repository )" />
-        <arg name="setupRobotService" value="$( arg setupRobotService )" />
-    </include>
+    <!-- Navigation Test -->
+    <group ns="/navigation_test" >
+        <rosparam file="$( arg testConfig )" command="load"/>
+        <include file="$( find navigation_test_prepare_robot )/launch/prepare_robot_simulation.launch" />
+        <include file="$( find navigation_test_skeleton )/launch/navigation.test">
+            <arg name="scenarioName"      value="$( arg scenarioName )" />
+            <arg name="robot"             value="$( arg robot )" />
+            <arg name="navigation"        value="$( arg navigation )" />
+        </include>
+        <include file="$( find navigation_test_collision_detection )/launch/collision_detection.launch">
+            <arg name="bumperTopic"     value="/base_bumper/state" />
+        </include>
+    </group>
 </launch>

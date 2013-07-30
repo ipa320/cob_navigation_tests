@@ -17,6 +17,6 @@ def setupRobot( req ):
 
 if __name__=='__main__':
     rospy.init_node( 'moveArmFolded' )
-    serviceName = rospy.get_param( '~setupRobotService' )
+    serviceName = rospy.get_param( 'setupRobotService' )
     setupRobotService( serviceName )
     rospy.spin()
