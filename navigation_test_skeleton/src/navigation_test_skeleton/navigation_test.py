@@ -33,20 +33,26 @@ class TestNavigation( unittest.TestCase ):
         self.tolerance = Tolerance( xy=0.2, theta=.3 )
         self.positionResolver = PositionResolver()
 
+        rospy.loginfo( 'Waiting for Bag Recorder' )
+        self._stopBagRecording = self._waitForBagRecorder()
+        self._navigationStatusPublisher.starting()
+
         rospy.loginfo( 'Waiting for robot to be ready' )
         self._setupRobotWhenReady()
 
-        rospy.loginfo( 'Waiting for Bag Recorder' )
-        self._stopBagRecording = self._waitForBagRecorder()
+        rospy.loginfo( 'Starting actual test' )
         self._setupWatchdog()
+
 
 
     def _getSetting( self ):
         return {
-            'scenario':   rospy.get_param( '~scenarioName' ),
-            'robot':      rospy.get_param( '~robot' ),
-            'navigation': rospy.get_param( '~navigation' ),
-            'repository': rospy.get_param( 'repository' )
+            'scenario':        rospy.get_param( '~scenarioName' ),
+            'robot':           rospy.get_param( '~robot' ),
+            'navigation':      rospy.get_param( '~navigation' ),
+            'repository':      rospy.get_param( 'repository' ),
+            'cameraTopics':    rospy.get_param( 'cameraTopics' ),
+            'collisionsTopic': rospy.get_param( 'collisionsTopic' )
         }
 
     def _setupWatchdog( self ):
@@ -69,7 +75,7 @@ class TestNavigation( unittest.TestCase ):
 
 
     def _waitForBagRecorder( self ):
-        rospy.wait_for_service( 'logger/stop' )
+        rospy.wait_for_service( 'logger/stop', timeout=120 )
 
         stopBagRecordingService  = rospy.ServiceProxy( 'logger/stop',  
                 cob_srvs.srv.Trigger )

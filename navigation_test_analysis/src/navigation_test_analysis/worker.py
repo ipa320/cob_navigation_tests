@@ -3,7 +3,7 @@ import roslib
 roslib.load_manifest( 'navigation_test_analysis' )
 import rospy, os, re, subprocess, sys, time, datetime
 import navigation_test_helper.msg
-import subprocess
+import subprocess, threading
 from navigation_test_helper.metricsObserverTF import MetricsObserverTF
 from navigation_test_helper.jsonFileHandler   import JsonFileHandler
 from navigation_test_helper.git               import Git
@@ -97,6 +97,18 @@ class BagReplayer( object ):
         if not os.path.isfile( self._filepath ):
             raise IOError( 'File %s does not exist' % self._filepath )
 
+
+class CameraDisplayer( threading.Thread ):
+    def __init__( self, topic ):
+        threading.Thread.__init__( self )
+        self._topic = topic
+
+    def start( self ):
+        cmd  = 'rosrun image_view image_view image:=%s/image_raw' % self._topic
+        print 'Running: %s' % cmd
+        args = cmd.split( ' ' )
+        p = subprocess.Popen( args )
+
 class BagAnalyzer( object ):
     class NoStatusReceivedError( Exception ): pass
     class NoRepositoryNameReceivedError( Exception ): pass
@@ -104,33 +116,48 @@ class BagAnalyzer( object ):
 
     def __init__( self, filename ):
         print 'Initializing Analyzer'
-        self._filename               = filename
-        self._metricsObserver        = MetricsObserverTF()
-        self._metricsObserver.dT     = 0
-        self._duration               = 'N/A'
-        self._active                 = False
-        self._setting                = {}
-        self._expectedNextWaypointId = 0
-        self._finishedStatusReceived = False
-        self._error                  = ''
-        self._subscribers            = []
-        self._collisions             = 0
+        self._filename                = filename
+        self._metricsObserver         = MetricsObserverTF()
+        self._metricsObserver.dT      = 0
+        self._duration                = 'N/A'
+        self._active                  = False
+        self._setting                 = {}
+        self._expectedNextWaypointId  = 0
+        self._finishedStatusReceived  = False
+        self._error                   = ''
+        self._subscribers             = []
+        self._collisions              = 0
+        self._collisionsTopic         = None
+        self._startedCameras          = {}
         self.setupStatusListener()
-        self.setupCollisionsListener()
 
     def setupStatusListener( self ):
         print 'Listening to /navigation_test/status'
         self._subscribers.append( rospy.Subscriber(
-                '/navigation_test/status', 
+                '/status', 
                 navigation_test_helper.msg.Status,
                 self._statusCallback ))
 
-    def setupCollisionsListener( self ):
-        print 'Listening to /navigation_test/collisions'
-        self._subscribers.append( rospy.Subscriber(
-                '/navigation_test/collisions',
-                navigation_test_helper.msg.Collision,
-                self._collisionCallback ))
+    def _setupCollisionsListener( self ):
+        topic = self._setting[ 'collisionsTopic' ]
+        if not topic or topic  == self._collisionsTopic:
+            return
+
+        print 'Listening to collisions on "%s"' % topic
+        self._subscribers.append( rospy.Subscriber( topic,
+            navigation_test_helper.msg.Collision,
+            self._collisionCallback ))
+        self._collisionsTopic = topic
+
+
+    def _displayCameraTopics( self ):
+        for cameraTopic in self._setting[ 'cameraTopics' ]:
+            if cameraTopic in self._startedCameras: continue
+            print 'Starting Camera "%s"' % cameraTopic
+            display = CameraDisplayer( cameraTopic )
+            display.start()
+            self._startedCameras[ cameraTopic ] = display
+
 
 
     def start( self ):
@@ -180,14 +207,18 @@ class BagAnalyzer( object ):
     def _statusCallback( self, msg ):
         if not self._active: return
 
-        if not self._startTime:
-            self._startTime               = msg.header.stamp
-            self._localtime               = msg.localtime
-            self._setting[ 'robot' ]      = msg.setting.robot
-            self._setting[ 'navigation' ] = msg.setting.navigation
-            self._setting[ 'scenario' ]   = msg.setting.scenario
-            self._setting[ 'repository' ] = msg.setting.repository
-        
+        self._startTime                    = msg.starttime
+        self._localtime                    = msg.localtime
+        self._setting[ 'robot' ]           = msg.setting.robot
+        self._setting[ 'navigation' ]      = msg.setting.navigation
+        self._setting[ 'scenario' ]        = msg.setting.scenario
+        self._setting[ 'repository' ]      = msg.setting.repository
+        self._setting[ 'collisionsTopic' ] = msg.setting.collisionsTopic
+        self._setting[ 'cameraTopics' ]    = msg.setting.cameraTopics
+
+        self._setupCollisionsListener()
+        self._displayCameraTopics()
+    
         # first error wins
         if msg.error and not self._error:
             self._error = msg.error
@@ -198,11 +229,16 @@ class BagAnalyzer( object ):
             self.stop()
             return
 
-        elif not msg.waypointId == self._expectedNextWaypointId:
-            raise Exception( 'Expected next waypoint id to be %s but was %s' % (
-                self._expectedNextWaypointId, msg.waypointId ))
-        self._expectedNextWaypointId += 1
+        elif msg.info == 'running':
+            if not msg.waypointId == self._expectedNextWaypointId:
+                raise Exception( 'Expected next waypoint id to be %s but was %s' % (
+                    self._expectedNextWaypointId, msg.waypointId ))
+            self._expectedNextWaypointId += 1
+            self._logNextWaypoint( msg )
 
+
+
+    def _logNextWapoint( self, msg ):
         sys.stdout.write( 'Going to Waypoint #%s, X: %s, Y: %s, Theta: %s\n' % 
             ( msg.waypointId, msg.waypointX, msg.waypointY, msg.waypointTheta ))
         sys.stdout.write( 'Robot: %s, Navigation: %s, Scenario: %s\n' % ( self._setting[ 'robot' ],
