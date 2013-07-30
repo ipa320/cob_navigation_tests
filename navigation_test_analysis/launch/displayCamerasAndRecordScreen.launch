@@ -3,6 +3,8 @@
     <arg name="videoConfig" />
     <arg name="bagFilepath" />
 
+    <node name="display_cameras" pkg="navigation_test_analysis" type="displayCameras.py" output="screen" />
+
     <node name="screen_recorder" pkg="navigation_test_analysis" type="screenRecorder.py" output="screen">
         <param name="~bagFilepath" value="$( arg bagFilepath )" />
         <rosparam command="load" file="$( arg videoConfig )" />

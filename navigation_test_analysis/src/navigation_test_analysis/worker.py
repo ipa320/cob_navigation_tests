@@ -98,16 +98,6 @@ class BagReplayer( object ):
             raise IOError( 'File %s does not exist' % self._filepath )
 
 
-class CameraDisplayer( threading.Thread ):
-    def __init__( self, topic ):
-        threading.Thread.__init__( self )
-        self._topic = topic
-
-    def start( self ):
-        cmd  = 'rosrun image_view image_view image:=%s/image_raw' % self._topic
-        print 'Running: %s' % cmd
-        args = cmd.split( ' ' )
-        p = subprocess.Popen( args )
 
 class BagAnalyzer( object ):
     class NoStatusReceivedError( Exception ): pass
@@ -134,7 +124,7 @@ class BagAnalyzer( object ):
     def setupStatusListener( self ):
         print 'Listening to /navigation_test/status'
         self._subscribers.append( rospy.Subscriber(
-                '/status', 
+                'status', 
                 navigation_test_helper.msg.Status,
                 self._statusCallback ))
 
@@ -148,16 +138,6 @@ class BagAnalyzer( object ):
             navigation_test_helper.msg.Collision,
             self._collisionCallback ))
         self._collisionsTopic = topic
-
-
-    def _displayCameraTopics( self ):
-        for cameraTopic in self._setting[ 'cameraTopics' ]:
-            if cameraTopic in self._startedCameras: continue
-            print 'Starting Camera "%s"' % cameraTopic
-            display = CameraDisplayer( cameraTopic )
-            display.start()
-            self._startedCameras[ cameraTopic ] = display
-
 
 
     def start( self ):
@@ -214,10 +194,8 @@ class BagAnalyzer( object ):
         self._setting[ 'scenario' ]        = msg.setting.scenario
         self._setting[ 'repository' ]      = msg.setting.repository
         self._setting[ 'collisionsTopic' ] = msg.setting.collisionsTopic
-        self._setting[ 'cameraTopics' ]    = msg.setting.cameraTopics
 
         self._setupCollisionsListener()
-        self._displayCameraTopics()
     
         # first error wins
         if msg.error and not self._error:
@@ -238,7 +216,7 @@ class BagAnalyzer( object ):
 
 
 
-    def _logNextWapoint( self, msg ):
+    def _logNextWaypoint( self, msg ):
         sys.stdout.write( 'Going to Waypoint #%s, X: %s, Y: %s, Theta: %s\n' % 
             ( msg.waypointId, msg.waypointX, msg.waypointY, msg.waypointTheta ))
         sys.stdout.write( 'Robot: %s, Navigation: %s, Scenario: %s\n' % ( self._setting[ 'robot' ],
