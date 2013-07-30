@@ -2,27 +2,30 @@
 import roslib
 roslib.load_manifest( 'navigation_test_collision_detection' )
 import rospy
-import datetime, sys
+import datetime, sys, yaml
 from gazebo_msgs.msg            import ContactsState
 from navigation_test_helper.msg import Collision
 
 class CollisionDetector:
-    def __init__( self, bumperTopicName, collisionsTopicName, collisionMinInterval ):
-        self._bumperTopicName      = bumperTopicName
+    def __init__( self, bumperTopicNames, collisionsTopicName, collisionMinInterval ):
+        self._bumperTopicNames     = bumperTopicNames
         self._collisionsTopicName  = collisionsTopicName
         self._collisionActive      = False
         self._collisionsNum        = 0
         self._timeLastCollision    = None
         self._collisionMinInterval = int( collisionMinInterval )
+        self._subscribers          = []
     
     def start( self ):
         rospy.loginfo( 'Starting collision detection' )
-        self._setupBumperSubscriber()
+        self._setupBumperSubscribers()
         self._setupCollisionPublisher()
 
-    def _setupBumperSubscriber( self ):
-        self._subscriber = rospy.Subscriber( self._bumperTopicName,
-                ContactsState, self._contactsStateCallback )
+    def _setupBumperSubscribers( self ):
+        callback = self._contactsStateCallback
+        for topicName in self._bumperTopicNames:
+            sub = rospy.Subscriber( topicName, ContactsState, callback )
+            self._subscribers.append( sub )
 
     def _setupCollisionPublisher( self ):
         self._publisher = rospy.Publisher( self._collisionsTopicName,
@@ -72,15 +75,16 @@ class CollisionDetector:
 
 if __name__ == '__main__':
     rospy.init_node( 'collision_detection' )
-    bumperTopicName      = rospy.get_param( '~bumperTopic' )
+    bumperTopicNamesAsYamlString = rospy.get_param( '~bumperTopics' )
+    bumperTopicNames     = yaml.load( bumperTopicNamesAsYamlString )
     collisionMinInterval = rospy.get_param( '~collisionMinInterval' )
     collisionsTopicName  = rospy.get_param( 'collisionsTopic' )
 
-    if not bumperTopicName or not collisionsTopicName:
-        rospy.loginfo( 'No bumperTopicName or collisionsTopicName found. Exiting.' )
+    if not bumperTopicNames or not collisionsTopicName:
+        rospy.loginfo( 'No bumperTopicNames or collisionsTopicName found. Exiting.' )
         sys.exit( 0 )
 
-    detector  = CollisionDetector( bumperTopicName, collisionsTopicName,
+    detector  = CollisionDetector( bumperTopicNames, collisionsTopicName,
             collisionMinInterval )
     detector.start()
     rospy.spin()

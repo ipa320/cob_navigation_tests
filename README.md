@@ -13,7 +13,6 @@ Navigation Test
 - Adjustable video frequency
 - Include ros dependency for avconv in github.org/ros/rosdistro
 - Sometimes a collision is detected on initial simulation startup due to the robot falling on the ground
-- Pass array of bumper topics to navigation_test_collisions
 - Highlight error messages thrown during startup (e.g. bagPath not writable)
 
 #### Implemented
@@ -29,3 +28,4 @@ Navigation Test
 - ~~Move generic launchfile settings into seperate yaml file.
   Eventually only the four arguments exclude cob specific parameter, robot, navigation, scenario_name, yaml_config are passed to navigation_test_skeleton~~
 - ~~Include Parameter to dynamically configure recorded camera topics~~
+- ~~Pass array of bumper topics to navigation_test_collisions~~

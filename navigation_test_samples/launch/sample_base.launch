@@ -27,7 +27,7 @@
             <arg name="navigation"        value="$( arg navigation )" />
         </include>
         <include file="$( find navigation_test_collision_detection )/launch/collision_detection.launch">
-            <arg name="bumperTopic"     value="/base_bumper/state" />
+            <arg name="bumperTopics"     value="[/base_bumper/state]" />
         </include>
     </group>
 </launch>
