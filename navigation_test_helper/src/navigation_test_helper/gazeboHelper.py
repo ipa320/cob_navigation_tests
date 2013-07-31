@@ -28,7 +28,10 @@ def resetSimulation():
 
 
 class ModelStateSetter( object ):
-    def set( self, modelName, position, z=0, R=0, P=0 ):
+    def __init__( self, modelName ):
+        self._modelName = modelName
+
+    def set( self, position, z=0, R=0, P=0 ):
         service = self._getServiceProxy()
 
         modelState = gazebo_msgs.srv.SetModelState()
@@ -53,7 +56,7 @@ class ModelStateSetter( object ):
         start_twist.angular.z = 0.0
 
         modelstate = gazebo_msgs.msg.ModelState
-        modelstate.model_name = modelName
+        modelstate.model_name = self._modelName
         modelstate.reference_frame = "/map";
         modelstate.pose =  start_pose;
         modelstate.twist = start_twist;
