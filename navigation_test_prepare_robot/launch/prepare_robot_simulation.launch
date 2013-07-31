@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <launch>
-    <node name="navigation_testprepare_robot_simulation" pkg="navigation_test_prepare_robot" type="moveArmFolded.py" output="screen"/>
+    <node name="navigation_testprepare_robot_simulation" pkg="navigation_test_prepare_robot" type="prepareRobot.py" output="screen"/>
 </launch>
