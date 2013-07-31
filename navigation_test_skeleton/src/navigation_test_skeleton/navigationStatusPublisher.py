@@ -24,7 +24,7 @@ class NavigationStatusPublisher( object ):
         self._publisher.publish( msg )
 
     def failed( self, errorCode ):
-        msg = self._createMsg( info='finished', error='failed:%s' % errorCode )
+        msg = self._createMsg( info='finished', error='%s' % errorCode )
         self._publisher.publish( msg )
 
     def timedout( self ):
