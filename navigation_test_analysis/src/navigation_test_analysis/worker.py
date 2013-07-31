@@ -38,7 +38,7 @@ class Worker( object ):
         except BagAnalyzer.NoRepositoryNameReceivedError:
             self._errorOccured( 'No Repository name received.' )
 
-        except subprocess.CalledProcessError,e:
+        except BagReplayer.TCPROSHeaderError:
             if not self.bagInfo.isFixed():
                 self._fixBagFile()
             else:
@@ -85,13 +85,21 @@ class Worker( object ):
 
 
 class BagReplayer( object ):
+    class TCPROSHeaderError( Exception ): pass
+
     def __init__( self, filepath ):
         self._filepath = filepath
 
     def play( self ):
         self._assertFileExists()
         print 'Playing %s' % self._filepath
-        p = subprocess.check_call([ 'rosbag', 'play', self._filepath ])
+        pipe = subprocess.PIPE
+        args = [ 'rosbag', 'play', self._filepath ]
+        p    = subprocess.Popen( args, stderr=pipe )
+        stdout, stderr = p.communicate()
+
+        if stderr.find( 'invalid TCPROS header' ) >= 0:
+            raise BagReplayer.TCPROSHeaderError()
 
     def _assertFileExists( self ):
         if not os.path.isfile( self._filepath ):
