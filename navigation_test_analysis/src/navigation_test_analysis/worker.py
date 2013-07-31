@@ -209,9 +209,9 @@ class BagAnalyzer( object ):
 
         elif msg.info == 'running':
             if not msg.waypointId == self._expectedNextWaypointId:
-                raise Exception( 'Expected next waypoint id to be %s but was %s' % (
+                print( 'Expected next waypoint id to be %s but was %s' % (
                     self._expectedNextWaypointId, msg.waypointId ))
-            self._expectedNextWaypointId += 1
+            self._expectedNextWaypointId = msg.waypointId + 1
             self._logNextWaypoint( msg )
 
 
