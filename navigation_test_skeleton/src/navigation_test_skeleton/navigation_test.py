@@ -116,7 +116,7 @@ class TestNavigation( unittest.TestCase ):
 
         except NavigationFailedException, e:
             errorCode = e.errorCode
-            failureMsg = "The navigation failed: %s. Exiting." % errorCode
+            failureMsg = "The navigation failed with errorCode: %s. Exiting." % errorCode
             self._navigationStatusPublisher.failed( errorCode )
 
         except TimeoutException, e:
