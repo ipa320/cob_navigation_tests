@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="scenarioName" />
+    <arg name="route" />
     <arg name="navigation" />
     <arg name="robot" />
     <arg name="robot_env"         default="ipa-apartment" />
@@ -20,7 +21,7 @@
     <!-- Navigation Test -->
     <group ns="/navigation_test" >
         <rosparam file="$( arg testConfig )/base_config.yaml"    command="load" />
-        <rosparam file="$( arg testConfig )/extended_route.yaml" command="load" />
+        <rosparam file="$( arg route )" command="load" />
         <include file="$( find navigation_test_prepare_robot )/launch/prepare_robot_simulation.launch" />
         <include file="$( find navigation_test_skeleton )/launch/navigation.test">
             <arg name="scenarioName"      value="$( arg scenarioName )" />
