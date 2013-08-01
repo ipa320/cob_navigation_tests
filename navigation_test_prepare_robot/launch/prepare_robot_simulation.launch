@@ -1,7 +1,4 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="setupRobotService" />
-    <node name="navigation_testprepare_robot_simulation" pkg="navigation_test_prepare_robot" type="moveArmFolded.py">
-        <param name="setupRobotService" value="$( arg setupRobotService )" />
-    </node>
+    <node name="navigation_testprepare_robot_simulation" pkg="navigation_test_prepare_robot" type="prepareRobot.py" output="screen"/>
 </launch>

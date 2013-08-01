@@ -13,10 +13,11 @@ def setupRobot( req ):
     rospy.loginfo( 'Moving robot arm to home position' )
     scriptServer = simple_script_server()
     scriptServer.move( 'arm', 'folded', blocking=True )
+    scriptServer.move( 'tray', 'down', blocking=True )
     return True, ''
 
 if __name__=='__main__':
-    rospy.init_node( 'moveArmFolded' )
-    serviceName = rospy.get_param( '~setupRobotService' )
+    rospy.init_node( 'cob_prepare_robot' )
+    serviceName = rospy.get_param( 'setupRobotService' )
     setupRobotService( serviceName )
     rospy.spin()

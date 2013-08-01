@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="scenarioName" default="debugScenario" />
+    <arg name="navigation"   default="2dnav_ros_dwa" />
+    <arg name="robot"        default="cob3-3" />
+    <arg name="robot_env"    default="ipa-apartment" />
+    <arg name="testConfig"   default="$( find navigation_test_debug )/debug_config.yaml" />
+
+    <!-- Navigation Test -->
+    <group ns="/navigation_test" >
+        <rosparam file="$( arg testConfig )" command="load"/>
+        <include file="$( find navigation_test_prepare_robot )/launch/prepare_robot_simulation.launch" />
+        <include file="$( find navigation_test_skeleton )/launch/navigation.launch">
+            <arg name="scenarioName"      value="$( arg scenarioName )" />
+            <arg name="robot"             value="$( arg robot )" />
+            <arg name="navigation"        value="$( arg navigation )" />
+        </include>
+        <include file="$( find navigation_test_collision_detection )/launch/collision_detection.launch">
+            <arg name="bumperTopics"     value="[/base_bumper/state]" />
+        </include>
+    </group>
+</launch>

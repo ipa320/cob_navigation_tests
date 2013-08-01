@@ -1,12 +1,10 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="bumperTopic" />
-    <arg name="collisionsTopic" />
+    <arg name="bumperTopics" />
     <arg name="collisionMinInterval" default="1" />
 
     <node name="collision_detection" pkg="navigation_test_collision_detection" type="collision_detection.py" output="screen">
-        <param name="~bumperTopic"          value="$( arg bumperTopic )" />
-        <param name="~collisionsTopic"      value="$( arg collisionsTopic )" />
-        <param name="~collisionMinInterval" value="$( arg collisionMinInterval )" />
+        <param name="bumperTopics"          value="$( arg bumperTopics )" />
+        <param name="collisionMinInterval" value="$( arg collisionMinInterval )" />
     </node>
 </launch>

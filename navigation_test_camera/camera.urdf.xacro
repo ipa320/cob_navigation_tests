@@ -6,8 +6,8 @@
        xmlns:xacro="http://ros.org/wiki/xacro">
 
 	<property name="M_PI"        value="3.1415926535897931" />
-	<property name="ros_topic"   value="top_camera" />
-	<property name="name"        value="top_camera" />
+	<property name="ros_topic"   value="topCamera" />
+	<property name="name"        value="topCamera" />
 	<property name="update_rate" value="10" />
     <!--<include filename="$(find navigation_test_camera)/prosilica.urdf.xacro" />-->
 

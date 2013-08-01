@@ -69,7 +69,7 @@ from tf.transformations     import euler_from_quaternion
 from simple_script_server   import Trigger, TriggerResponse
 from navigation_test_helper import copyHandlers
 from navigation_test_helper.copyHandlers import CopyException
-import math, uuid, re, tempfile, time, os, sys, itertools
+import math, uuid, re, tempfile, time, os, sys, itertools, yaml
 
 class topics_bag():
 
@@ -133,16 +133,44 @@ class topics_bag():
         self.wanted_tfs                 = self.getRequiredParam('~wanted_tfs')
         self.trigger_topics             = self.getRequiredParam("~trigger_topics")
         self.continuous_topics          = self.getRequiredParam("~continuous_topics")
-        self.bag_target_path            = self.getRequiredParam("~bag_path")
+        self.bag_target_path            = self.getRequiredParam("bagPath")
         self.bag_local_path             = tempfile.gettempdir()
         self.bag_filename               = '%s.bag' % uuid.uuid4()
         self.bag_local_filepath         = self.bag_local_path + '/' + self.bag_filename
+        self.addCameraTopics()
+        self.addCollisionsTopic()
+
+    def addCameraTopics( self ):
+        cameraTopicNames = self.getOptionalParam( 'cameraTopics' )
+        if not cameraTopicNames:
+            return
+
+        for cameraTopicName in cameraTopicNames:
+            self.continuous_topics.append({
+                'topic':  cameraTopicName + '/image_raw',
+                'type':  'sensor_msgs/Image'
+            })
+
+    def addCollisionsTopic( self ):
+        collisionsTopic = self.getOptionalParam( 'collisionsTopic' )
+        if not collisionsTopic:
+            return
+        self.continuous_topics.append({
+            'topic': collisionsTopic,
+            'type':  'navigation_test_helper/Collision'
+        })
 
     def getRequiredParam( self, key ):
         value = rospy.get_param( key )
         if value is None:
             raise Exception( 'Could not load paramter %s' % key )
         return value
+
+    def getOptionalParam( self, key, default=None ):
+        try:
+            return rospy.get_param( key )
+        except KeyError,e:
+            return default
 
     def openBagfile( self ):
         # this creates the bagfile
@@ -203,10 +231,11 @@ class topics_bag():
 
 shutdown = False
 def waitForShutdown():
-    rospy.Service('/logger/shutdown', Trigger, shutdownReceived )
+    rospy.Service('logger/shutdown', Trigger, shutdownReceived )
     rospy.loginfo("Published shutdown" )
+    i = 0
     global shutdown
-    while not shutdown:
+    while not shutdown and i < 11:
         print 'Waiting for shutdown.'
         time.sleep( 1 )
 

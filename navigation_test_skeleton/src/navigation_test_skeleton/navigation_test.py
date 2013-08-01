@@ -6,7 +6,7 @@ import os, logging, sys
 import cob_srvs.srv, time
 import unittest, rostest
 import std_srvs, std_srvs.srv, std_msgs
-from watchDog import WatchDog, TimeoutException
+from watchDog                                 import WatchDog, TimeoutException
 from navigationStatusPublisher                import NavigationStatusPublisher
 from navigation_test_helper.positionResolver  import PositionResolver
 from navigation_test_helper.positionResolver  import PositionMissedException
@@ -22,40 +22,51 @@ class TestNavigation( unittest.TestCase ):
     def _initialize( self ):
         rospy.loginfo( 'Setting navigator' )
 
-        self.navigator = Navigator( '/move_base' )
+        moveBaseAction = rospy.get_param( 'moveBaseAction' )
+        self.navigator = Navigator( moveBaseAction )
         self._metricsObserver = MetricsObserverTF()
 
         setting = self._getSetting()
         self._navigationStatusPublisher = NavigationStatusPublisher( 
-                '/navigation_test/status', setting )
+                'status', setting )
 
         self.tolerance = Tolerance( xy=0.2, theta=.3 )
         self.positionResolver = PositionResolver()
 
+        rospy.loginfo( 'Waiting for Bag Recorder' )
+        self._stopBagRecording = self._waitForBagRecorder()
+        self._navigationStatusPublisher.starting()
+
         rospy.loginfo( 'Waiting for robot to be ready' )
         self._setupRobotWhenReady()
 
-        rospy.loginfo( 'Waiting for Bag Recorder' )
-        self._stopBagRecording = self._waitForBagRecorder()
+        rospy.loginfo( 'Starting actual test' )
         self._setupWatchdog()
+
 
 
     def _getSetting( self ):
         return {
-            'scenario':   rospy.get_param( '~scenarioName' ),
-            'robot':      rospy.get_param( '~robot' ),
-            'navigation': rospy.get_param( '~navigation' ),
-            'repository': rospy.get_param( '~repository' )
+            'scenario':        rospy.get_param( '~scenarioName' ),
+            'robot':           rospy.get_param( '~robot' ),
+            'navigation':      rospy.get_param( '~navigation' ),
+            'repository':      rospy.get_param( 'repository' ),
+            'cameraTopics':    rospy.get_param( 'cameraTopics' ),
+            'collisionsTopic': rospy.get_param( 'collisionsTopic' )
         }
 
     def _setupWatchdog( self ):
-        timeoutInS     = rospy.get_param( '~timeoutInS' )
+        timeoutInS     = rospy.get_param( 'timeoutInS' )
         self._watchDog = WatchDog( timeoutInS )
 
     def _setupRobotWhenReady( self ):
-        setupRobotServiceName = rospy.get_param( '~setupRobotService' )
+        setupRobotServiceName = rospy.get_param( 'setupRobotService' )
+        if not setupRobotServiceName:
+            rospy.loginfo( 'No setup robot service set. Assuming it\'s ready' )
+            return
+
         rospy.loginfo( 'Waiting on setup service %s' % setupRobotServiceName )
-        rospy.wait_for_service( setupRobotServiceName )
+        rospy.wait_for_service( setupRobotServiceName, timeout=120 )
         setupRobotService = rospy.ServiceProxy( setupRobotServiceName,
                 SetupRobotService )
         result = setupRobotService()
@@ -64,9 +75,9 @@ class TestNavigation( unittest.TestCase ):
 
 
     def _waitForBagRecorder( self ):
-        rospy.wait_for_service( '/logger/stop' )
+        rospy.wait_for_service( 'logger/stop', timeout=120 )
 
-        stopBagRecordingService  = rospy.ServiceProxy( '/logger/stop',  
+        stopBagRecordingService  = rospy.ServiceProxy( 'logger/stop',  
                 cob_srvs.srv.Trigger )
         rospy.loginfo( 'Logger ready' )
         return stopBagRecordingService
@@ -74,8 +85,9 @@ class TestNavigation( unittest.TestCase ):
 
     def testNavigate( self ):
         self._initialize()
-        goals = rospy.get_param( '~goals' )
         self._metricsObserver.start()
+
+        goals            = rospy.get_param( 'route' )
         positionResolver = self.positionResolver
         tolerance        = self.tolerance
         failureMsg       = ''
@@ -90,7 +102,7 @@ class TestNavigation( unittest.TestCase ):
                 resultWaiter = self.navigator.goTo( targetPosition ) 
                 while not resultWaiter.hasFinished():
                     self._watchDog.assertExecutionTimeLeft()
-                    time.sleep( 3 )
+                    time.sleep( 1 )
 
                 resultWaiter.assertSucceeded()
                 positionResolver.assertInPosition( targetPosition, tolerance )
@@ -101,19 +113,16 @@ class TestNavigation( unittest.TestCase ):
         except PositionMissedException, e:
             failureMsg = "The navigation missed the target. Exiting."
             self._navigationStatusPublisher.missed()
-            failure = True
 
         except NavigationFailedException, e:
             errorCode = e.errorCode
-            failureMsg = "The navigation failed: %s. Exiting." % errorCode
+            failureMsg = "The navigation failed with errorCode: %s. Exiting." % errorCode
             self._navigationStatusPublisher.failed( errorCode )
-            failure = True
 
         except TimeoutException, e:
             timeout = self._watchDog.timeoutInS
             failureMsg = "The test timed out after %ss" % timeout
             self._navigationStatusPublisher.timedout()
-            failure = True
 
         finally:
             self._terminate()
@@ -133,8 +142,8 @@ class TestNavigation( unittest.TestCase ):
 
     def _waitForBagRecorderShutdown( self ):
         rospy.loginfo("waiting for logger to be able to shutdown")
-        rospy.wait_for_service( '/logger/shutdown' )
-        shutdownService = rospy.ServiceProxy( '/logger/shutdown',
+        rospy.wait_for_service( 'logger/shutdown' )
+        shutdownService = rospy.ServiceProxy( 'logger/shutdown',
                 cob_srvs.srv.Trigger )
         shutdownService()
         rospy.loginfo("found.")

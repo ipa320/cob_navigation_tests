@@ -52,20 +52,7 @@ define [ 'backbone', 'models/noErroneousFilter'  ], ( Backbone, NoErroneousFilte
     formatErrorPoints: ( data )->
       for i, current of data
         continue if !current.error
-
-        previousY = +data[ i - 1 ]?.y || 0
-        next      = @findNextValue data, i
-        if next
-          current.y = ( next.y - previousY ) / ( next.index - i + 1 ) + previousY
-        else
-          current.y = previousY
-
         current.marker = { symbol: 'square', fillColor: 'red' }
-
-    findNextValue: ( data, i )->
-      while current = data[ ++i ]
-        if !current.error && +current.y
-          return index: i, y: +current.y
 
     extremesChanged: ( min, max )->
       @_swallowNextExtremesEvent = true

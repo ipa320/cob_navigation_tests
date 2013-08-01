@@ -1,9 +1,10 @@
-Header header
+Header  header
+time    starttime
 float64 localtime
-int32 waypointId
+int32   waypointId
 float64 waypointX
 float64 waypointY
 float64 waypointTheta
-string info
-string error
+string  info
+string  error
 Setting setting

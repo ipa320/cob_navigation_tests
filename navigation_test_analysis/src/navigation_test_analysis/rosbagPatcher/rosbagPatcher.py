@@ -2,7 +2,8 @@
 import roslib
 roslib.load_manifest( 'navigation_test_analysis' )
 import rospy, rosbag
-from rosbag.bag import ROSBagFormatException
+from rosbag.bag    import ROSBagFormatException
+from genpy.message import DeserializationError
 import sys, os, tempfile, shutil
 
 
@@ -30,7 +31,7 @@ class BagReader( object ):
         return rospy.Time.from_sec( sec+delta )
 
 class BagFilePatcher( object ):
-    def __init__( self, sourceFilepath, destFilepath ):
+    def __init__( self, sourceFilepath, destFilepath=None ):
         self._sourceFilepath = sourceFilepath
         self._destFilepath   = destFilepath
         self._sameSourceAndDestination = destFilepath is None
@@ -44,8 +45,8 @@ class BagFilePatcher( object ):
                 self._destBag   = destBag
                 self._reader    = BagReader( sourceBag )
                 self._patchSourceBagFileToDestination()
-        if self._sameSourceAndDestination:
-            os.remove( self.sourceFilepath )
+        if self._sameSourceAndDestination: #replace old bagfile with new one
+            os.remove( self._sourceFilepath )
             shutil.move( self._destFilepath, self._sourceFilepath )
 
     def _patchSourceBagFileToDestination( self ):
@@ -55,14 +56,12 @@ class BagFilePatcher( object ):
                 for msg in self._reader.read():
                     self._writeMessage( msg )
                 finished = True
-            except ROSBagFormatException, e:
+            except ( ROSBagFormatException, DeserializationError ) as e:
                 self._tryToFixError( e )
 
     def _tryToFixError( self, e ):
-        if 'Error reading header field' != str( e ):
-            raise e
         readerTimestamp = self._reader.positionInSeconds()
-        print 'Header field error detected at %s' % readerTimestamp
+        print 'Possible Header field error detected at %s' % readerTimestamp
         self._skipDeltaSecondsInPlayback( delta=0.001 )
 
     def _writeMessage( self, msg ):

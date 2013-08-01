@@ -63,7 +63,7 @@
         };
       },
       formatErrorPoints: function(data) {
-        var current, i, next, previousY, _ref, _results;
+        var current, i, _results;
 
         _results = [];
         for (i in data) {
@@ -71,31 +71,12 @@
           if (!current.error) {
             continue;
           }
-          previousY = +((_ref = data[i - 1]) != null ? _ref.y : void 0) || 0;
-          next = this.findNextValue(data, i);
-          if (next) {
-            current.y = (next.y - previousY) / (next.index - i + 1) + previousY;
-          } else {
-            current.y = previousY;
-          }
           _results.push(current.marker = {
             symbol: 'square',
             fillColor: 'red'
           });
         }
         return _results;
-      },
-      findNextValue: function(data, i) {
-        var current;
-
-        while (current = data[++i]) {
-          if (!current.error && +current.y) {
-            return {
-              index: i,
-              y: +current.y
-            };
-          }
-        }
       },
       extremesChanged: function(min, max) {
         var _ref;

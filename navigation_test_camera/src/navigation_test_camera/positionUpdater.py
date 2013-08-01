@@ -18,11 +18,11 @@ class CameraUpdater( threading.Thread ):
 
     def run( self ):
         positionResolver = PositionResolver()
-        modelStateSetter = ModelStateSetter()
+        modelStateSetter = ModelStateSetter( 'camera_model' )
         while self._active and not rospy.is_shutdown():
             position = positionResolver.getPosition()
-            modelStateSetter.set( 'camera_model', position, z=self._zOffset,
-                    P=math.pi/2 )
+            position.theta = 0
+            modelStateSetter.set( position, z=self._zOffset, P=math.pi/2 )
             time.sleep( self._updateRate )
 
     def stop( self ):

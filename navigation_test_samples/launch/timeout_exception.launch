@@ -2,7 +2,7 @@
 <launch>
     <include file="$( find navigation_test_samples )/launch/sample_base.launch">
         <arg name="scenarioName" value="timeout_exception" />
-        <arg name="timeoutInS"   value="10" />
+        <arg name="testConfig"   value="$( find navigation_test_samples )/config/timeout_config.yaml" />
     </include>
 
     <include file="$( find navigation_test_samples_gazebo_objects )/launch/large_heavy_table.launch" />
