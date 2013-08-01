@@ -10,7 +10,7 @@
 
     <!-- Set time-limit practically to infinitiy and abort within the test script to shut
          everything down properly -->
-    <test test-name="navigation_test" pkg="navigation_test_skeleton" type="navigation_test.py" time-limit="1000000">
+    <test test-name="$( anon navigation_test )" pkg="navigation_test_skeleton" type="navigation_test.py" time-limit="1000000">
         <param name="scenarioName" value="$( arg scenarioName )" />
         <param name="robot"        value="$( arg robot )" />
         <param name="navigation"   value="$( arg navigation )" />
