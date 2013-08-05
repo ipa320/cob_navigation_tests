@@ -2,9 +2,10 @@
 import roslib
 roslib.load_manifest( 'navigation_test_analysis' )
 import rospy
-import subprocess, threading, os, gtk, tempfile, os.path
+import subprocess, threading, os, tempfile, os.path
 from subprocess import PIPE
 from navigation_test_helper import copyHandlers
+from navigation_test_helper import gtkHelper
 from videoEncoder import RecorderSettings
 import videoEncoder
 
@@ -63,12 +64,6 @@ class ScreenRecorder( threading.Thread ):
         os.unlink( self.mp4AbsolutePath )
         os.rmdir( self.tmpPath )
 
-def getFullscreenSize():
-    window = gtk.Window()
-    screen = window.get_screen()
-    return [ screen.get_width(), screen.get_height() ]
-
-
 def getParam( key, default=None ):
     try:
         return rospy.get_param( key )
@@ -82,7 +77,7 @@ if __name__=='__main__':
     rospy.init_node( 'screen_recorder' )
     settings  = RecorderSettings()
     settings.bagFilepath = getParam( '~bagFilepath' )
-    settings.size        = getParam( '~size', getFullscreenSize() )
+    settings.size        = getParam( '~size', gtkHelper.getFullscreenSize() )
     settings.frequency   = getParam( '~frequency' )
     settings.offset      = getParam( '~offset' )
     settings.targetUri   = getParam( '~videoPath' )

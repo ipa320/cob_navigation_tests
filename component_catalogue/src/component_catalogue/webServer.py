@@ -5,18 +5,21 @@ import rospy
 
 import SimpleHTTPServer, SocketServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler
+from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from SocketServer import ThreadingMixIn
 from navigation_test_helper.git import Git
 from navigation_test_helper.resultRepository import ResultRepository
 import os, json, urllib, urllib2
 
 os.chdir( os.path.dirname( os.path.realpath( __file__ )))
 
-class MyServer( SocketServer.TCPServer ):
-    allow_reuse_address = True
+class WebServer( ThreadingMixIn, HTTPServer ):
+    daemon_threads = True
+
     def __init__( self, port, repository, videoServer ):
         self._repository  = repository
         self._videoServer = videoServer
-        SocketServer.TCPServer.__init__( self, ( "", port ), MyHandler )
+        HTTPServer.__init__( self, ( '', port ), Handler )
 
     def updateRepository( self ):
         self._repository.pull()
@@ -50,7 +53,7 @@ class MyServer( SocketServer.TCPServer ):
             for test in tests:
                 test[ 'video' ] = 'Could not connect to server'
 
-class MyHandler( SimpleHTTPRequestHandler ):
+class Handler( SimpleHTTPRequestHandler ):
     def do_GET( self ):
         if self.path == '/':
             self.send_response( 301 )
@@ -77,5 +80,5 @@ if __name__ == '__main__':
     videoServer = rospy.get_param( '~videoServer' )
     git = Git( repositoryName )
     with git as repository:
-        server = MyServer( port, repository, videoServer )
+        server = WebServer( port, repository, videoServer )
         server.serve_forever()

@@ -93,6 +93,8 @@ class Handler( BaseHTTPRequestHandler ):
 
 
 class VideoServer( ThreadingMixIn, HTTPServer ):
+    daemon_threads = True
+    
     def __init__( self, port, videoPath ):
         self.videoPath = videoPath
         HTTPServer.__init__( self, ( '', port ), Handler )
