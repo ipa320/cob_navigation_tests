@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import roslib
-roslib.load_manifest( 'navigation_test_camera' )
+roslib.load_manifest( 'navigation_test_analysis' )
 import rospy
 import yaml
 from sensor_msgs.msg import Image
@@ -33,7 +33,8 @@ class ImageViewApp( wx.App ):
         if topicsCount == 2:
             return self.createTwoPanels()
 
-        size = int( math.ceil( math.sqrt( topicsCount )))
+        size = int( math.ceil( math.sqrt( topicsCount ))ls
+                gi
         return self.createMultiplePanels( size, size )
     
     def createSinglePanel( self ):
