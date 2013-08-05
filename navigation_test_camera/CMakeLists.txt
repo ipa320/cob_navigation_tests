@@ -17,4 +17,4 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 #rosbuild_add_executable(multi_image_view src/multi_image_view.cpp)
-rosbuild_add_executable(map_to_image src/map_to_image.cpp)
+rosbuild_add_executable(map_to_image src/navigation_test_camera/map_to_image.cpp)
