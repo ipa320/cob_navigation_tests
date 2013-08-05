@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$( find ipa_tests )/launch/base.launch">
+        <arg name="route"        value="$( find ipa_tests )/config/$route$.yaml" />
+        <arg name="scenarioName" value="$scenarioName$" />
+        <arg name="robot"        value="$robot$" />
+        <arg name="navigation"   value="$navigation$" />
+    </include>
+</launch>

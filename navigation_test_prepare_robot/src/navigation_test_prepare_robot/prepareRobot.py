@@ -1,30 +1,31 @@
 #!/usr/bin/env python
 import roslib
 roslib.load_manifest( 'navigation_test_prepare_robot' )
-import rospy, time
+import rospy, time, yaml
 from simple_script_server       import simple_script_server
 from navigation_test_helper.srv import SetupRobotService
 
-trayPosition = ''
-def setupRobotService( serviceName ):
+def setupRobotService( serviceName, robotConfig ):
     rospy.loginfo( 'Creating setup service %s' % serviceName )
-    rospy.Service( serviceName, SetupRobotService, setupRobot )
+    serviceCallback = createSetupRobotCallback( robotConfig )
+    rospy.Service( serviceName, SetupRobotService, serviceCallback )
 
-def setupRobot( req ):
-    rospy.loginfo( 'Moving robot arm to home position' )
+def createSetupRobotCallback( robotConfig ):
+    return lambda( req ): setupRobot( robotConfig, req )
+
+def setupRobot( robotConfig, req ):
+    rospy.loginfo( 'Preparing robot for navigation scenario ...' )
     scriptServer = simple_script_server()
-    scriptServer.move( 'arm', 'folded', blocking=True )
-    scriptServer.move( 'tray', trayPosition, blocking=True )
+    config = yaml.load( file( robotConfig, 'r' ))
+    if config:
+        for key, value in config.items():
+            rospy.loginfo( 'Moving %s to %s' % ( key, value ))
+            scriptServer.move( key, value, blocking=True )
     return True, ''
 
 if __name__=='__main__':
     rospy.init_node( 'cob_prepare_robot' )
     serviceName = rospy.get_param( 'setupRobotService' )
-    robot = rospy.get_param( '~robot' )
-
-    if robot in ( 'cob3-5', 'cob3-6' ):
-        trayPosition = 'storetray'
-    else:
-        trayPosition = 'down'
-    setupRobotService( serviceName )
+    robotConfig = rospy.get_param( '~robotConfig' )
+    setupRobotService( serviceName, robotConfig )
     rospy.spin()

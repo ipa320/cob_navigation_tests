@@ -22,7 +22,9 @@
     <group ns="/navigation_test" >
         <rosparam file="$( arg testConfig )/base_config.yaml"    command="load" />
         <rosparam file="$( arg route )" command="load" />
-        <include file="$( find navigation_test_prepare_robot )/launch/prepare_robot_simulation.launch" />
+        <include file="$( find navigation_test_prepare_robot )/launch/prepare_robot_simulation.launch">
+            <arg name="robot"             value="$( arg robot )" />
+        </include>
         <include file="$( find navigation_test_skeleton )/launch/navigation.test">
             <arg name="scenarioName"      value="$( arg scenarioName )" />
             <arg name="robot"             value="$( arg robot )" />
