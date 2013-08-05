@@ -4,12 +4,20 @@
      navigation_test_camera
 
   </description>
-  <author>Simon Ebner</author>
+  <author>Jan Fischer</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/navigation_test_camera</url>
   <depend package="navigation_test_helper" />
   <depend package="gazebo_msgs" />
+  <depend package="sensor_msgs" />
+  <depend package="nav_msgs" />
+  <depend package="image_transport"/>
+  <depend package="opencv2"/>
+  <depend package="cv_bridge"/>
+  <depend package="message_filters"/>
+
+  <rosdep name="boost"/>
 
 </package>
 
