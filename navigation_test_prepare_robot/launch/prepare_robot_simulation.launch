@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
 <launch>
-    <node name="navigation_testprepare_robot_simulation" pkg="navigation_test_prepare_robot" type="prepareRobot.py" output="screen"/>
+    <arg name="robot" />
+    <node name="navigation_testprepare_robot_simulation" pkg="navigation_test_prepare_robot" type="prepareRobot.py" output="screen">
+        <param name="robot" value="$( arg robot )" />
+    </node>
 </launch>
