@@ -2,44 +2,28 @@
 import roslib
 roslib.load_manifest( 'navigation_test_analysis' )
 import rospy
-import threading, subprocess
+import threading, subprocess, sys
 import navigation_test_helper.msg
-
-class CameraDisplay( threading.Thread ):
-    def __init__( self, topic ):
-        threading.Thread.__init__( self )
-        self._topic = topic
-        self._p     = None
-
-    def start( self ):
-        cmd  = 'rosrun image_view image_view image:=%s/image_raw' % self._topic
-        print 'Starting Camera "%s" with:\n > %s' % ( self._topic, cmd )
-        args = cmd.split( ' ' )
-        self._p = subprocess.Popen( args )
-
-    def stop( self ):
-        if not self._p: return
-        self._p.terminate()
-
+from multiImageView import ImageViewApp
 
 class CameraDisplayManager( object ):
     def __init__( self ):
         self._startedCameraDisplays = {}
+        self._app = None
 
     def start( self ):
         self._statusSubscriber = rospy.Subscriber( 'status', 
             navigation_test_helper.msg.Status, self._statusCallback )
 
     def _statusCallback( self, msg ):
-        for cameraTopic in msg.setting.cameraTopics:
-            if cameraTopic in self._startedCameraDisplays: continue
-            display = CameraDisplay( cameraTopic )
-            display.start()
-            self._startedCameraDisplays[ cameraTopic ] = display
+        if msg.setting.cameraTopics:
+            print 'Starting MultiImageView'
+            self._app = ImageViewApp( msg.setting.cameraTopics )
+            self._app.start()
+            self._statusSubscriber.unregister()
 
     def stop( self ):
-        for topic, display in self._startedCameraDisplays.items():
-            display.stop()
+        sys.exit( 0 )
 
 
 if __name__ == '__main__':

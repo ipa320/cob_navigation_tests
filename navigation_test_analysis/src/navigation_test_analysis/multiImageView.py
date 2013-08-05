@@ -3,12 +3,10 @@
 import roslib
 roslib.load_manifest( 'navigation_test_analysis' )
 import rospy
-import yaml
 from sensor_msgs.msg import Image
-from proportional_splitter import ProportionalSplitter
 from navigation_test_helper import gtkHelper
  
-import wx, sys, threading, math
+import wx, sys, threading, math, yaml
  
 class ImageViewApp( wx.App ):
     def __init__( self, topics ):
@@ -33,8 +31,7 @@ class ImageViewApp( wx.App ):
         if topicsCount == 2:
             return self.createTwoPanels()
 
-        size = int( math.ceil( math.sqrt( topicsCount ))ls
-                gi
+        size = int( math.ceil( math.sqrt( topicsCount )))
         return self.createMultiplePanels( size, size )
     
     def createSinglePanel( self ):
@@ -53,18 +50,6 @@ class ImageViewApp( wx.App ):
                 panel = ImageViewPanel( self.frame, pos=pos, size=size )
                 self.panels.append( panel )
 
-    def splitHorizontally( self, target, rowsLeft, columns ):
-        PS = ProportionalSplitter
-        horizontalSplitter = PS( target, proportion=1/rowsLeft )
-        nextHorizontalSplitter = PS( horizontalSplitter,
-            proportion = 1/(rowsLeft-1) )
-        verticalSplitter = PS( horizontalSplitter, 1/columns )
-        horizontalSplitter.SplitHorizontally( verticalSplitter, 
-            nextHorizontalSplitter )
-        return verticalSplitter, nextHorizontalSplitter
-
-
-
     def onClose( self ):
         for subscriber in self.subscribers:
             subscriber.unregister()
@@ -72,7 +57,7 @@ class ImageViewApp( wx.App ):
 
     def start( self ):
         for i in xrange( len( self.topics )):
-            topic      = self.topics[ i ]
+            topic      = self.topics[ i ] + '/image_raw'
             panel      = self.panels[ i ]
             cb         = self.make_handle_image_cb( panel )
             subscriber = rospy.Subscriber( topic, Image, cb )
