@@ -62,7 +62,7 @@ if __name__ == '__main__':
     cmakePaths = []
     for config in permutations():
         filename, launchfileCode = generateLaunchfile( config )
-        cmakePath = 'launch/generatd' + filename
+        cmakePath = 'launch/generated/' + filename
         cmakePaths.append( cmakePath )
 
         absPath = relativeToAbsolutePath( '../../' + cmakePath )
