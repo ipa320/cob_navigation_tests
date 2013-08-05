@@ -4,7 +4,7 @@
      navigation_test_camera
 
   </description>
-  <author>Jan Fischer</author>
+  <author>SimonEbner, Jan Fischer</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/navigation_test_camera</url>
