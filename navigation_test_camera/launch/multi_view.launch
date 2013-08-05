@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <launch>
+    <arg name="cameraTopics" />
 
     <node pkg="navigation_test_camera" type="multi_image_view.py" name="map_to_image" output="screen">
+        <param name="cameraTopics" value="$( arg cameraTopics )" />
     </node>
 
 </launch>

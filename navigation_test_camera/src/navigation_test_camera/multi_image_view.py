@@ -3,29 +3,66 @@
 import roslib
 roslib.load_manifest( 'navigation_test_camera' )
 import rospy
+import yaml
 from sensor_msgs.msg import Image
 from proportional_splitter import ProportionalSplitter
 from navigation_test_helper import gtkHelper
  
-import wx, sys, threading
+import wx, sys, threading, math
  
 class ImageViewApp( wx.App ):
     def __init__( self, topics ):
-        wx.App.__init__( self )
         self.topics      = topics
+        self.panels      = []
         self.subscribers = []
+        wx.App.__init__( self )
 
     def OnInit( self ):
         wx.App.__init__( self )
-        size = gtkHelper.getFullscreenSize()
-        self.frame = CloseFrame( title = "ROS Image View", size=size )
+        self.size = gtkHelper.getFullscreenSize()
+        self.frame = CloseFrame( title = "ROS Image View", size=self.size )
         self.frame.addCloseCallback( self.onClose )
-        self.split1 = ProportionalSplitter( self.frame, proportion=0.5, size=size )
-        self.panel1 = ImageViewPanel( self.split1 )
-        self.panel2 = ImageViewPanel( self.split1 )
-        self.split1.SplitVertically( self.panel1, self.panel2 )
+        self.createPanels()
         self.frame.Show(True)
         return True
+
+    def createPanels( self ):
+        topicsCount = len( self.topics )
+        if topicsCount == 1:
+            return self.createSinglePanel()
+        if topicsCount == 2:
+            return self.createTwoPanels()
+
+        size = int( math.ceil( math.sqrt( topicsCount )))
+        return self.createMultiplePanels( size, size )
+    
+    def createSinglePanel( self ):
+        self.panels = [ ImageViewPanel( self.frame )]
+
+    def createTwoPanels( self ):
+        return self.createMultiplePanels( 1, 2 )
+
+    def createMultiplePanels( self, rows, cols ):
+        widthPerPanel  = self.size[ 0 ] / cols
+        heightPerPanel = self.size[ 1 ] / rows
+        size           = [ widthPerPanel, heightPerPanel ]
+        for y in xrange( rows ):
+            for x in xrange( cols ):
+                pos   = [ x*widthPerPanel, y*heightPerPanel ]
+                panel = ImageViewPanel( self.frame, pos=pos, size=size )
+                self.panels.append( panel )
+
+    def splitHorizontally( self, target, rowsLeft, columns ):
+        PS = ProportionalSplitter
+        horizontalSplitter = PS( target, proportion=1/rowsLeft )
+        nextHorizontalSplitter = PS( horizontalSplitter,
+            proportion = 1/(rowsLeft-1) )
+        verticalSplitter = PS( horizontalSplitter, 1/columns )
+        horizontalSplitter.SplitHorizontally( verticalSplitter, 
+            nextHorizontalSplitter )
+        return verticalSplitter, nextHorizontalSplitter
+
+
 
     def onClose( self ):
         for subscriber in self.subscribers:
@@ -33,10 +70,9 @@ class ImageViewApp( wx.App ):
         sys.exit( 1 )
 
     def start( self ):
-        panels = [ self.panel1, self.panel2 ]
         for i in xrange( len( self.topics )):
             topic      = self.topics[ i ]
-            panel      = panels[ i ]
+            panel      = self.panels[ i ]
             cb         = self.make_handle_image_cb( panel )
             subscriber = rospy.Subscriber( topic, Image, cb )
             self.subscribers.append( subscriber )
@@ -91,12 +127,9 @@ class ImageViewPanel(wx.Panel):
     ## http://wiki.wxpython.org/LongRunningTasks
  
 def main(argv):
-    def handle_image( image ):
-        wx.CallAfter( app.panel.update, image )
-
     rospy.init_node('ImageView')
-    topics = [ '/stereo/right/image_raw', '/stereo/left/image_raw' ]
-    app = ImageViewApp( topics )
+    topics = yaml.load( rospy.get_param( '~cameraTopics' ))
+    app    = ImageViewApp( topics )
     app.start()
     return 0
  
