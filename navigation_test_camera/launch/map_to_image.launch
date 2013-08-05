@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="map_topic" default="/map" />
+  
+  <node pkg="navigation_test_camera" ns="navigation_test_camera" type="map_to_image" name="map_to_image" output="screen">
+	<!--launch-prefix="/usr/bin/gdb"-->
+	<remap from="map" to="$(arg map_topic)"/> 	
+	<remap from="image" to="/navigation_test_camera/image"/>
+  </node>
+
+</launch>
