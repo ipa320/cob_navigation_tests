@@ -7,12 +7,6 @@
     <arg name="robot_env"      />
     <arg name="testConfig"     />
 
-    <!-- Robot Simulation -->
-    <include file="$( find cob_bringup_sim )/launch/robot.launch">
-        <arg name="robot"     value="$( arg robot )" />
-        <arg name="robot_env" value="$( arg robot_env )" />
-    </include>
-    
     <include file="$( find ipa_tests_sim )/launch/$( arg navigation ).launch">
         <arg name="robot"     value="$( arg robot )" />
         <arg name="robot_env" value="$( arg robot_env )" />
@@ -27,7 +21,7 @@
             <arg name="robot"             value="$( arg robot )" />
         </include>
         <include file="$( find navigation_test_skeleton )/launch/navigation.launch">
-            <arg name="sim"               value="true" />
+            <arg name="sim"               value="false" />
             <arg name="scenarioName"      value="$( arg scenarioName )" />
             <arg name="robot"             value="$( arg robot )" />
             <arg name="navigation"        value="$( arg navigation )" />

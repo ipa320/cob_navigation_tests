@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robot" default="$( optenv ROBOT !! NO_ROBOT_SET !! )" />
+    <arg name="robot_env" default="$( optenv ROBOT_ENV !! NO_ROBOT_ENV_SET !! )" />
+    <include file="$( find cob_navigation_global )/launch/2dnav_ros_tr.launch">
+        <arg name="robot"     value="$( arg robot )" />
+        <arg name="robot_env" value="$( arg robot_env )" />
+        <arg name="map"       value="/u/navigation_test/map.yaml" />
+    </include>
+</launch>
