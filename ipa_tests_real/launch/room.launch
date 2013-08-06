@@ -3,13 +3,13 @@
     <arg name="navigation" default="$( optenv NAVIGATION !!NO_NAVIGATION_SET!! )" />
     <arg name="robot"      default="$( optenv ROBOT !!NO_ROBOT_SET!! )" />
 
-    <include file="$( find ipa_tests_sim )/launch/base.launch">
+    <include file="$( find ipa_tests_real )/launch/base.launch">
         <arg name="scenarioName"   value="room" />
-        <arg name="route"          value="$( find ipa_tests_sim)/routes/room.yaml" />
+        <arg name="route"          value="$( find ipa_tests_real )/routes/room.yaml" />
         <arg name="robot"          value="$( arg robot )" />
         <arg name="robot_env"      value="ipa-apartment"   />
         <arg name="navigation"     value="$( arg navigation )" />
-        <arg name="testConfig"     value="$( find ipa_tests_sim )/config/room.yaml" />
+        <arg name="testConfig"     value="$( find ipa_tests_real )/config/room.yaml" />
     </include>
-    <include file="$( find ipa_tests_sim )/launch/table.launch" />
+    <include file="$( find ipa_tests_real )/launch/table.launch" />
 </launch>
