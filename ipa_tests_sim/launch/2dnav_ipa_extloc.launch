@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="robot" default="$( optenv ROBOT !! NO_ROBOT_SET !! )" />
+    <arg name="robot_env" default="$( optenv ROBOT_ENV !! NO_ROBOT_ENV_SET !! )" />
+    <include file="$( find cob_navigation_global )/launch/intern/2dnav_ipa_extloc.launch">
+        <arg name="robot" value="$( arg robot )" />
+        <arg name="robot_env" value="$( arg robot_env )" />
+    </include>
+</launch>

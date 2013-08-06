@@ -1,0 +1,7 @@
+timeoutInS:        300
+repository:        git@github.com:SimonEbner/navigation_test_results
+bagPath:           /tmp/bagfiles
+setupRobotService: setup_robot
+collisionsTopic:   collisions
+cameraTopics:      [ /camera/rgb/image_color ]
+moveBaseAction:    /move_base

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="scenarioName"   />
+    <arg name="route"          />
+    <arg name="navigation"     />
+    <arg name="robot"          />
+    <arg name="robot_env"      />
+    <arg name="testConfig"     />
+
+    <!-- Robot Simulation -->
+    <include file="$( find cob_bringup_sim )/launch/robot.launch">
+        <arg name="robot"     value="$( arg robot )" />
+        <arg name="robot_env" value="$( arg robot_env )" />
+    </include>
+    
+    <include file="$( find ipa_tests_sim )/launch/$( arg navigation ).launch">
+        <arg name="robot"     value="$( arg robot )" />
+        <arg name="robot_env" value="$( arg robot_env )" />
+    </include>
+
+    <!-- Navigation Test -->
+    <group ns="/navigation_test" >
+        <rosparam file="$( arg testConfig )"    command="load" />
+        <rosparam file="$( arg route )" command="load" />
+        <rosparam file="$( find ipa_tests_sim )/config/$( arg navigation ).yaml" command="load" />
+        <include file="$( find navigation_test_prepare_robot )/launch/prepare_robot_simulation.launch">
+            <arg name="robot"             value="$( arg robot )" />
+        </include>
+        <include file="$( find navigation_test_skeleton )/launch/navigation.launch">
+            <arg name="sim"               value="true" />
+            <arg name="scenarioName"      value="$( arg scenarioName )" />
+            <arg name="robot"             value="$( arg robot )" />
+            <arg name="navigation"        value="$( arg navigation )" />
+        </include>
+        <include file="$( find navigation_test_collision_detection )/launch/collision_detection.launch">
+            <arg name="bumperTopics"     value="[/base_bumper/state]" />
+        </include>
+    </group>
+</launch>
