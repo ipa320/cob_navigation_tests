@@ -1,7 +1,7 @@
 timeoutInS:        300
 repository:        git@github.com:SimonEbner/navigation_test_results
-bagPath:           /tmp/bagfiles
+bagPath:           jenkins@cob-sim2:/home/webportal/bagfiles
 setupRobotService: setup_robot
 collisionsTopic:   collisions
-cameraTopics:      [ /camera/rgb/image_color ]
+cameraTopics:      [ /topCamera ]
 moveBaseAction:    /move_base
