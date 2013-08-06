@@ -19,7 +19,7 @@ class BagDirectoryReader( object ):
 
     def waitUntilBagfileSizeStable( self, bagInfo ):
         filepath = bagInfo.filepath
-        fileSize1, filesize2 = 0,1
+        filesize1, filesize2 = 0,1
         while filesize1 != filesize2:
             filesize1 = os.path.getsize( filepath )
             time.sleep( 2 )
