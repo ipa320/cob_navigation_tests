@@ -1,6 +1,6 @@
 robots:
-    [ cob3-3, desire, raw3-2 ]
+    [ cob3-3, desire, raw3-1 ]
 navigations:
-    [ 2dnav_ros_dwa, 2dnav_ros_tr ]
+    [ 2dnav_ros_dwa, 2dnav_ros_tr, 2dnav_ipa, 2dnav_ipa_extloc ]
 routes:
     [ compact_route, extended_route ]

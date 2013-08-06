@@ -34,7 +34,7 @@ def generateLaunchfile( config ):
         launchfileCode = f.read()
 
     scenarioName = config.route
-    filename = scenarioName + '.launch'
+    filename = '%s_%s_%s.launch' % ( config.route, config.robot, config.navigation )
     launchfileCode = launchfileCode.replace( '$route$',      config.route )
     launchfileCode = launchfileCode.replace( '$robot$',      config.robot )
     launchfileCode = launchfileCode.replace( '$navigation$', config.navigation)
@@ -66,6 +66,7 @@ if __name__ == '__main__':
 
         absPath = relativeToAbsolutePath( '../../' + cmakePath )
         with file( absPath, 'w' ) as f:
+            print 'Saved launchfile %s' % absPath
             f.write( launchfileCode )
 
     updateCMakeListsTxt( cmakePaths )
