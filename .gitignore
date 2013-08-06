@@ -1,2 +1,5 @@
 navigation_test_results
 srv_gen
+*.pyc
+build
+msg_gen
