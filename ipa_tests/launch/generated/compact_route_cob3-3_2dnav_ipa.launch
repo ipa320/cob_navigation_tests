@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$( find ipa_tests )/launch/base.launch">
+        <arg name="route"        value="$( find ipa_tests )/config/compact_route.yaml" />
+        <arg name="scenarioName" value="compact_route" />
+        <arg name="robot"        value="cob3-3" />
+        <arg name="navigation"   value="2dnav_ipa" />
+    </include>
+</launch>
