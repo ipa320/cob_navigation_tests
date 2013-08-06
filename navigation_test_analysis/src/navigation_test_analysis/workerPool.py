@@ -3,7 +3,7 @@ import roslib
 PKG = 'navigation_test_analysis'
 roslib.load_manifest( PKG )
 import rospy
-import os, re, subprocess, socket, time, threading
+import os, re, subprocess, socket, time, threading, os.path
 from navigation_test_helper.git              import Git
 from navigation_test_helper.jsonFileHandler  import JsonFileHandler
 from navigation_test_helper.resultRepository import ResultRepository
@@ -16,6 +16,14 @@ class BagDirectoryReader( object ):
     def __init__( self, directory ):
         self._directory     = directory
         self._filesAnalyzed = []
+
+    def waitUntilBagfileSizeStable( self, bagInfo ):
+        filepath = bagInfo.filepath
+        filesize1, filesize2 = 0,1
+        while filesize1 != filesize2:
+            filesize1 = os.path.getsize( filepath )
+            time.sleep( 2 )
+            filesize2 = os.path.getsize( filepath )
 
     def getBagInfos( self ):
         bagFiles = []
@@ -37,6 +45,7 @@ class BagDirectoryReader( object ):
             if analyzedAlready or bagInfo.isProcessed():
                 continue
 
+            self.waitUntilBagfileSizeStable( bagInfo )
             if not silent:
                 self._filesAnalyzed.append( bagInfo.filepath )
 
