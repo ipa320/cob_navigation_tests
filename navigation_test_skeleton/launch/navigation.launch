@@ -3,9 +3,11 @@
     <arg name="scenarioName" />
     <arg name="robot" />
     <arg name="navigation" />
+    <arg name="sim" default="false" />
 
     <include file="$( find navigation_test_skeleton )/launch/bag_record.launch" />
 
+    <include if="$( arg sim )" file="$( find navigation_test_camera )/launch/spawn_camera.launch" />
 
     <!-- Set time-limit practically to infinitiy and abort within the test script to shut
          everything down properly -->
