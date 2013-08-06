@@ -147,7 +147,7 @@ class topics_bag():
 
         for cameraTopicName in cameraTopicNames:
             self.continuous_topics.append({
-                'topic':  cameraTopicName + '/image_raw',
+                'topic':  cameraTopicName,
                 'type':  'sensor_msgs/Image'
             })
 

@@ -9,6 +9,7 @@
 
     <!-- Robot Simulation -->
     <include file="$( find cob_navigation_global )/launch/$(arg navigation).launch" >
+	<arg name="map"       value="/u/navigation_test/map.yaml" />
         <arg name="robot"     value="$( arg robot )" />
         <arg name="robot_env" value="$( arg robot_env )" />
     </include>
