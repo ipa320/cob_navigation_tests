@@ -17,7 +17,7 @@ class CameraDisplayManager( object ):
 
     def _statusCallback( self, msg ):
         if msg.setting.cameraTopics:
-            print 'Starting MultiImageView'
+            print 'Starting MultiImageView on topics: %s' % msg.setting.cameraTopics
             self._app = ImageViewApp( msg.setting.cameraTopics )
             self._app.start()
             self._statusSubscriber.unregister()

@@ -57,7 +57,7 @@ class ImageViewApp( wx.App ):
 
     def start( self ):
         for i in xrange( len( self.topics )):
-            topic      = self.topics[ i ] + '/image_raw'
+            topic      = self.topics[ i ]
             panel      = self.panels[ i ]
             cb         = self.make_handle_image_cb( panel )
             subscriber = rospy.Subscriber( topic, Image, cb )
@@ -103,6 +103,9 @@ class ImageViewPanel(wx.Panel):
             bmp = wx.BitmapFromBufferRGBA(image.width, image.height, image.data)
             self.staticbmp.SetBitmap(bmp)
         elif image.encoding == 'rgb8':
+            bmp = wx.BitmapFromBuffer(image.width, image.height, image.data)
+            self.staticbmp.SetBitmap(bmp)
+        elif image.encoding == 'bgr8':
             bmp = wx.BitmapFromBuffer(image.width, image.height, image.data)
             self.staticbmp.SetBitmap(bmp)
 
