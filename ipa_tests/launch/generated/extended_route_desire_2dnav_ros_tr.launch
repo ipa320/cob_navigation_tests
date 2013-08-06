@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <include file="$( find ipa_tests )/launch/base.launch">
-        <arg name="route"        value="$( find ipa_tests )/config/extended_route.yaml" />
-        <arg name="scenarioName" value="extended_route" />
-        <arg name="robot"        value="desire" />
-        <arg name="navigation"   value="2dnav_ros_tr" />
-    </include>
-</launch>
