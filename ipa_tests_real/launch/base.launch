@@ -17,9 +17,6 @@
         <rosparam file="$( arg testConfig )"    command="load" />
         <rosparam file="$( arg route )" command="load" />
         <rosparam file="$( find ipa_tests_real )/config/$( arg navigation ).yaml" command="load" />
-        <include file="$( find navigation_test_prepare_robot )/launch/prepare_robot_simulation.launch">
-            <arg name="robot"             value="$( arg robot )" />
-        </include>
         <include file="$( find navigation_test_skeleton )/launch/navigation.launch">
             <arg name="sim"               value="false" />
             <arg name="scenarioName"      value="$( arg scenarioName )" />
