@@ -13,7 +13,6 @@
   <depend package="navigation_test_prepare_robot" />
   <depend package="navigation_test_skeleton" />
   <depend package="cob_navigation_global" />
-  <depend package="cob_bringup_sim" />
 </package>
 
 
