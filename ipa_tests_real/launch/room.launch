@@ -11,5 +11,4 @@
         <arg name="navigation"     value="$( arg navigation )" />
         <arg name="testConfig"     value="$( find ipa_tests_real )/config/room.yaml" />
     </include>
-    <include file="$( find ipa_tests_real )/launch/table.launch" />
 </launch>
