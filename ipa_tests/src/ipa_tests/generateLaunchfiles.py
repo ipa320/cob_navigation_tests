@@ -33,8 +33,7 @@ def generateLaunchfile( config ):
     with templateStream as f:
         launchfileCode = f.read()
 
-    scenarioName = '%s_%s_%s' % ( config.robot, config.navigation, 
-            config.route )
+    scenarioName = config.route
     filename = scenarioName + '.launch'
     launchfileCode = launchfileCode.replace( '$route$',      config.route )
     launchfileCode = launchfileCode.replace( '$robot$',      config.robot )
