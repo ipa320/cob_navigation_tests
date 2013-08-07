@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="navigation" default="$( optenv NAVIGATION !!NO_NAVIGATION_SET!! )" />
+    <arg name="robot"      default="$( optenv ROBOT !!NO_ROBOT_SET!! )" />
+
+    <include file="$( find ipa_tests_real )/launch/base.launch">
+        <arg name="scenarioName"   value="ipa-apartment" />
+        <arg name="route"          value="$( find ipa_tests_real )/routes/ipa-apartment.yaml" />
+        <arg name="robot"          value="$( arg robot )" />
+        <arg name="robot_env"      value="ipa-apartment"   />
+        <arg name="navigation"     value="$( arg navigation )" />
+        <arg name="testConfig"     value="$( find ipa_tests_real )/config/ipa-apartment.yaml" />
+    </include>
+</launch>
