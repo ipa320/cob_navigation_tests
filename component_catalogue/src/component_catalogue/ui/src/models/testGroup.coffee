@@ -128,6 +128,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
 
       for key in errorKeys
         @set 'errors' + key, errors[ key ]
+      @set 'errorsCombined', errorsCombined
 
 
     updateStdDevAttribute: ( attr )->
