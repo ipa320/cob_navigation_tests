@@ -1,4 +1,4 @@
-timeoutInS:        100
+timeoutInS:        300
 repository:        git@github.com:SimonEbner/navigation_test_results
 bagPath:           /tmp/bagrecord
 collisionsTopic:   collisions
