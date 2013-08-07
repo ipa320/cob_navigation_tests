@@ -104,7 +104,6 @@
         }
         this.updateErrorCount();
         this.updateCount();
-        this.set('empty', this.get('count' === 0));
         return this.updateTitle();
       },
       updateTitle: function() {
@@ -116,7 +115,8 @@
         activeTests = this.get('tests').filter(function(test) {
           return test.get('active');
         });
-        return this.set('count', activeTests.length);
+        this.set('count', activeTests.length);
+        return this.set('empty', this.get('count') === 0);
       },
       updateUniqAttribute: function(attr) {
         var uniqueValues;

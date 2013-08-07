@@ -72,7 +72,6 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       do @updateErrorCount
 
       do @updateCount
-      @set 'empty',  @get 'count' == 0
       do @updateTitle
 
     updateTitle: ->
@@ -88,6 +87,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       activeTests = @get( 'tests' ).filter ( test )->
         test.get 'active'
       @set 'count', activeTests.length
+      @set 'empty',  @get( 'count' ) == 0
 
     updateUniqAttribute: ( attr )->
       uniqueValues = []

@@ -7,7 +7,7 @@
       initialize: function() {
         var key, model, _i, _len, _ref, _results;
 
-        this.listenTo(this.options.testGroups, 'change:empty change:selected', _.debounce(this.groupsChanged.bind(this, 10)));
+        this.listenTo(this.options.testGroups, 'change:count change:selected', _.debounce(this.groupsChanged.bind(this, 10)));
         this.triggerResizeOnce = _.once(this.triggerResize);
         this.chartModels = [];
         this.chartViews = [];
@@ -72,7 +72,7 @@
       },
       getInterestingRows: function() {
         return this.options.testGroups.filter(function(testGroup) {
-          if (!testGroup.get('empty') && testGroup.get('selected')) {
+          if (testGroup.get('count') > 0 && testGroup.get('selected')) {
             return true;
           }
         });
@@ -100,10 +100,11 @@
         return this.testGroupAttributes[this.options.variableAttributeKey].length === 0;
       },
       error: function(msg) {
-        this.$('.error').show().html(msg);
+        this.$el.parent().hide();
         return this.$('.charts').hide();
       },
       showCharts: function() {
+        this.$el.parent().show();
         this.$('.charts').show();
         this.$('.error').hide();
         return this.triggerResizeOnce();
