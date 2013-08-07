@@ -7,7 +7,10 @@ from sensor_msgs.msg import Image
 from navigation_test_helper import gtkHelper
  
 import wx, sys, threading, math, yaml
+import numpy as np
 import cv_bridge, cv, cv2
+
+widthPerPanel, heightPerPanel = 0, 0
  
 class ImageViewApp( wx.App ):
     def __init__( self, topics ):
@@ -36,12 +39,15 @@ class ImageViewApp( wx.App ):
         return self.createMultiplePanels( size, size )
     
     def createSinglePanel( self ):
-        self.panels = [ ImageViewPanel( self.frame )]
+        global widthPerPanel, heightPerPanel
+        widthPerPanel, heightPerPanel = self.size
+        self.panels = [ ImageViewPanel( self.frame, size=self.size )]
 
     def createTwoPanels( self ):
         return self.createMultiplePanels( 1, 2 )
 
     def createMultiplePanels( self, rows, cols ):
+        global widthPerPanel, heightPerPanel
         widthPerPanel  = self.size[ 0 ] / cols
         heightPerPanel = self.size[ 1 ] / rows
         size           = [ widthPerPanel, heightPerPanel ]
@@ -100,11 +106,13 @@ class ImageViewPanel(wx.Panel):
 
     """ class ImageViewPanel creates a panel with an image on it, inherits wx.Panel """
     def update(self, image):
+        global widthPerPanel, heightPerPanel
+        #widthPerPanel, heightPerPanel = image.width, image.height
         # http://www.ros.org/doc/api/sensor_msgs/html/msg/Image.html
         if not hasattr(self, 'staticbmp'):
             self.staticbmp = wx.StaticBitmap(self)
             frame = self.GetParent()
-            frame.SetSize((image.width, image.height))
+            frame.SetSize(( widthPerPanel, heightPerPanel ))
         if image.encoding == 'rgba8':
             bmp = wx.BitmapFromBufferRGBA(image.width, image.height, image.data)
             self.staticbmp.SetBitmap(bmp)
@@ -112,8 +120,10 @@ class ImageViewPanel(wx.Panel):
             bmp = wx.BitmapFromBuffer(image.width, image.height, image.data)
             self.staticbmp.SetBitmap(bmp)
         elif image.encoding == 'bgr8':
-            cvImage = self.bridge.imgmsg_to_cv( image, 'rgb8' )
-            bmp = wx.BitmapFromBuffer(image.width, image.height, cvImage.tostring() )
+            cvImage  = self.bridge.imgmsg_to_cv( image, 'rgb8' )
+            a = np.asarray( cvImage[:,:])
+            newimage = cv2.resize( a, ( widthPerPanel, heightPerPanel ))
+            bmp = wx.BitmapFromBuffer( widthPerPanel, heightPerPanel, newimage )
             self.staticbmp.SetBitmap(bmp)
 
  
