@@ -7,6 +7,7 @@ from sensor_msgs.msg import Image
 from navigation_test_helper import gtkHelper
  
 import wx, sys, threading, math, yaml
+import cv_bridge, cv, cv2
  
 class ImageViewApp( wx.App ):
     def __init__( self, topics ):
@@ -92,6 +93,11 @@ class CloseFrame( wx.Frame ):
         self.Destroy()
  
 class ImageViewPanel(wx.Panel):
+    def __init__( self, *args, **kwargs ):
+        wx.Panel.__init__( self, *args, **kwargs )
+        self.bridge      = cv_bridge.CvBridge()
+
+
     """ class ImageViewPanel creates a panel with an image on it, inherits wx.Panel """
     def update(self, image):
         # http://www.ros.org/doc/api/sensor_msgs/html/msg/Image.html
@@ -106,7 +112,8 @@ class ImageViewPanel(wx.Panel):
             bmp = wx.BitmapFromBuffer(image.width, image.height, image.data)
             self.staticbmp.SetBitmap(bmp)
         elif image.encoding == 'bgr8':
-            bmp = wx.BitmapFromBuffer(image.width, image.height, image.data)
+            cvImage = self.bridge.imgmsg_to_cv( image, 'rgb8' )
+            bmp = wx.BitmapFromBuffer(image.width, image.height, cvImage.tostring() )
             self.staticbmp.SetBitmap(bmp)
 
  
