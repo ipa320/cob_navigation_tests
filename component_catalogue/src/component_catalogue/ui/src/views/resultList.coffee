@@ -72,6 +72,7 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
         do @selectAllGroups
       else
         do @unselectAllGroups
+        do @selectFirstGroup
 
     selectAllGroups: ->
       @options.testGroups.each ( testGroup )->
@@ -83,6 +84,16 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
         return if options?.except == testGroup
         testGroup.set 'selected', false
       do @updateCheckboxes
+
+    selectFirstGroup: ->
+      _.defer =>
+        console.log( 'select first', @options.testGroups.at( 0 ));
+        group = @options.testGroups.at( 0 )
+        group.set 'selected', true
+        id = group.get 'id'
+        console.log( 'id', id )
+        @$el.find( '#' + id + ' input:first' ).prop 'checked', true
+
 
     updateCheckboxes: ->
       rows = @$ '.row'

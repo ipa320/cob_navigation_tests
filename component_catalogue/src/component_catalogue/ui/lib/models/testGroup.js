@@ -225,17 +225,23 @@
         });
       },
       getDetailedDataPointsForKey: function(key) {
-        var indexesByCid;
+        var data, indexesByCid, relevantTests;
 
         indexesByCid = this.get('indexesByCid');
-        return this.get('tests').map(function(model) {
-          return {
+        relevantTests = this.get('test');
+        data = [];
+        this.get('tests').forEach(function(model) {
+          if (!model.get('active')) {
+            return;
+          }
+          return data.push({
             date: model.get('date'),
             error: model.get('error'),
             index: indexesByCid[model.cid],
             y: model.get(key)
-          };
+          });
         });
+        return data;
       },
       groupBy: function() {
         var tests;

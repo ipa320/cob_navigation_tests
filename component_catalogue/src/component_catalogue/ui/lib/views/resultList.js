@@ -94,7 +94,8 @@
         if (mode === 'promiscuous') {
           return this.selectAllGroups();
         } else {
-          return this.unselectAllGroups();
+          this.unselectAllGroups();
+          return this.selectFirstGroup();
         }
       },
       selectAllGroups: function() {
@@ -111,6 +112,20 @@
           return testGroup.set('selected', false);
         });
         return this.updateCheckboxes();
+      },
+      selectFirstGroup: function() {
+        var _this = this;
+
+        return _.defer(function() {
+          var group, id;
+
+          console.log('select first', _this.options.testGroups.at(0));
+          group = _this.options.testGroups.at(0);
+          group.set('selected', true);
+          id = group.get('id');
+          console.log('id', id);
+          return _this.$el.find('#' + id + ' input:first').prop('checked', true);
+        });
       },
       updateCheckboxes: function() {
         var rows,
