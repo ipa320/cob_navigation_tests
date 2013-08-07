@@ -146,12 +146,17 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
         return model.get key
 
     getDetailedDataPointsForKey: ( key )->
-      indexesByCid = @get 'indexesByCid'
-      return @get( 'tests' ).map ( model )->
-        date:  model.get 'date'
-        error: model.get 'error'
-        index: indexesByCid[ model.cid ]
-        y:     model.get key
+      indexesByCid  = @get 'indexesByCid'
+      relevantTests = @get( 'test' )
+      data          = []
+      @get( 'tests' ).forEach ( model )->
+        return if not model.get( 'active' )
+        data.push
+          date:  model.get 'date'
+          error: model.get 'error'
+          index: indexesByCid[ model.cid ]
+          y:     model.get key
+      data
 
     groupBy: ->
       tests = @get 'tests'
