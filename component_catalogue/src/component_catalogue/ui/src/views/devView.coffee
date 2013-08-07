@@ -13,16 +13,20 @@ define [ 'backbone', 'templates/devView', 'views/componentDevView', 'views/appli
 
     initialize: ->
       @applicationDevView = new ApplicationDevView
-        testGroups: @options.testGroups
+        testGroups:     @options.testGroups
+        sortingOptions: @options.sortingOptions
 
       @componentDevView = new ComponentDevView
-        testGroups: @options.testGroups
+        testGroups:     @options.testGroups
+        sortingOptions: @options.sortingOptions
 
     renderComponentDevView: ( $el )->
       $el.html @componentDevView.render().el
+      $( '#sortingOptionsContainer' ).show()
 
     renderApplicationDevView: ( $el )->
       $el.html @applicationDevView.render().el
+      $( '#sortingOptionsContainer' ).hide()
 
     activateApplicationView: ->
       if @activeTab() != 'application'

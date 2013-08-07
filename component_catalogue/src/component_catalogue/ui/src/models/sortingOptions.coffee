@@ -1,5 +1,5 @@
 define [ 'backbone' ], ( Backbone )->
   Backbone.Model.extend
     defaults:
-      sorting: 'date'
-      showErrors:  true
+      sorting:         'date'
+      erroneousFilter: null

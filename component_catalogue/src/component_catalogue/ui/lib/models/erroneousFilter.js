@@ -3,8 +3,13 @@
   define(['backbone'], function(Backbone) {
     return Backbone.Model.extend({
       defaults: {
-        sorting: 'date',
-        erroneousFilter: null
+        show: true
+      },
+      complies: function(test) {
+        if (this.get('show')) {
+          return true;
+        }
+        return !test.get('error');
       }
     });
   });

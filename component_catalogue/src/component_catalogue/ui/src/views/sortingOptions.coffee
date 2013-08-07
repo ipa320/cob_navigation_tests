@@ -5,9 +5,10 @@ define [ 'backbone', 'templates/sortingOptions' ], ( Backbone, sortingOptionsTmp
       'change #showErrorsChkbx': 'showErrorsChanged'
 
     render: ->
+      filter = @model.get 'erroneousFilter'
       @$el.html sortingOptionsTmpl
         sorting:    @model.get 'sorting'
-        showErrors: @model.get 'showErrors'
+        showErrors: filter?.get 'show'
       @
 
     sortingChanged: ( e )->
@@ -16,6 +17,7 @@ define [ 'backbone', 'templates/sortingOptions' ], ( Backbone, sortingOptionsTmp
       @model.set 'sorting', value if value
 
     showErrorsChanged: ( e )->
-      input = $ e.currentTarget
-      value = input.prop 'checked'
-      @model.set 'showErrors', value
+      input  = $ e.currentTarget
+      value  = input.prop 'checked'
+      filter = @model.get 'erroneousFilter'
+      filter?.set( 'show', value )

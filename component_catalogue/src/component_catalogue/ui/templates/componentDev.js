@@ -39,7 +39,7 @@ define( [ 'ecoHelper' ], function( helper ){(function() {
     }
     (function() {
       (function() {
-        __out.push('<div class="chartContainer duration"></div>\n<div class="chartContainer distance"></div>\n<div class="chartContainer rotation"></div>\n<div class="sortingOptionsContainer"></div>\n');
+        __out.push('<div class="chartContainer duration"></div>\n<div class="chartContainer distance"></div>\n<div class="chartContainer rotation"></div>\n');
       
       }).call(this);
       

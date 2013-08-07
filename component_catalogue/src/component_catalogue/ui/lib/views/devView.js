@@ -15,17 +15,21 @@
       },
       initialize: function() {
         this.applicationDevView = new ApplicationDevView({
-          testGroups: this.options.testGroups
+          testGroups: this.options.testGroups,
+          sortingOptions: this.options.sortingOptions
         });
         return this.componentDevView = new ComponentDevView({
-          testGroups: this.options.testGroups
+          testGroups: this.options.testGroups,
+          sortingOptions: this.options.sortingOptions
         });
       },
       renderComponentDevView: function($el) {
-        return $el.html(this.componentDevView.render().el);
+        $el.html(this.componentDevView.render().el);
+        return $('#sortingOptionsContainer').show();
       },
       renderApplicationDevView: function($el) {
-        return $el.html(this.applicationDevView.render().el);
+        $el.html(this.applicationDevView.render().el);
+        return $('#sortingOptionsContainer').hide();
       },
       activateApplicationView: function() {
         if (this.activeTab() !== 'application') {
