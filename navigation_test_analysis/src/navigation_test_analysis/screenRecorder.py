@@ -38,7 +38,6 @@ class ScreenRecorder( threading.Thread ):
         self._copyFiles()
         self._remove()
         print 'Finished converting video'
-        return True
 
     def _convert( self ):
         cmd = self._convertCmd()

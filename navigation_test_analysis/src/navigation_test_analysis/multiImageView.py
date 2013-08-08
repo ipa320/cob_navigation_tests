@@ -17,6 +17,7 @@ class ImageViewApp( wx.App ):
         self.topics      = topics
         self.panels      = []
         self.subscribers = []
+        self.bridge      = cv_bridge.CvBridge()
         wx.App.__init__( self )
 
     def OnInit( self ):
@@ -76,8 +77,16 @@ class ImageViewApp( wx.App ):
         return lambda image: self.handle_image( panel, image )
 
     def handle_image( self, panel, image ):
+        global widthPerPanel, heightPerPanel
         # make sure we update in the UI thread
-        wx.CallAfter( panel.update, image )
+
+        if image.encoding == 'bgr8':
+            cvImage  = self.bridge.imgmsg_to_cv( image, 'rgb8' )
+            a = np.asarray( cvImage[:,:])
+            image = cv2.resize( a, ( widthPerPanel, heightPerPanel ))
+            wx.CallAfter( panel.updateRgb, image )
+        else:
+            wx.CallAfter( panel.update, image )
         # http://wiki.wxpython.org/LongRunningTasks
 
 
@@ -101,7 +110,6 @@ class CloseFrame( wx.Frame ):
 class ImageViewPanel(wx.Panel):
     def __init__( self, *args, **kwargs ):
         wx.Panel.__init__( self, *args, **kwargs )
-        self.bridge      = cv_bridge.CvBridge()
 
 
     """ class ImageViewPanel creates a panel with an image on it, inherits wx.Panel """
@@ -119,12 +127,18 @@ class ImageViewPanel(wx.Panel):
         elif image.encoding == 'rgb8':
             bmp = wx.BitmapFromBuffer(image.width, image.height, image.data)
             self.staticbmp.SetBitmap(bmp)
-        elif image.encoding == 'bgr8':
-            cvImage  = self.bridge.imgmsg_to_cv( image, 'rgb8' )
-            a = np.asarray( cvImage[:,:])
-            newimage = cv2.resize( a, ( widthPerPanel, heightPerPanel ))
-            bmp = wx.BitmapFromBuffer( widthPerPanel, heightPerPanel, newimage )
-            self.staticbmp.SetBitmap(bmp)
+
+    def updateRgb( self, image ):
+        global widthPerPanel, heightPerPanel
+        #widthPerPanel, heightPerPanel = image.width, image.height
+        # http://www.ros.org/doc/api/sensor_msgs/html/msg/Image.html
+        if not hasattr(self, 'staticbmp'):
+            self.staticbmp = wx.StaticBitmap(self)
+            frame = self.GetParent()
+            frame.SetSize(( widthPerPanel, heightPerPanel ))
+
+        bmp = wx.BitmapFromBuffer( widthPerPanel, heightPerPanel, image )
+        self.staticbmp.SetBitmap( bmp )
 
  
 #def handle_image(image):

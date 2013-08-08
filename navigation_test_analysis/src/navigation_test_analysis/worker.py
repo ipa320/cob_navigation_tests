@@ -29,7 +29,7 @@ class Worker( object ):
             data = analyzer.serialize()
             self.saveResults( data )
             self.bagInfo.setAnalyzed()
-
+            self._stopScreenRecoder()
 
         except BagAnalyzer.NoStatusReceivedError:
             self._errorOccured( 'No status topic received.' )
@@ -48,7 +48,6 @@ class Worker( object ):
 
         finally:
             analyzer.stop()
-            self._stopScreenRecoder()
 
     def _stopScreenRecoder( self ):
         try:
