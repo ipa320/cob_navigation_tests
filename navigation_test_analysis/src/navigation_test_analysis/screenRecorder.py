@@ -25,7 +25,7 @@ class ScreenRecorder( threading.Thread ):
 
     def run( self ):
         cmd     = self._startCmd()
-        self._p = subprocess.Popen( cmd, stdout=PIPE, stderr=PIPE )
+        self._p = subprocess.Popen( cmd )
         self._p.wait()
 
     def stop( self ):
