@@ -18,6 +18,7 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
         @chartViews.push new BarChartView
           model: model
           title: @options.title
+          key:   key
 
     # most of the times, several resize triggers are issued with small or no
     # time difference. Group all those together

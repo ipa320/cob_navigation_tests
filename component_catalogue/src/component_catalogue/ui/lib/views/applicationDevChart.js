@@ -22,7 +22,8 @@
           this.chartModels.push(model);
           _results.push(this.chartViews.push(new BarChartView({
             model: model,
-            title: this.options.title
+            title: this.options.title,
+            key: key
           })));
         }
         return _results;
