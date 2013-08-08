@@ -121,9 +121,18 @@ class AnalyserDaemon( threading.Thread ):
     def stop( self ):
         self._active = False
 
+    def runUntilNoBagfileLeft( self ):
+        self.start()
+        print 'bagpath: %s' % self._bagPath
+        directoryReader = BagDirectoryReader( self._bagPath )
+        while self._active:
+            time.sleep( 5 )
+            self._active = directoryReader.hasUnanalyzedBagFilenames()
+            print 'Slept: %s' % self._active
+
     def run( self ):
         print 'Starting analysis daemon on: %s' % self._bagPath
-        directoryReader = BagDirectoryReader( bagPath )
+        directoryReader = BagDirectoryReader( self._bagPath )
         pool = WorkerPool()
         while self._active:
             if directoryReader.hasUnanalyzedBagFilenames():
@@ -140,8 +149,13 @@ if __name__ == '__main__':
     bagPath     = os.path.expanduser( rospy.get_param( '~bagPath' ))
     videoConfig = rospy.get_param( '~videoConfig' )
     speed       = rospy.get_param( '~speed' )
+    keepalive   = rospy.get_param( '~keepalive' ) == 'true'
     daemon  = AnalyserDaemon( bagPath, videoConfig, speed )
-    daemon.start()
-    rospy.spin()
-    daemon.stop()
+    if keepalive:
+        daemon.start()
+        rospy.spin()
+        daemon.stop()
+    else:
+        daemon.runUntilNoBagfileLeft()
+
     print 'Stopping daemon, please wait'
