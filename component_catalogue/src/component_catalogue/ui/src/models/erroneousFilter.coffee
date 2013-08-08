@@ -1,4 +1,10 @@
 define [ 'backbone' ], ( Backbone )->
   Backbone.Model.extend
-    complies: ( number, test )->
+    defaults:
+      show: true
+
+    complies: ( test )->
+      return true if @get 'show'
       return !test.get 'error'
+
+

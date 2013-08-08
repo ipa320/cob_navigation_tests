@@ -4,7 +4,7 @@
     return Backbone.Model.extend({
       defaults: {
         sorting: 'date',
-        showErrors: true
+        erroneousFilter: null
       }
     });
   });

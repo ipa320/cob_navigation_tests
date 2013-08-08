@@ -104,7 +104,6 @@
         }
         this.updateErrorCount();
         this.updateCount();
-        this.set('empty', this.get('count' === 0));
         return this.updateTitle();
       },
       updateTitle: function() {
@@ -116,7 +115,8 @@
         activeTests = this.get('tests').filter(function(test) {
           return test.get('active');
         });
-        return this.set('count', activeTests.length);
+        this.set('count', activeTests.length);
+        return this.set('empty', this.get('count') === 0);
       },
       updateUniqAttribute: function(attr) {
         var uniqueValues;
@@ -165,7 +165,7 @@
         return this.set('mean.' + attr, num > 0 ? sum / num : 'N/A');
       },
       updateErrorCount: function() {
-        var erroneous, errorKeys, errors, errorsCombined, key, _i, _j, _len, _len1, _results;
+        var erroneous, errorKeys, errors, errorsCombined, key, _i, _j, _len, _len1;
 
         errorsCombined = 0;
         errorKeys = ['Aborted', 'Failed', 'Missed', 'Timedout'];
@@ -192,12 +192,11 @@
           }
           return _results;
         });
-        _results = [];
         for (_j = 0, _len1 = errorKeys.length; _j < _len1; _j++) {
           key = errorKeys[_j];
-          _results.push(this.set('errors' + key, errors[key]));
+          this.set('errors' + key, errors[key]);
         }
-        return _results;
+        return this.set('errorsCombined', errorsCombined);
       },
       updateStdDevAttribute: function(attr) {
         var mean, num, sum,
@@ -205,16 +204,23 @@
 
         mean = this.get('mean.' + attr);
         sum = num = 0;
-        return this.get('tests').map(function(model) {
+        this.get('tests').forEach(function(model) {
           var value;
 
+          if (!model.get('active')) {
+            return;
+          }
+          if (model.get('error')) {
+            return;
+          }
           value = +model.get(attr);
           if (!isNaN(value)) {
             num++;
-            sum += Math.pow(value - mean, 2);
+            return sum += Math.pow(value - mean, 2);
           }
-          return _this.set('stdDev.' + attr, sum > 0 ? Math.sqrt(sum / num) : 'N/A');
         });
+        console.log('found', this, sum / num, sum, num);
+        return this.set('stdDev.' + attr, sum > 0 ? Math.sqrt(sum / num) : 'N/A');
       },
       getDataPointsForKey: function(key) {
         return this.get('tests').map(function(model) {
@@ -225,17 +231,23 @@
         });
       },
       getDetailedDataPointsForKey: function(key) {
-        var indexesByCid;
+        var data, indexesByCid, relevantTests;
 
         indexesByCid = this.get('indexesByCid');
-        return this.get('tests').map(function(model) {
-          return {
+        relevantTests = this.get('test');
+        data = [];
+        this.get('tests').forEach(function(model) {
+          if (!model.get('active')) {
+            return;
+          }
+          return data.push({
             date: model.get('date'),
             error: model.get('error'),
             index: indexesByCid[model.cid],
             y: model.get(key)
-          };
+          });
         });
+        return data;
       },
       groupBy: function() {
         var tests;

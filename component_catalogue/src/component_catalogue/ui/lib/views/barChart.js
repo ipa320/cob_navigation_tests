@@ -49,7 +49,7 @@
         var units, values;
 
         units = {
-          duration: 'min',
+          duration: 's',
           distance: 'm',
           rotation: 'deg'
         };
@@ -107,7 +107,7 @@
             formatter: this.tooltipFormatter
           },
           xAxis: {
-            categories: ['Duration', 'Distance', 'Rotation']
+            categories: [this.options.key]
           }
         };
       },

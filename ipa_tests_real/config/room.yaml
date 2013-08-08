@@ -1,0 +1,5 @@
+timeoutInS:        300
+repository:        git@github.com:SimonEbner/navigation_test_results
+bagPath:           /u/navigation_test/bagfiles
+collisionsTopic:   collisions
+cameraTopics:      []

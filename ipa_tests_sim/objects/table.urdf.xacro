@@ -16,9 +16,9 @@
   <property name="table_height" value="0.55" />
   <property name="table_width" value="1.0" />
   <property name="table_depth" value="1.0" />
-  <property name="leg_radius" value="0.02" />
-  <property name="table_x" value="2.10" />
-  <property name="table_y" value="-1.0" />
+  <property name="leg_radius" value="0.04" />
+  <property name="table_x" value="1.60" />
+  <property name="table_y" value="-1.4" />
   <property name="table_z" value="0.0" />
 
   <property name="table_mass" value="0.01" />

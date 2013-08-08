@@ -147,7 +147,7 @@ class topics_bag():
 
         for cameraTopicName in cameraTopicNames:
             self.continuous_topics.append({
-                'topic':  cameraTopicName + '/image_raw',
+                'topic':  cameraTopicName,
                 'type':  'sensor_msgs/Image'
             })
 
@@ -235,9 +235,10 @@ def waitForShutdown():
     rospy.loginfo("Published shutdown" )
     i = 0
     global shutdown
-    while not shutdown and i < 11:
+    while not shutdown and i < 5:
         print 'Waiting for shutdown.'
-        time.sleep( 1 )
+        time.sleep( 0.5 )
+        i += 1
 
 def shutdownReceived( req ):
     global shutdown

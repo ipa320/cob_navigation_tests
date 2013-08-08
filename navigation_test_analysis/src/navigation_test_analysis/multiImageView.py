@@ -7,12 +7,17 @@ from sensor_msgs.msg import Image
 from navigation_test_helper import gtkHelper
  
 import wx, sys, threading, math, yaml
+import numpy as np
+import cv_bridge, cv, cv2
+
+widthPerPanel, heightPerPanel = 0, 0
  
 class ImageViewApp( wx.App ):
     def __init__( self, topics ):
         self.topics      = topics
         self.panels      = []
         self.subscribers = []
+        self.bridge      = cv_bridge.CvBridge()
         wx.App.__init__( self )
 
     def OnInit( self ):
@@ -35,12 +40,15 @@ class ImageViewApp( wx.App ):
         return self.createMultiplePanels( size, size )
     
     def createSinglePanel( self ):
-        self.panels = [ ImageViewPanel( self.frame )]
+        global widthPerPanel, heightPerPanel
+        widthPerPanel, heightPerPanel = self.size
+        self.panels = [ ImageViewPanel( self.frame, size=self.size )]
 
     def createTwoPanels( self ):
         return self.createMultiplePanels( 1, 2 )
 
     def createMultiplePanels( self, rows, cols ):
+        global widthPerPanel, heightPerPanel
         widthPerPanel  = self.size[ 0 ] / cols
         heightPerPanel = self.size[ 1 ] / rows
         size           = [ widthPerPanel, heightPerPanel ]
@@ -69,8 +77,16 @@ class ImageViewApp( wx.App ):
         return lambda image: self.handle_image( panel, image )
 
     def handle_image( self, panel, image ):
+        global widthPerPanel, heightPerPanel
         # make sure we update in the UI thread
-        wx.CallAfter( panel.update, image )
+
+        if image.encoding == 'bgr8':
+            cvImage  = self.bridge.imgmsg_to_cv( image, 'rgb8' )
+            a = np.asarray( cvImage[:,:])
+            image = cv2.resize( a, ( widthPerPanel, heightPerPanel ))
+            wx.CallAfter( panel.updateRgb, image )
+        else:
+            wx.CallAfter( panel.update, image )
         # http://wiki.wxpython.org/LongRunningTasks
 
 
@@ -92,22 +108,37 @@ class CloseFrame( wx.Frame ):
         self.Destroy()
  
 class ImageViewPanel(wx.Panel):
+    def __init__( self, *args, **kwargs ):
+        wx.Panel.__init__( self, *args, **kwargs )
+
+
     """ class ImageViewPanel creates a panel with an image on it, inherits wx.Panel """
     def update(self, image):
+        global widthPerPanel, heightPerPanel
+        #widthPerPanel, heightPerPanel = image.width, image.height
         # http://www.ros.org/doc/api/sensor_msgs/html/msg/Image.html
         if not hasattr(self, 'staticbmp'):
             self.staticbmp = wx.StaticBitmap(self)
             frame = self.GetParent()
-            frame.SetSize((image.width, image.height))
+            frame.SetSize(( widthPerPanel, heightPerPanel ))
         if image.encoding == 'rgba8':
             bmp = wx.BitmapFromBufferRGBA(image.width, image.height, image.data)
             self.staticbmp.SetBitmap(bmp)
         elif image.encoding == 'rgb8':
             bmp = wx.BitmapFromBuffer(image.width, image.height, image.data)
             self.staticbmp.SetBitmap(bmp)
-        elif image.encoding == 'bgr8':
-            bmp = wx.BitmapFromBuffer(image.width, image.height, image.data)
-            self.staticbmp.SetBitmap(bmp)
+
+    def updateRgb( self, image ):
+        global widthPerPanel, heightPerPanel
+        #widthPerPanel, heightPerPanel = image.width, image.height
+        # http://www.ros.org/doc/api/sensor_msgs/html/msg/Image.html
+        if not hasattr(self, 'staticbmp'):
+            self.staticbmp = wx.StaticBitmap(self)
+            frame = self.GetParent()
+            frame.SetSize(( widthPerPanel, heightPerPanel ))
+
+        bmp = wx.BitmapFromBuffer( widthPerPanel, heightPerPanel, image )
+        self.staticbmp.SetBitmap( bmp )
 
  
 #def handle_image(image):

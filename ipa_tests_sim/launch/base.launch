@@ -26,7 +26,8 @@
         <include file="$( find navigation_test_prepare_robot )/launch/prepare_robot_simulation.launch">
             <arg name="robot"             value="$( arg robot )" />
         </include>
-        <include file="$( find navigation_test_skeleton )/launch/navigation.launch">
+        <include file="$( find navigation_test_skeleton )/launch/navigation.test">
+            <arg name="sim"               value="true" />
             <arg name="scenarioName"      value="$( arg scenarioName )" />
             <arg name="robot"             value="$( arg robot )" />
             <arg name="navigation"        value="$( arg navigation )" />

@@ -72,7 +72,6 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       do @updateErrorCount
 
       do @updateCount
-      @set 'empty',  @get 'count' == 0
       do @updateTitle
 
     updateTitle: ->
@@ -88,6 +87,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
       activeTests = @get( 'tests' ).filter ( test )->
         test.get 'active'
       @set 'count', activeTests.length
+      @set 'empty',  @get( 'count' ) == 0
 
     updateUniqAttribute: ( attr )->
       uniqueValues = []
@@ -128,17 +128,24 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
 
       for key in errorKeys
         @set 'errors' + key, errors[ key ]
+      @set 'errorsCombined', errorsCombined
 
 
     updateStdDevAttribute: ( attr )->
       mean = @get 'mean.' + attr
       sum = num = 0
-      @get( 'tests' ).map ( model )=>
+
+
+      @get( 'tests' ).forEach ( model )=>
+        return if not model.get 'active'
+        return if model.get 'error'
         value = +model.get( attr )
         if !isNaN( value )
           num++
           sum += Math.pow ( value - mean ), 2
-        @set 'stdDev.' + attr, if sum > 0 then Math.sqrt sum/num else 'N/A'
+      #if @cid == 'c201'
+      console.log 'found', @, sum/num, sum, num
+      @set 'stdDev.' + attr, if sum > 0 then Math.sqrt sum/num else 'N/A'
 
     getDataPointsForKey: ( key )->
       return @get( 'tests' ).map ( model )->
@@ -146,12 +153,17 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
         return model.get key
 
     getDetailedDataPointsForKey: ( key )->
-      indexesByCid = @get 'indexesByCid'
-      return @get( 'tests' ).map ( model )->
-        date:  model.get 'date'
-        error: model.get 'error'
-        index: indexesByCid[ model.cid ]
-        y:     model.get key
+      indexesByCid  = @get 'indexesByCid'
+      relevantTests = @get( 'test' )
+      data          = []
+      @get( 'tests' ).forEach ( model )->
+        return if not model.get( 'active' )
+        data.push
+          date:  model.get 'date'
+          error: model.get 'error'
+          index: indexesByCid[ model.cid ]
+          y:     model.get key
+      data
 
     groupBy: ->
       tests = @get 'tests'

@@ -12,4 +12,6 @@
         <arg name="testConfig"     value="$( find ipa_tests_sim )/config/room.yaml" />
     </include>
     <include file="$( find ipa_tests_sim )/launch/table.launch" />
+    <node pkg="ipa_tests_sim" type="killGazeboOnHangup.py" name="killGazeboOnHangup" />
+
 </launch>

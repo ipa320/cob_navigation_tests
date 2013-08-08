@@ -1,11 +1,9 @@
-define  [ 'backbone', 'views/componentDevChart', 'templates/componentDev', 'models/sortingOptions', 'views/sortingOptions' ], ( Backbone, ComponentDevChart, componentDevTmpl, SortingOptions, SortingOptionsView )->
+define  [ 'backbone', 'views/componentDevChart', 'templates/componentDev' ], ( Backbone, ComponentDevChart, componentDevTmpl, SortingOptions )->
   Backbone.View.extend
     tagName:   'div'
     className: 'componentDevView'
 
     initialize: ->
-      @sortingOptions = new SortingOptions
-      
       @createChart 'duration', 'Duration', 's'
       @createChart 'distance', 'Distance', 'm'
       @createChart 'rotation', 'Rotation', 'deg'
@@ -15,7 +13,6 @@ define  [ 'backbone', 'views/componentDevChart', 'templates/componentDev', 'mode
       @renderChart 'duration'
       @renderChart 'distance'
       @renderChart 'rotation'
-      do @renderSortingOptions
       @
 
     createChart: ( key, label, unit )->
@@ -23,14 +20,10 @@ define  [ 'backbone', 'views/componentDevChart', 'templates/componentDev', 'mode
       @charts[ key ] = new ComponentDevChart
         key:            key
         testGroups:     @options.testGroups
-        sortingOptions: @sortingOptions
+        sortingOptions: @options.sortingOptions
         label:          label
         unit:           unit
 
     renderChart: ( key )->
       @$( ".#{key}" ).html @charts[ key ].render().el
 
-    renderSortingOptions: ->
-      sortingOptions = new SortingOptionsView
-        model: @sortingOptions
-      @$( '.sortingOptionsContainer' ).html sortingOptions.render().el

@@ -1,6 +1,6 @@
 timeoutInS:        100
-repository:        git@github.com:SimonEbner/navigation_test_results
+repository:        git@github.com:SimonEbner/navigation_test_results_sim
 bagPath:           /share/uhr-se/bagrecord
 setupRobotService: setup_robot
 collisionsTopic:   collisions
-cameraTopics:      [ /topCamera ]
+cameraTopics:      [ /topCamera/image_raw ]

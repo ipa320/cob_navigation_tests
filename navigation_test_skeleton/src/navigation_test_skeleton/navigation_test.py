@@ -55,12 +55,18 @@ class TestNavigation( unittest.TestCase ):
             'collisionsTopic': rospy.get_param( 'collisionsTopic' )
         }
 
+    def getParamOptional( self, key, default=None ):
+        try:
+            return rospy.get_param( key )
+        except KeyError, e:
+            return default
+
     def _setupWatchdog( self ):
         timeoutInS     = rospy.get_param( 'timeoutInS' )
         self._watchDog = WatchDog( timeoutInS )
 
     def _setupRobotWhenReady( self ):
-        setupRobotServiceName = rospy.get_param( 'setupRobotService' )
+        setupRobotServiceName = self.getParamOptional( 'setupRobotService' )
         if not setupRobotServiceName:
             rospy.loginfo( 'No setup robot service set. Assuming it\'s ready' )
             return

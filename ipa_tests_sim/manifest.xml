@@ -9,11 +9,13 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/ipa_tests</url>
 
+  <depend package="rospy" />
   <depend package="navigation_test_collision_detection" />
   <depend package="navigation_test_prepare_robot" />
   <depend package="navigation_test_skeleton" />
   <depend package="cob_navigation_global" />
   <depend package="cob_bringup_sim" />
+  <depend package="gazebo_msgs" />
 </package>
 
 

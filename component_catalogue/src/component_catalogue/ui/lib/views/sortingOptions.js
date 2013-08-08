@@ -7,9 +7,12 @@
         'change #showErrorsChkbx': 'showErrorsChanged'
       },
       render: function() {
+        var filter;
+
+        filter = this.model.get('erroneousFilter');
         this.$el.html(sortingOptionsTmpl({
           sorting: this.model.get('sorting'),
-          showErrors: this.model.get('showErrors')
+          showErrors: filter != null ? filter.get('show') : void 0
         }));
         return this;
       },
@@ -23,11 +26,12 @@
         }
       },
       showErrorsChanged: function(e) {
-        var input, value;
+        var filter, input, value;
 
         input = $(e.currentTarget);
         value = input.prop('checked');
-        return this.model.set('showErrors', value);
+        filter = this.model.get('erroneousFilter');
+        return filter != null ? filter.set('show', value) : void 0;
       }
     });
   });
