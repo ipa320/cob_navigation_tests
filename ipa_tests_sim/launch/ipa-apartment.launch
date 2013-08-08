@@ -4,14 +4,13 @@
     <arg name="robot"      default="$( optenv ROBOT !!NO_ROBOT_SET!! )" />
 
     <include file="$( find ipa_tests_sim )/launch/base.launch">
-        <arg name="scenarioName"   value="room" />
-        <arg name="route"          value="$( find ipa_tests_sim)/routes/room.yaml" />
+        <arg name="scenarioName"   value="ipa-apartment" />
+        <arg name="route"          value="$( find ipa_tests_sim )/routes/ipa-apartment.yaml" />
         <arg name="robot"          value="$( arg robot )" />
         <arg name="robot_env"      value="ipa-apartment"   />
         <arg name="navigation"     value="$( arg navigation )" />
-        <arg name="testConfig"     value="$( find ipa_tests_sim )/config/room.yaml" />
+        <arg name="testConfig"     value="$( find ipa_tests_sim )/config/ipa-apartment.yaml" />
     </include>
-    <include file="$( find ipa_tests_sim )/launch/table.launch" />
     <node pkg="ipa_tests_sim" type="killGazeboOnHangup.py" name="killGazeboOnHangup" />
 
 </launch>

@@ -4,7 +4,7 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
     className: 'applicationDevChart'
 
     initialize: ->
-      @listenTo @options.testGroups, 'change:empty change:selected', \
+      @listenTo @options.testGroups, 'change:count change:selected', \
         _.debounce @groupsChanged.bind @, 10
       @triggerResizeOnce = _.once @triggerResize
 
@@ -18,6 +18,7 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
         @chartViews.push new BarChartView
           model: model
           title: @options.title
+          key:   key
 
     # most of the times, several resize triggers are issued with small or no
     # time difference. Group all those together
@@ -53,7 +54,7 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
 
     getInterestingRows: ->
       @options.testGroups.filter ( testGroup )->
-        return true if !testGroup.get( 'empty' ) and testGroup.get( 'selected' )
+        return true if testGroup.get( 'count' ) > 0 and testGroup.get( 'selected' )
 
     hasOnlyOneKindOfEveryFixedAttribute: ( rows )->
       state = null
@@ -67,10 +68,13 @@ define [ 'backbone', 'templates/applicationDevChart', 'models/barChart', 'views/
       return @testGroupAttributes[ @options.variableAttributeKey ].length == 0
 
     error: ( msg )->
-      @$( '.error' ).show().html msg
+      @$el.parent().hide()
+      #@$( '.error' ).show().html msg
+      #@$( '.error' ).hide()
       do @$( '.charts' ).hide
 
     showCharts: ->
+      @$el.parent().show()
       do @$( '.charts' ).show
       do @$( '.error' ).hide
       do @triggerResizeOnce

@@ -32,7 +32,7 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
 
     tooltipFormatter: ->
       units =
-        duration: 'min'
+        duration: 's'
         distance: 'm'
         rotation: 'deg'
       values = @points.map ( point )->
@@ -74,7 +74,7 @@ define [ 'backbone', 'highcharts-more', 'templates/tooltip' ], ( Backbone, Highc
         shared:      true
         formatter:   @tooltipFormatter
       xAxis:
-        categories:  [ 'Duration', 'Distance', 'Rotation' ]
+        categories:  [ @options.key ]
 
     redrawElements: ->
       lineHeight = 2

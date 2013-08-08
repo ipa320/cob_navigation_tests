@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="bagPath" />
+    <arg name="speed" default="1" />
     <arg name="videoConfig" default="$( find navigation_test_analysis )/videoConfigExample.yaml" />
     <node name="analyse_remaining_bag_files" pkg="navigation_test_analysis" type="workerPool.py" output="screen">
-        <param name="~bagPath" value="$( arg bagPath )" />
+        <param name="~bagPath"     value="$( arg bagPath )" />
         <param name="~videoConfig" value="$( arg videoConfig )" />
+        <param name="~speed"       value="$( arg speed )" />
     </node>
 </launch>
