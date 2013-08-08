@@ -12,6 +12,8 @@
         <arg name="robot_env" value="$( arg robot_env )" />
     </include>
 
+<!--    <include file="$( find navigation_test_camera )/launch/map_to_image.launch" />-->
+
     <!-- Navigation Test -->
     <group ns="/navigation_test" >
         <rosparam file="$( arg testConfig )"    command="load" />
