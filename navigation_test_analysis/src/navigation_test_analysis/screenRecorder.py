@@ -3,10 +3,11 @@ import roslib
 roslib.load_manifest( 'navigation_test_analysis' )
 import rospy
 import subprocess, threading, os, tempfile, os.path
-from subprocess import PIPE
+from subprocess             import PIPE
 from navigation_test_helper import copyHandlers
 from navigation_test_helper import gtkHelper
-from videoEncoder import RecorderSettings
+from videoEncoder           import RecorderSettings
+from std_srvs.srv           import Empty
 import videoEncoder
 
 class ScreenRecorder( threading.Thread ):
@@ -25,13 +26,19 @@ class ScreenRecorder( threading.Thread ):
     def run( self ):
         cmd     = self._startCmd()
         self._p = subprocess.Popen( cmd, stdout=PIPE, stderr=PIPE )
+        self._p.wait()
 
     def stop( self ):
         if not self._p: return
+        print 'Terminating video process'
         self._p.terminate()
+        print 'Converting video to mp4'
         self._convert()
+        print 'Copying files'
         self._copyFiles()
         self._remove()
+        print 'Finished converting video'
+        return True
 
     def _convert( self ):
         cmd = self._convertCmd()
@@ -85,5 +92,6 @@ if __name__=='__main__':
 
     screenRecorder = ScreenRecorder( settings )
     screenRecorder.start()
+    stopCallback = lambda *args: screenRecorder.stop()
+    rospy.Service( 'screenRecorder/stop', Empty, stopCallback )
     rospy.spin()
-    screenRecorder.stop()

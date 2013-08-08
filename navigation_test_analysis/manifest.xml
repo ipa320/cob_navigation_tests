@@ -11,5 +11,6 @@
 
   <depend package="gazebo"/>
   <depend package="navigation_test_helper"/>
+  <depend package="std_srvs"/>
 
 </package>

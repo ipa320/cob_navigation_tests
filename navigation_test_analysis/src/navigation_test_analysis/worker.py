@@ -8,7 +8,9 @@ from navigation_test_helper.metricsObserverTF import MetricsObserverTF
 from navigation_test_helper.jsonFileHandler   import JsonFileHandler
 from navigation_test_helper.git               import Git
 from navigation_test_helper.bagInfo           import BagInfo
-from rosbagPatcher.rosbagPatcher import BagFilePatcher
+from rosbagPatcher.rosbagPatcher              import BagFilePatcher
+from std_srvs.srv                             import Empty
+import rospy.service
 
 
 class Worker( object ):
@@ -46,6 +48,15 @@ class Worker( object ):
 
         finally:
             analyzer.stop()
+            self._stopScreenRecoder()
+
+    def _stopScreenRecoder( self ):
+        try:
+            print 'Stopping video converter'
+            s = rospy.ServiceProxy( 'screenRecorder/stop', Empty )
+            s()
+        except rospy.service.ServiceException, e:
+            print 'Service could not be called: %s' % str( e )
 
     def _fixBagFile( self ):
         print
