@@ -17,13 +17,13 @@ class Worker( object ):
     def __init__( self, bagInfo ):
         self.bagInfo = bagInfo
 
-    def start( self ):
+    def start( self, speed=1 ):
         filename = self.bagInfo.filename
         analyzer = BagAnalyzer( filename )
         analyzer.start()
         player = BagReplayer( self.bagInfo.filepath )
         try:
-            player.play()
+            player.play( speed )
             analyzer.stop()
             print '"%s" analyzed' % self.bagInfo.filepath
             data = analyzer.serialize()
@@ -100,13 +100,14 @@ class BagReplayer( object ):
     def __init__( self, filepath ):
         self._filepath = filepath
 
-    def play( self ):
+    def play( self, speed=1 ):
         self._assertFileExists()
         print 'Playing %s' % self._filepath
         pipe = subprocess.PIPE
-        args = [ 'rosbag', 'play', self._filepath ]
+        args = [ 'rosbag', 'play', self._filepath, '-r', str( speed )]
         p    = subprocess.Popen( args, stderr=pipe )
         stdout, stderr = p.communicate()
+        print stderr
 
         if stderr.find( 'invalid TCPROS header' ) >= 0:
             raise BagReplayer.TCPROSHeaderError()
@@ -246,5 +247,6 @@ class BagAnalyzer( object ):
 if __name__ == '__main__':
     rospy.init_node( 'analyse_worker', anonymous=True )
     filepath = rospy.get_param( '~filepath' )
+    speed    = rospy.get_param( '~speed' )
     worker = Worker( BagInfo( filepath ))
-    worker.start()
+    worker.start( speed=speed )

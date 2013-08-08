@@ -2,13 +2,15 @@
 <launch>
     <arg name="videoConfig" />
     <arg name="filepath" />
+    <arg name="speed" default="1" />
 
-    <include file="$( find navigation_test_analysis )/launch/displayCamerasAndRecordScreen.launch">
+    <include file="$( find navigation_test_analysis )/launch/displayCamerasAndRecordScreen.launch" output="screen">
         <arg name="videoConfig" value="$( arg videoConfig )" />
         <arg name="bagFilepath" value="$( arg filepath )" />
     </include>
 
     <node name="analyse_bag_file" pkg="navigation_test_analysis" type="worker.py" output="screen" required="true">
         <param name="~filepath" value="$( arg filepath )" />
+        <param name="~speed"    value="$( arg speed )" />
     </node>
 </launch>
