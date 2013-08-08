@@ -134,12 +134,18 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
     updateStdDevAttribute: ( attr )->
       mean = @get 'mean.' + attr
       sum = num = 0
-      @get( 'tests' ).map ( model )=>
+
+
+      @get( 'tests' ).forEach ( model )=>
+        return if not model.get 'active'
+        return if model.get 'error'
         value = +model.get( attr )
         if !isNaN( value )
           num++
           sum += Math.pow ( value - mean ), 2
-        @set 'stdDev.' + attr, if sum > 0 then Math.sqrt sum/num else 'N/A'
+      #if @cid == 'c201'
+      console.log 'found', @, sum/num, sum, num
+      @set 'stdDev.' + attr, if sum > 0 then Math.sqrt sum/num else 'N/A'
 
     getDataPointsForKey: ( key )->
       return @get( 'tests' ).map ( model )->

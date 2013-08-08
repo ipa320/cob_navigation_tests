@@ -204,16 +204,23 @@
 
         mean = this.get('mean.' + attr);
         sum = num = 0;
-        return this.get('tests').map(function(model) {
+        this.get('tests').forEach(function(model) {
           var value;
 
+          if (!model.get('active')) {
+            return;
+          }
+          if (model.get('error')) {
+            return;
+          }
           value = +model.get(attr);
           if (!isNaN(value)) {
             num++;
-            sum += Math.pow(value - mean, 2);
+            return sum += Math.pow(value - mean, 2);
           }
-          return _this.set('stdDev.' + attr, sum > 0 ? Math.sqrt(sum / num) : 'N/A');
         });
+        console.log('found', this, sum / num, sum, num);
+        return this.set('stdDev.' + attr, sum > 0 ? Math.sqrt(sum / num) : 'N/A');
       },
       getDataPointsForKey: function(key) {
         return this.get('tests').map(function(model) {
