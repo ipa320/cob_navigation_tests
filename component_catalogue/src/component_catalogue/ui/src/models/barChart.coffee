@@ -45,4 +45,4 @@ define [ 'backbone'  ], ( Backbone )->
           id:    testGroup.id
           data:  data
           
-      series
+      _.sortBy series, ( item )-> item.name

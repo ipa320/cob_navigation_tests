@@ -66,7 +66,9 @@
             data: data
           });
         }
-        return series;
+        return _.sortBy(series, function(item) {
+          return item.name;
+        });
       }
     });
   });
