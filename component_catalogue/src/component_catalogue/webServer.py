@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-import roslib
-roslib.load_manifest( 'component_catalogue' )
-import rospy
+"""
+Usage: webServer.py [port] [repository] [videoServer]
+"""
 
 import SimpleHTTPServer, SocketServer
 from SimpleHTTPServer import SimpleHTTPRequestHandler
@@ -9,7 +9,7 @@ from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from SocketServer import ThreadingMixIn
 from navigation_test_helper.git import Git
 from navigation_test_helper.resultRepository import ResultRepository
-import os, json, urllib, urllib2
+import os, json, urllib, urllib2, sys
 
 os.chdir( os.path.dirname( os.path.realpath( __file__ )))
 
@@ -73,11 +73,18 @@ class Handler( SimpleHTTPRequestHandler ):
         self.end_headers()
         self.wfile.write( json.dumps( data ))
 
+def printUsageAndExit():
+    print __doc__
+    sys.exit( 1 )
+
 if __name__ == '__main__':
-    rospy.init_node( 'server' )
-    port = int( rospy.get_param( '~port' ))
-    repositoryName = rospy.get_param( '~repository' )
-    videoServer = rospy.get_param( '~videoServer' )
+    try:
+        port           = int( sys.argv[ 1 ])
+        repositoryName = sys.argv[ 2 ]
+        videoServer    = sys.argv[ 3 ]
+    except IndexError:
+        printUsageAndExit()
+
     git = Git( repositoryName )
     with git as repository:
         server = WebServer( port, repository, videoServer )
