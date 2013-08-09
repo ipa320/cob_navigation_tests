@@ -219,7 +219,6 @@
             return sum += Math.pow(value - mean, 2);
           }
         });
-        console.log('found', this, sum / num, sum, num);
         return this.set('stdDev.' + attr, sum > 0 ? Math.sqrt(sum / num) : 'N/A');
       },
       getDataPointsForKey: function(key) {

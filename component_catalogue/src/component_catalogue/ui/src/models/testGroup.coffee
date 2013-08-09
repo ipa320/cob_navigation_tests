@@ -144,7 +144,6 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
           num++
           sum += Math.pow ( value - mean ), 2
       #if @cid == 'c201'
-      console.log 'found', @, sum/num, sum, num
       @set 'stdDev.' + attr, if sum > 0 then Math.sqrt sum/num else 'N/A'
 
     getDataPointsForKey: ( key )->
