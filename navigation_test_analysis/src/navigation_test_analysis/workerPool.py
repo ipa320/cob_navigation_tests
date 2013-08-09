@@ -45,7 +45,12 @@ class BagDirectoryReader( object ):
             if analyzedAlready or bagInfo.isProcessed():
                 continue
 
-            self.waitUntilBagfileSizeStable( bagInfo )
+            try:
+                self.waitUntilBagfileSizeStable( bagInfo )
+            except OSError, e:
+                self._filesAnalyzed.append( bagInfo.filepath )
+                continue
+
             if not silent:
                 self._filesAnalyzed.append( bagInfo.filepath )
 
@@ -113,6 +118,7 @@ class AnalyserDaemon( threading.Thread ):
         threading.Thread.__init__( self )
         self._bagPath = bagPath
         self._active  = True
+        self._directoryReader = BagDirectoryReader( self._bagPath )
         self._additionalRosArguments = {
             'videoConfig':  videoConfig,
             'speed':        speed
@@ -124,19 +130,17 @@ class AnalyserDaemon( threading.Thread ):
     def runUntilNoBagfileLeft( self ):
         self.start()
         print 'bagpath: %s' % self._bagPath
-        directoryReader = BagDirectoryReader( self._bagPath )
         while self._active:
             time.sleep( 5 )
-            self._active = directoryReader.hasUnanalyzedBagFilenames()
+            self._active = self._directoryReader.hasUnanalyzedBagFilenames()
             print 'Slept: %s' % self._active
 
     def run( self ):
         print 'Starting analysis daemon on: %s' % self._bagPath
-        directoryReader = BagDirectoryReader( self._bagPath )
         pool = WorkerPool()
         while self._active:
-            if directoryReader.hasUnanalyzedBagFilenames():
-                bagInfo = directoryReader.nextUnanalyzedBagFilename()
+            if self._directoryReader.hasUnanalyzedBagFilenames():
+                bagInfo = self._directoryReader.nextUnanalyzedBagFilename()
                 printInfoMessage( bagInfo )
                 pool.newInstance( bagInfo, self._additionalRosArguments )
 
