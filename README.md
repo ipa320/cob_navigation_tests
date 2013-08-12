@@ -12,7 +12,7 @@ Navigation Test
 - Include ros dependency for avconv in github.org/ros/rosdistro
 - Sometimes a collision is detected on initial simulation startup due to the robot falling on the ground
 - Highlight error messages thrown during startup (e.g. bagPath not writable)
-- Update Start- / Enddate in search to include all Test within the corresponding time window. I.e. start: dd/mm/yyyy 00:00, end: dd/mm/yyyy 23:59:59
+- ~~Update Start- / Enddate in search to include all Test within the corresponding time window. I.e. start: dd/mm/yyyy 00:00, end: dd/mm/yyyy 23:59:59~~
 
 #### Implemented
 - ~~Create navigation_test_video_publisher that serves as a gateway between fileserver and webserver~~
