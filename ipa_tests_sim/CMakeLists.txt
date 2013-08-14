@@ -21,4 +21,8 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined services
 #rosbuild_gensrv()
 
-rosbuild_add_rostest(launch/room.launch ROBOT=cob3-3 NAVIGATION=2dnav_ros_dwa TIMEOUT 900 )
+ 
+rosbuild_add_rostest(launch/room_cob3-3_dwa.launch TIMEOUT 900 )
+#set(ENV{ROBOT} "cob3-3")
+#set(ENV{NAVIGATION} "2dnav_ros_dwa")
+#rosbuild_add_rostest(launch/room_cob3-3_dwa.launch TIMEOUT 900 )
