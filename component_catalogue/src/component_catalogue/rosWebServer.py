@@ -3,6 +3,7 @@ import roslib
 roslib.load_manifest( 'component_catalogue' )
 import rospy
 from webServer import WebServer
+from navigation_test_helper.git import Git
 
 if __name__ == '__main__':
     rospy.init_node( 'server' )
