@@ -1,6 +1,6 @@
 timeoutInS:        200
 repository:        git@github.com:SimonEbner/navigation_test_results_sim
-bagPath:           /share/uhr-se/bagrecord
+bagPath:           /home/jenkins/chroot_tarballs/bagfiles
 setupRobotService: setup_robot
 collisionsTopic:   collisions
 cameraTopics:      [ /topCamera/image_raw ]
