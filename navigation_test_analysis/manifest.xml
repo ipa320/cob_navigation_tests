@@ -9,7 +9,6 @@
   <review status="unreviewed" notes=""/>
   <url></url>
 
-  <depend package="gazebo"/>
   <depend package="navigation_test_helper"/>
   <depend package="std_srvs"/>
 
