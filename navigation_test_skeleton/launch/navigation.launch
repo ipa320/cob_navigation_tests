@@ -15,5 +15,6 @@
         <param name="scenarioName" value="$( arg scenarioName )" />
         <param name="robot"        value="$( arg robot )" />
         <param name="navigation"   value="$( arg navigation )" />
+        <param name="bagPath"      value="$( optenv BAGPATH /tmp )" />
     </node>
 </launch>
