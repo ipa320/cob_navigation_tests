@@ -86,6 +86,9 @@ class LocalCopyHandler():
     def copyFile( self, localFilepath ):
         filename       = os.path.basename( localFilepath )
         targetFilepath = '%s/%s' % ( self.path, filename )
+        if localFilepath == targetFilepath:
+            return True
+
         try:
             shutil.copyfile( localFilepath, targetFilepath )
         except IOError,e:
