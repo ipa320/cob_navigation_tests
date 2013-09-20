@@ -11,7 +11,7 @@
 
   <depend package="navigation_test_skeleton" />
   <depend package="navigation_test_prepare_robot" />
-  <depend package="navigation_test_collisions_detection" />
+  <depend package="navigation_test_collision_detection" />
 </package>
 
 
