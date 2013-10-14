@@ -152,7 +152,7 @@ if __name__ == '__main__':
     bagPath     = os.path.expanduser( rospy.get_param( '~bagPath' ))
     videoConfig = rospy.get_param( '~videoConfig' )
     speed       = rospy.get_param( '~speed' )
-    keepalive   = rospy.get_param( '~keepalive' ) == 'true'
+    keepalive   = str( rospy.get_param( '~keepalive' )).lower() == 'true'
     daemon  = AnalyserDaemon( bagPath, videoConfig, speed )
     if keepalive:
         daemon.start()
