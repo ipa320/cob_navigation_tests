@@ -1,12 +1,10 @@
 #!/usr/bin/env python
-import roslib
+import roslib, sys
 roslib.load_manifest( 'navigation_test_analysis' )
 import rospy
 import threading, subprocess, sys
 import navigation_test_helper.msg
 
-def importImageView():
-    from multiImageView import ImageViewApp
 
 class CameraDisplayManager( object ):
     def __init__( self ):
@@ -30,12 +28,14 @@ class CameraDisplayManager( object ):
 
 if __name__ == '__main__':
     try:
-        importImageView()
-        rospy.init_node( 'display_cameras' )
-        manager = CameraDisplayManager()
-        manager.start()
-        rospy.spin()
-        manager.stop()
+        from multiImageView import ImageViewApp
     except ImportError,e:
         print 'Could not launch MultiImageView'
         print e
+        sys.exit( 1 )
+
+    rospy.init_node( 'display_cameras' )
+    manager = CameraDisplayManager()
+    manager.start()
+    rospy.spin()
+    manager.stop()

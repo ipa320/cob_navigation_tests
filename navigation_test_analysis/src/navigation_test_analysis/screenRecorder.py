@@ -2,15 +2,13 @@
 import roslib
 roslib.load_manifest( 'navigation_test_analysis' )
 import rospy
-import subprocess, threading, os, tempfile, os.path
+import subprocess, threading, os, tempfile, os.path, sys
 from subprocess             import PIPE
 from navigation_test_helper import copyHandlers
 from videoEncoder           import RecorderSettings
 from std_srvs.srv           import Empty
 import videoEncoder
 
-def importGtkModule():
-    from navigation_test_helper import gtkHelper
 
 class ScreenRecorder( threading.Thread ):
     def __init__( self, settings ):
@@ -81,26 +79,28 @@ def getParam( key, default=None ):
 
 if __name__=='__main__':
     try:
-        importGtkModule()
+        from navigation_test_helper import gtkHelper
         videoEncoder.assertInstalled()
-
-        rospy.init_node( 'screen_recorder' )
-        settings  = RecorderSettings()
-        settings.bagFilepath = getParam( '~bagFilepath' )
-        settings.size        = getParam( '~size', gtkHelper.getFullscreenSize() )
-        settings.frequency   = getParam( '~frequency' )
-        settings.offset      = getParam( '~offset' )
-        settings.targetUri   = getParam( '~videoPath' )
-        settings.display     = getParam( '~display', os.environ[ 'DISPLAY' ])
-
-        screenRecorder = ScreenRecorder( settings )
-        screenRecorder.start()
-        stopCallback = lambda *args: screenRecorder.stop()
-        rospy.Service( 'screenRecorder/stop', Empty, stopCallback )
-        rospy.spin()
     except videoEncoder.EncoderMissing, e:
         print 'Could not start avconv since the encoder is missing:'
         print e
+        sys.exit( 1 )
     except ImportError, e:
         print 'Could not import Gtk Module'
         print e
+        sys.exit( 1 )
+
+    rospy.init_node( 'screen_recorder' )
+    settings  = RecorderSettings()
+    settings.bagFilepath = getParam( '~bagFilepath' )
+    settings.size        = getParam( '~size', gtkHelper.getFullscreenSize() )
+    settings.frequency   = getParam( '~frequency' )
+    settings.offset      = getParam( '~offset' )
+    settings.targetUri   = getParam( '~videoPath' )
+    settings.display     = getParam( '~display', os.environ[ 'DISPLAY' ])
+
+    screenRecorder = ScreenRecorder( settings )
+    screenRecorder.start()
+    stopCallback = lambda *args: screenRecorder.stop()
+    rospy.Service( 'screenRecorder/stop', Empty, stopCallback )
+    rospy.spin()

@@ -4,7 +4,7 @@
     <arg name="filepath" />
     <arg name="speed" default="1" />
 
-    <include file="$( find navigation_test_analysis )/launch/displayCamerasAndRecordScreen.launch" output="screen">
+    <include file="$( find navigation_test_analysis )/launch/displayCamerasAndRecordScreen.launch">
         <arg name="videoConfig" value="$( arg videoConfig )" />
         <arg name="bagFilepath" value="$( arg filepath )" />
     </include>
