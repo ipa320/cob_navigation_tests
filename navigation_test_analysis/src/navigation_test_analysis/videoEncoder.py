@@ -1,5 +1,8 @@
 import subprocess
 
+class EncoderMissing( Exception ):
+    pass
+
 class RecorderSettings( object ):
     def __init__( self ):
         self.targetUri   = ''
@@ -17,8 +20,11 @@ class RecorderSettings( object ):
 
 
 def assertInstalled():
-    assertAvconvInstalled()
-    assertCodecInstalled()
+    try:
+        assertAvconvInstalled()
+        assertCodecInstalled()
+    except Exception, e:
+        raise EncoderMissing( str( e ))
 
 def assertAvconvInstalled():
     try:

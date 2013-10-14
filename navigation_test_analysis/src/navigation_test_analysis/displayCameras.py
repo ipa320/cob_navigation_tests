@@ -4,7 +4,9 @@ roslib.load_manifest( 'navigation_test_analysis' )
 import rospy
 import threading, subprocess, sys
 import navigation_test_helper.msg
-from multiImageView import ImageViewApp
+
+def importImageView():
+    from multiImageView import ImageViewApp
 
 class CameraDisplayManager( object ):
     def __init__( self ):
@@ -27,8 +29,13 @@ class CameraDisplayManager( object ):
 
 
 if __name__ == '__main__':
-    rospy.init_node( 'display_cameras' )
-    manager = CameraDisplayManager()
-    manager.start()
-    rospy.spin()
-    manager.stop()
+    try:
+        importImageView()
+        rospy.init_node( 'display_cameras' )
+        manager = CameraDisplayManager()
+        manager.start()
+        rospy.spin()
+        manager.stop()
+    except ImportError,e:
+        print 'Could not launch MultiImageView'
+        print e
