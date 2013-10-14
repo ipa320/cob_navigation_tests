@@ -133,7 +133,6 @@ class AnalyserDaemon( threading.Thread ):
         while self._active:
             time.sleep( 5 )
             self._active = self._directoryReader.hasUnanalyzedBagFilenames()
-            print 'Slept: %s' % self._active
 
     def run( self ):
         print 'Starting analysis daemon on: %s' % self._bagPath
