@@ -129,7 +129,7 @@ class AnalyserDaemon( threading.Thread ):
 
     def runUntilNoBagfileLeft( self ):
         self.start()
-        print 'bagpath: %s' % self._bagPath
+        print 'Bagpath: %s' % self._bagPath
         while self._active:
             time.sleep( 5 )
             self._active = self._directoryReader.hasUnanalyzedBagFilenames()
