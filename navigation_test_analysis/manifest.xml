@@ -11,5 +11,6 @@
 
   <depend package="navigation_test_helper"/>
   <depend package="std_srvs"/>
+  <depend package="cv_bridge" />
 
 </package>
