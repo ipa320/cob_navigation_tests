@@ -152,7 +152,7 @@ if __name__ == '__main__':
     speed       = rospy.get_param( '~speed' )
     keepalive   = str( rospy.get_param( '~keepalive' )).lower() == 'true'
     daemon  = AnalyserDaemon( bagPath, videoConfig, speed )
-    if not keepalive:
+    if keepalive:
         daemon.start()
         rospy.spin()
         daemon.stop()
