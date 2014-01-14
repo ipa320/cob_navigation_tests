@@ -17,10 +17,9 @@ class MetricsObserverTF( Thread ):
         Thread.start( self )
 
     def stop( self ):
-        print 'Trying to stop MetricsObserverTf...'
+        print 'Instruct MetricsObserverTf to stop'
         self._metricsContainer.stop()
         with self._lock:
-            print '...Alive set to false'
             self._alive = False
 
     def isAlive( self ):
