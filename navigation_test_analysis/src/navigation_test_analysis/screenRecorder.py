@@ -27,17 +27,24 @@ class ScreenRecorder( threading.Thread ):
         cmd     = self._startCmd()
         self._p = subprocess.Popen( cmd, stdout=PIPE )
         self._p.wait()
+        print 'Screen Recorder stopped'
 
-    def stop( self ):
-        if not self._p: return
+    def terminate( self ):
+        if not self._p: return None
         print 'Terminating video process'
         self._p.terminate()
+        return []
+
+    def stop( self ):
+        if not self._p: return None
+        self.terminate()
         print 'Converting video to mp4'
         self._convert()
         print 'Copying files'
         self._copyFiles()
         self._remove()
         print 'Finished converting video'
+        return []
 
     def _convert( self ):
         cmd = self._convertCmd()
@@ -102,5 +109,7 @@ if __name__=='__main__':
     screenRecorder = ScreenRecorder( settings )
     screenRecorder.start()
     stopCallback = lambda *args: screenRecorder.stop()
-    rospy.Service( 'screenRecorder/stop', Empty, stopCallback )
+    termCallback = lambda *args: screenRecorder.terminate()
+    rospy.Service( 'screenRecorder/stop',      Empty, stopCallback )
+    rospy.Service( 'screenRecorder/terminate', Empty, termCallback )
     rospy.spin()

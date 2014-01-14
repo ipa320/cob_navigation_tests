@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import roslib
 roslib.load_manifest( 'navigation_test_analysis' )
-import rospy, os, re, subprocess, sys, time, datetime
+import rospy, os, re, subprocess, sys, time, datetime, traceback
 import navigation_test_helper.msg
 import subprocess, threading
 from navigation_test_helper.metricsObserverTF import MetricsObserverTF
@@ -16,55 +16,100 @@ import rospy.service
 class Worker( object ):
     def __init__( self, bagInfo ):
         self.bagInfo = bagInfo
+        self._analyzer = None
 
     def start( self, speed=1 ):
         filename = self.bagInfo.filename
-        analyzer = BagAnalyzer( filename )
-        analyzer.start()
-        player = BagReplayer( self.bagInfo.filepath )
+        self._analyzer = BagAnalyzer( filename )
+        self._analyzer.start()
+        player   = BagReplayer( self.bagInfo.filepath )
         try:
             player.play( speed )
-            analyzer.stop()
+            self._analyzer.stop()
             print '"%s" analyzed' % self.bagInfo.filepath
-            data = analyzer.serialize()
+            data = self._analyzer.serialize()
             self.saveResults( data )
             self.bagInfo.setAnalyzed()
-            self._stopScreenRecoder()
+            self._stopScreenRecorder()
 
         except BagAnalyzer.NoStatusReceivedError:
+            self._terminateScreenRecorderAndMetricsObserver()
             self._errorOccured( 'No status topic received.' )
 
         except BagAnalyzer.NoFinishedStatusReceivedError:
+            self._terminateScreenRecorderAndMetricsObserver()
             self._errorOccured( 'No finished status topic received.' )
 
         except BagAnalyzer.NoRepositoryNameReceivedError:
+            self._terminateScreenRecorderAndMetricsObserver()
             self._errorOccured( 'No Repository name received.' )
 
         except BagReplayer.TCPROSHeaderError:
+            self._terminateScreenRecorderAndMetricsObserver()
             if not self.bagInfo.isFixed():
-                self._fixBagFile()
+                self._fixBagFileTCPROSHeader()
             else:
-                self._errorOccured( 'Bag-File corrupted' )
+                self._errorOccured( 'Bag-File corrupted: TCPROS-Header-Error' )
 
-        finally:
-            analyzer.stop()
+        except BagReplayer.INDEX_DATA_Expected:
+            self._terminateScreenRecorderAndMetricsObserver()
+            if not self.bagInfo.isFixed():
+                self._reindexBagFile()
+            else:
+                self._errorOccured( 'Bag-File corrupted: Bagfile index. \n' + \
+                        'Running rosbag reindex might fix the problem' )
 
-    def _stopScreenRecoder( self ):
+        except Exception,e:
+            self._terminateScreenRecorderAndMetricsObserver()
+            self._errorOccured( 'Unexpected error occured: %s' % e )
+
+
+    def _terminateScreenRecorderAndMetricsObserver( self ):
+        if not self._analyzer: return
+        try:
+            self._analyzer.stop()
+        except Exception,e:
+            traceback.print_stack()
+            print 'Could not stop the analyzer, an unexpected error occured:'
+            print e
+
+
+        try:
+            print 'Terminating video converter'
+            s = rospy.ServiceProxy( 'screenRecorder/terminate', Empty )
+            s()
+        except rospy.service.ServiceException, e:
+            print 'Terminate Service could not be called: %s' % str( e )
+
+
+    def _stopScreenRecorder( self ):
         try:
             print 'Stopping video converter'
             s = rospy.ServiceProxy( 'screenRecorder/stop', Empty )
             s()
         except rospy.service.ServiceException, e:
-            print 'Service could not be called: %s' % str( e )
+            print 'Stop Service could not be called: %s' % str( e )
 
-    def _fixBagFile( self ):
+    def _fixBagFileTCPROSHeader( self ):
         print
-        print 'BAG-FILE ERROR OCCURED. TRYING TO RECOVER'
-        print '-----------------------------------------'
+        print 'BAG-FILE TCPROS-HEADER-ERROR OCCURED. TRYING TO RECOVER'
+        print '-------------------------------------------------------'
         patcher = BagFilePatcher( self.bagInfo.filepath )
         patcher.patch()
         self.bagInfo.setFixed()
         
+    def _reindexBagFile( self ):
+        print
+        print 'BAG-FILE INDEX-DATA-ERROR OCCURED. TRYING TO RECOVER'
+        print '----------------------------------------------------'
+        args = [ 'rosbag', 'reindex', self.bagInfo.filepath ]
+        print 'Running %s.\nThis could take a minute\n\n' % args
+        try:
+            subprocess.call( args )
+            self.bagInfo.setFixed()
+        except Exception, e:
+            print 'Could not reindex bag file'
+            set.bagInfo.setErroneous()
 
     def _errorOccured( self, msg ):
         self.bagInfo.setErroneous()
@@ -96,6 +141,7 @@ class Worker( object ):
 
 class BagReplayer( object ):
     class TCPROSHeaderError( Exception ): pass
+    class INDEX_DATA_Expected( Exception ): pass
 
     def __init__( self, filepath ):
         self._filepath = filepath
@@ -110,7 +156,12 @@ class BagReplayer( object ):
         print stderr
 
         if stderr.find( 'invalid TCPROS header' ) >= 0:
+            p.terminate()
             raise BagReplayer.TCPROSHeaderError()
+
+        if stderr.find( 'Expected INDEX_DATA record' ) >= 0:
+            p.terminate()
+            raise BagReplayer.INDEX_DATA_Expected()
 
     def _assertFileExists( self ):
         if not os.path.isfile( self._filepath ):
@@ -250,3 +301,5 @@ if __name__ == '__main__':
     speed    = rospy.get_param( '~speed' )
     worker = Worker( BagInfo( filepath ))
     worker.start( speed=speed )
+    print 'Worker finished, all threads closed'
+    print threading._active

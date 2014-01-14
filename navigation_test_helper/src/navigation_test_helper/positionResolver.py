@@ -11,9 +11,22 @@ class PositionMissedException( Exception ):
 
 class PositionResolver( object ):
     def __init__( self ):
-        self.transformListener = tf.TransformListener()
-        self.transformListener.waitForTransform( '/map', '/base_link', rospy.Time( 0 ), 
-            rospy.Duration( 300.0 ) )
+        self._initialized = False
+
+    def initialize( self, timeout=5.0 ):
+        if self._initialized: return True
+        try:
+            self.transformListener = tf.TransformListener()
+            self.transformListener.waitForTransform( '/map', '/base_link', rospy.Time( 0 ), 
+                rospy.Duration( timeout ) )
+            self._initialized = True
+            return True
+        except tf.Exception,e:
+            print 'Could not get transformation from /map to /base_link within timeout'
+            return False
+
+    def isInitialized( self ):
+        return self._initialized
 
     def getPosition( self ):
         pos, rot = self.transformListener.lookupTransform(

@@ -17,8 +17,10 @@ class MetricsObserverTF( Thread ):
         Thread.start( self )
 
     def stop( self ):
+        print 'Trying to stop MetricsObserverTf...'
         self._metricsContainer.stop()
         with self._lock:
+            print '...Alive set to false'
             self._alive = False
 
     def isAlive( self ):
@@ -28,6 +30,11 @@ class MetricsObserverTF( Thread ):
     def run( self ):
         positionResolver = PositionResolver()
         while self.isAlive() and not rospy.is_shutdown():
+            # initialize the position resolver but be careful to abort this
+            # procedure if the user is requesting to stop the thread
+            while self.isAlive() and not positionResolver.isInitialized():
+                positionResolver.initialize( 5 )
+
             try: 
                 position = positionResolver.getPosition()
                 self._metricsContainer.update( position )
@@ -40,6 +47,7 @@ class MetricsObserverTF( Thread ):
             except rospy.exceptions.ROSInterruptException:
                 self._alive = False
                 break
+        print 'MetricsObserverTF finished.'
 
     def serialize( self ):
         return self._metricsContainer.serialize()

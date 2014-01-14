@@ -12,7 +12,10 @@ class BagInfo( object ):
 
     @staticmethod
     def isBagFile( uri ):
-        return BagInfo.fileMatcher( uri ) != None
+        fileIsBagFile = BagInfo.fileMatcher( uri ) != None
+        fileFromRosbagReindex = uri.find( '.orig.bag' ) > -1 
+        # ignore files created by rosbag reindex
+        return fileIsBagFile and not fileFromRosbagReindex
 
     def __init__( self, filepath ):
         self._updateAttributes( filepath )
