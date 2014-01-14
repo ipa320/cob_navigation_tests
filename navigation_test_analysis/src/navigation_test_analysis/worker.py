@@ -156,11 +156,9 @@ class BagReplayer( object ):
         print stderr
 
         if stderr.find( 'invalid TCPROS header' ) >= 0:
-            p.terminate()
             raise BagReplayer.TCPROSHeaderError()
 
         if stderr.find( 'Expected INDEX_DATA record' ) >= 0:
-            p.terminate()
             raise BagReplayer.INDEX_DATA_Expected()
 
     def _assertFileExists( self ):
