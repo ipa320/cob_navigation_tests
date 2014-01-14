@@ -2,6 +2,7 @@ import tf
 import rospy
 from tf.transformations import euler_from_quaternion
 from position import Position
+from threading import Lock
 
 class PositionMissedException( Exception ):
     def __init__( self, position, target, tolerance ):
@@ -12,21 +13,24 @@ class PositionMissedException( Exception ):
 class PositionResolver( object ):
     def __init__( self ):
         self._initialized = False
+        self._lock = Lock()
 
     def initialize( self, timeout=5.0 ):
-        if self._initialized: return True
+        if self.isInitialized(): return True
         try:
             self.transformListener = tf.TransformListener()
-            self.transformListener.waitForTransform( '/map', '/base_link', rospy.Time( 0 ), 
-                rospy.Duration( timeout ) )
-            self._initialized = True
-            return True
+            self.transformListener.waitForTransform( '/map', '/base_link',
+                    rospy.Time( 0 ), rospy.Duration( timeout ))
+            with self._lock:
+                self._initialized = True
+                return True
         except tf.Exception,e:
             print 'Could not get transformation from /map to /base_link within timeout'
             return False
 
     def isInitialized( self ):
-        return self._initialized
+        with self._lock:
+            return self._initialized
 
     def getPosition( self ):
         pos, rot = self.transformListener.lookupTransform(
