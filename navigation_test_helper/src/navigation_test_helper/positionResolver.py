@@ -2,7 +2,7 @@ import tf
 import rospy
 from tf.transformations import euler_from_quaternion
 from position import Position
-from threading import Lock
+from threading import RLock
 
 class PositionMissedException( Exception ):
     def __init__( self, position, target, tolerance ):
@@ -11,36 +11,37 @@ class PositionMissedException( Exception ):
         Exception.__init__( self, msg )
 
 class PositionResolver( object ):
+    _tfListener = None
+
     def __init__( self ):
-        self._initialized = False
-        self._lock = Lock()
+        self._lock = RLock()
 
     def initialize( self, timeout=None ):
         if not timeout:
             while not rospy.is_shutdown() and not self.isInitialized():
-                self.initialize( 5 )
+                self._initializeOnce( 5 )
         else:
-            self.initialize( timeout )
+            self._initializeOnce( timeout )
 
-    def initializeOnce( self, timeout=5.0 ):
-        if self.isInitialized(): return True
-        try:
-            self.transformListener = tf.TransformListener()
-            self.transformListener.waitForTransform( '/map', '/base_link',
-                    rospy.Time( 0 ), rospy.Duration( timeout ))
-            with self._lock:
-                self._initialized = True
+    def _initializeOnce( self, timeout=5.0 ):
+        with self._lock:
+            if self.isInitialized(): return True
+            try:
+                tfListener = tf.TransformListener()
+                tfListener.waitForTransform( '/map', '/base_link',
+                        rospy.Time( 0 ), rospy.Duration( timeout ))
+                PositionResolver._tfListener = tfListener
                 return True
-        except tf.Exception,e:
-            print 'Could not get transformation from /map to /base_link within timeout'
-            return False
+            except tf.Exception,e:
+                print 'Could not get transformation from /map to /base_link within timeout'
+                return False
 
     def isInitialized( self ):
         with self._lock:
-            return self._initialized
+            return PositionResolver._tfListener != None
 
     def getPosition( self ):
-        pos, rot = self.transformListener.lookupTransform(
+        pos, rot = PositionResolver._tfListener.lookupTransform(
             '/map', '/base_link', rospy.Time( 0 ))
         return self._rawToPositionObject( pos, rot )
 

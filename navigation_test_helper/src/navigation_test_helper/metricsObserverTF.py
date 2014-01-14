@@ -24,7 +24,7 @@ class MetricsObserverTF( Thread ):
 
     def isAlive( self ):
         with self._lock:
-            return self._alive and not rospy.is_shutdown():
+            return self._alive and not rospy.is_shutdown()
 
     def run( self ):
         positionResolver = PositionResolver()
