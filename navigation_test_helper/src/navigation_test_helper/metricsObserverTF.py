@@ -24,16 +24,16 @@ class MetricsObserverTF( Thread ):
 
     def isAlive( self ):
         with self._lock:
-            return self._alive
+            return self._alive and not rospy.is_shutdown():
 
     def run( self ):
         positionResolver = PositionResolver()
-        while self.isAlive() and not rospy.is_shutdown():
-            # initialize the position resolver but be careful to abort this
-            # procedure if the user is requesting to stop the thread
-            while self.isAlive() and not positionResolver.isInitialized():
-                positionResolver.initialize( 5 )
+        # initialize the position resolver but be careful to abort this
+        # procedure if the user is requesting to stop the thread
+        while self.isAlive() and not positionResolver.isInitialized():
+            positionResolver.initialize( 5 )
 
+        while self.isAlive():
             try: 
                 position = positionResolver.getPosition()
                 self._metricsContainer.update( position )

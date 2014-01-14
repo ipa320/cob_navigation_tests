@@ -15,7 +15,14 @@ class PositionResolver( object ):
         self._initialized = False
         self._lock = Lock()
 
-    def initialize( self, timeout=5.0 ):
+    def initialize( self, timeout=None ):
+        if not timeout:
+            while not rospy.is_shutdown() and not self.isInitialized():
+                self.initialize( 5 )
+        else:
+            self.initialize( timeout )
+
+    def initializeOnce( self, timeout=5.0 ):
         if self.isInitialized(): return True
         try:
             self.transformListener = tf.TransformListener()

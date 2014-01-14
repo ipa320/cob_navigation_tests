@@ -30,8 +30,10 @@ class TestNavigation( unittest.TestCase ):
         self._navigationStatusPublisher = NavigationStatusPublisher( 
                 'status', setting )
 
+        rospy.loginfo( 'Initializing Position Resolver' )
         self.tolerance = Tolerance( xy=0.3, theta=.3 )
         self.positionResolver = PositionResolver()
+        self.positionResolver.initialize()
 
         rospy.loginfo( 'Waiting for Bag Recorder' )
         self._stopBagRecording = self._waitForBagRecorder()
