@@ -15,7 +15,7 @@ TODO
 
 Analysis
 ------------------------------------------------------------------
-* roslaunch navigation_test_analysis analyse_remaining_bag_files.launch bagPath:="bagPath"
+* roslaunch navigation_test_analysis analyse_remaining_bag_files.launch bagPath:="bagPath" keepalive:=False
 
 
 Visualization
