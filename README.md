@@ -1,6 +1,32 @@
 Navigation Test
 ===============
 
+Usage in simulation
+------------------------------------------------------------------
+* build navigation_test_samples
+* adapt navigation_test_samples/launch/sample_base.launch:
+ + repository: git repository for results + bagPath: path to store bag-files ( local or ssh )
+* start examples, e.g. roslaunch navigation_test_samples collision.launch
+
+Usage with real robot
+------------------------------------------------------------------
+TODO
+
+
+Analysis
+------------------------------------------------------------------
+* roslaunch navigation_test_analysis analyse_remaining_bag_files.launch bagPath:="bagPath"
+
+
+Visualization
+------------------------------------------------------------------
+* roslaunch component_catalogue component_catalogue.launch repository:="repository" (https path to results repository)
+
+
+
+
+
+
 ## Todo
 
 #### High Priority
@@ -29,3 +55,5 @@ Navigation Test
 - ~~Pass array of bumper topics to navigation_test_collisions~~
 - ~~In case of an error, display the actual metrics of the test ( distance, duration, rotation )~~
 - ~~Update Start- / Enddate in search to include all Test within the corresponding time window. I.e. start: dd/mm/yyyy 00:00, end: dd/mm/yyyy 23:59:59~~
+
+
