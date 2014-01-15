@@ -20,7 +20,7 @@ Analysis
 
 Visualization
 ------------------------------------------------------------------
-* roslaunch component_catalogue component_catalogue.launch repository:="repository" (https path to results repository)
+* roslaunch component_catalogue web_server.launch repository:="repository" (https path to results repository)
 
 
 
