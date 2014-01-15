@@ -16,16 +16,19 @@ def createSetupRobotCallback( robotConfig ):
 def setupRobot( robotConfig, req ):
     rospy.loginfo( 'Preparing robot for navigation scenario ...' )
     scriptServer = simple_script_server()
-    config = yaml.load( file( robotConfig, 'r' ))
-    if config:
-        for key, value in config.items():
-            rospy.loginfo( 'Moving %s to %s' % ( key, value ))
-            scriptServer.move( key, value, blocking=True )
+    #config = yaml.load( file( robotConfig, 'r' ))
+    #if config:
+    #    for key, value in config.items():
+    #        rospy.loginfo( 'Moving %s to %s' % ( key, value ))
+    #        scriptServer.move( key, value, blocking=True )
+    for key, value in robotConfig.items():
+        rospy.loginfo( 'Moving %s to %s' % ( key, value ))
+        scriptServer.move( key, value, blocking=True )
     return True, ''
 
 if __name__=='__main__':
     rospy.init_node( 'cob_prepare_robot' )
     serviceName = rospy.get_param( 'setupRobotService' )
-    robotConfig = rospy.get_param( '~robotConfig' )
+    robotConfig = rospy.get_param( 'robotConfig' )
     setupRobotService( serviceName, robotConfig )
     rospy.spin()
