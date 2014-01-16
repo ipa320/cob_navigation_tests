@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="bagPath"     default="$(env HOME)/bagFiles"/>
+	<arg name="videoConfig" default="$( find navigation_test_analysis )/videoConfigExample.yaml" />
+	<arg name="keepalive"   default="true" />
+	<arg name="repository"  default="git@github.com:ipa320/cob_navigation_tests_results" />
+	<arg name="videoServer" default="http://localhost:8000" />
+	<arg name="videoPath"   default="$(env HOME)/videoFiles"/>
+
+	<include file="$(find navigation_test_analysis)/launch/analyse_remaining_bag_files.launch" >
+		<arg name="bagPath"     default="$(arg bagPath)"/>
+		<arg name="speed"       default="1" />
+		<arg name="videoConfig" default="$( find navigation_test_analysis )/videoConfigExample.yaml" />
+		<arg name="keepalive"   default="true" />
+	</include>
+
+	<include file="$(find component_catalogue)/launch/web_server.launch" >
+		<arg name="videoServer" default="$(arg videoServer)" />
+		<arg name="repository"  default="$(arg repository)" />
+		<arg name="port"        default="9000" />
+	</include>
+
+	<include file="$(find component_catalogue)/launch/video_server.launch" >
+		<arg name="videoPath"   default="$(arg videoPath)"/>
+		<arg name="port"        default="8000" />
+	</include>
+
+</launch>
+
