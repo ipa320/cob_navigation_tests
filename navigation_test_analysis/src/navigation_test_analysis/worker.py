@@ -33,18 +33,21 @@ class Worker( object ):
             self._stopScreenRecorder()
 
         except BagAnalyzer.NoStatusReceivedError:
+            print "except BagAnalyzer.NoStatusReceivedError"
             self._terminateScreenRecorderAndMetricsObserver()
             self._errorOccured( 'No status topic received.' )
-
         except BagAnalyzer.NoFinishedStatusReceivedError:
+            print "except BagAnalyzer.NoFinishedStatusReceivedError"
             self._terminateScreenRecorderAndMetricsObserver()
             self._errorOccured( 'No finished status topic received.' )
 
         except BagAnalyzer.NoRepositoryNameReceivedError:
+            print "except BagAnalyzer.NoRepositoryNameReceivedError"
             self._terminateScreenRecorderAndMetricsObserver()
             self._errorOccured( 'No Repository name received.' )
 
         except BagReplayer.TCPROSHeaderError:
+            print "except BagReplayer.TCPROSHeaderError"
             self._terminateScreenRecorderAndMetricsObserver()
             if not self.bagInfo.isFixed():
                 self._fixBagFileTCPROSHeader()
@@ -52,6 +55,7 @@ class Worker( object ):
                 self._errorOccured( 'Bag-File corrupted: TCPROS-Header-Error' )
 
         except BagReplayer.INDEX_DATA_Expected:
+            print "except BagReplayer.INDEX_DATA_Expected"
             self._terminateScreenRecorderAndMetricsObserver()
             if not self.bagInfo.isFixed():
                 self._reindexBagFile()

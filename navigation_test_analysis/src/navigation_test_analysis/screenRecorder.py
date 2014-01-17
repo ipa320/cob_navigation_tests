@@ -103,7 +103,7 @@ if __name__=='__main__':
     settings.size        = getParam( '~size', gtkHelper.getFullscreenSize() )
     settings.frequency   = getParam( '~frequency' )
     settings.offset      = getParam( '~offset' )
-    settings.targetUri   = getParam( '~videoPath' )
+    settings.targetUri   = getParam( '~videoFilepath' )
     settings.display     = getParam( '~display', os.environ[ 'DISPLAY' ])
 
     screenRecorder = ScreenRecorder( settings )

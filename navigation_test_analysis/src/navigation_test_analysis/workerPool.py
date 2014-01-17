@@ -89,7 +89,8 @@ class WorkerPool( object ):
         args = [
             'roslaunch',
             PKG, 'analyse_bag_file.launch',
-            'filepath:=%s' % bagInfo.filepath
+            'filepath:=%s' % bagInfo.filepath,
+            'videofilepath:=%s' % rospy.get_param("~videoPath")
         ]
         for key, value in additionalRosArguments.items():
             args.append( '%s:=%s' % ( key, value ))
