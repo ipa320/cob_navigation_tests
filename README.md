@@ -68,41 +68,37 @@ All analysis can be do ne by starting (asuming all your bag files are copied to 
 mkdir ~/videoFiles
 roslaunch navigation_test_analysis analyse_remaining_bag_files.launch bagPath:=~/bagFiles videoPath:=~/videoFiles keepalive:=False
 ```
-Note: As the video is rendered from the current screen, please keep the image view window maximised on a single screen. There is no dual monitor setup supported yet.
+Notes: 
+* As the video is rendered from the current screen, please keep the image view window maximised on a single screen. There is no dual monitor setup supported yet.
+* Make sure you have write permissions to the github repository listed in the ```scene1.yaml``` file (e.g. https://github.com/ipa320/cob_navigation_tests_results)
 
 # Visualize component catalogue
 ```
 roslaunch component_catalogue component_catalogue.launch
 ```
 
-
-Usage in simulation
-------------------------------------------------------------------
-* build navigation_test_samples
-* adapt navigation_test_samples/launch/sample_base.launch:
- + repository: git repository for results + bagPath: path to store bag-files ( local or ssh )
-* start examples, e.g. roslaunch navigation_test_samples collision.launch
-
-Usage with real robot
-------------------------------------------------------------------
-TODO
-
-
-Analysis
-------------------------------------------------------------------
-* roslaunch navigation_test_analysis analyse_remaining_bag_files.launch bagPath:="bagPath" keepalive:=False
-
-
-Visualization
-------------------------------------------------------------------
-* roslaunch component_catalogue web_server.launch repository:="repository" (https path to results repository)
+Now you can have a look at the results at [http://localhost:9000](http://localhost:9000).
 
 
 
 
 
 
-## Todo
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Open isseues
 
 #### High Priority
 - Include ~~video and~~ map topics into bag file
