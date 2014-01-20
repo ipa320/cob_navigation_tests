@@ -3,7 +3,7 @@
 	<arg name="config_pkg"       value="$(find navigation_test_samples)"/>
 	<arg name="sim"              value="true" />
 
-	<arg name="navigation"       default="2dnav_ros_dwa"/>
+	<arg name="navigation"       default="2dnav_ros_tr"/>
 
 	<arg name="robot"            default="cob3-3"/>
 	<arg name="moveBaseAction"   default="/move_base"/>

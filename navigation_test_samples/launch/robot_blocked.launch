@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <include file="$( find navigation_test_samples )/launch/sample_base.launch">
-        <arg name="scenarioName" value="robot_blocked" />
-        <arg name="timeoutInS"   value="600" />
-    </include>
-
-    <include file="$( find navigation_test_samples_gazebo_objects )/launch/large_heavy_table.launch" />
-</launch>
