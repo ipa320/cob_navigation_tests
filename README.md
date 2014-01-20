@@ -32,7 +32,7 @@ and two configuration files, one for the robot (e.g. [cob3-3](https://raw.github
 ```
 gedit config/prepare_robot_cob3-3.yaml
 ```
-and one for the scenario (e.g. [scene1](https://github.com/ipa320/cob_navigation_tests/blob/groovy_dev/navigation_test_samples/config/scene1.yaml))
+and one for the scenario (e.g. [scene1](https://raw.github.com/ipa320/cob_navigation_tests/groovy_dev/navigation_test_samples/config/scene1.yaml))
 ```
 gedit config/scene1.yaml
 ```
