@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="config_pkg"       value="$(find nav_test_fmw)"/>
+	<arg name="sim"              value="true" />
+
+	<arg name="navigation"       default="2dnav_ros_dwa"/>
+
+	<arg name="robot"            default="cob3-3"/>
+	<arg name="moveBaseAction"   default="/move_base"/>
+	<arg name="bumperTopics"     default="[/base_bumper/state]" />
+
+	<arg name="robot_env"        default="ipa-apartment"/>
+	<arg name="map"              default="$(find cob_default_env_config)/$(arg robot_env)/map.yaml"/>
+
+	<arg name="scenarioName"     default="scene1"/>
+
+
+
+	<!-- ###################### -->
+	<!-- start robot simulation -->
+	<!-- ###################### -->
+	<include file="$( find cob_bringup_sim )/launch/robot.launch">
+		<arg name="robot"     value="$( arg robot )" />
+		<arg name="robot_env" value="$( arg robot_env )" />
+	</include>
+	<!-- spawn obstacles in environment (optional) -->
+	<!--include file="$( find ipa_tests_sim )/launch/table.launch" /-->
+
+	<!-- ################ -->
+	<!-- start navigation -->
+	<!-- ################ -->
+	<include file="$(find cob_navigation_global)/launch/$(arg navigation).launch">
+		<arg name="robot"     value="$( arg robot )" />
+		<arg name="robot_env" value="$( arg robot_env )" />
+		<arg name="map"       value="$( arg map )" />
+	</include>
+
+	<!-- ####################### -->
+	<!-- execute navigation test -->
+	<!-- ####################### -->
+	<group ns="/navigation_test" >
+		<rosparam file="$(arg config_pkg)/config/$(arg scenarioName).yaml" command="load" />
+		<rosparam file="$(arg config_pkg)/config/prepare_robot_$(arg robot).yaml" command="load" />
+		<param name="moveBaseAction"      value="$(arg moveBaseAction)" />
+		<!-- prepare robot service server -->
+		<node name="navigation_test_prepare_robot_simulation" pkg="navigation_test_prepare_robot" type="prepareRobot.py" output="screen"/>
+		<!-- start collision detection -->
+		<include file="$( find navigation_test_collision_detection )/launch/collision_detection.launch">
+			<arg name="bumperTopics"      value="$(arg bumperTopics)" />
+		</include>
+		<!-- start test skeleton -->
+		<include file="$( find navigation_test_skeleton )/launch/navigation.test">
+			<arg name="sim"               value="$( arg sim )" />
+			<arg name="scenarioName"      value="$( arg scenarioName )" />
+			<arg name="robot"             value="$( arg robot )" />
+			<arg name="navigation"        value="$( arg navigation )" />
+		</include>
+	</group>
+
+	<!-- ####### -->
+	<!-- helpers -->
+	<!-- ####### -->
+	<node pkg="ipa_tests_sim" type="killGazeboOnHangup.py" name="killGazeboOnHangup"/>
+
+</launch>

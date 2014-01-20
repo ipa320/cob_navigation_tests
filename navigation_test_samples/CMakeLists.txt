@@ -31,3 +31,11 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 #rosbuild_add_roslaunch_check(launch/navigation.test)
 #rosbuild_add_rostest(launch/navigation.test TIMEOUT 1000.0)
+
+
+rosbuild_check_for_display(disp)
+if(disp)
+  rosbuild_add_rostest(launch/sample_test.test)
+else(disp)
+  rosbuild_add_roslaunch_check(launch robot:=cob3-3)
+endif(disp)
