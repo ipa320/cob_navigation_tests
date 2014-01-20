@@ -1,5 +1,3 @@
-navigation_test_results
-srv_gen
+build/
+*~
 *.pyc
-build
-msg_gen
