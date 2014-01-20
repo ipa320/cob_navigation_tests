@@ -23,12 +23,12 @@ roscd my_navigation_test
 mkdir launch
 mkdir config
 ```
-Create a rostest file in the launch directory and fill it with [this example code]( https://github.com/ipa320/cob_navigation_tests/blob/groovy_dev/navigation_test_samples/launch/sample_test.test)
+Create a rostest file in the launch directory and fill it with [this example code](https://raw.github.com/ipa320/cob_navigation_tests/groovy_dev/navigation_test_samples/launch/sample_test.testt)
 ```
 gedit launch/my_test.test
 ```
 
-and two configuration files, one for the robot (e.g. [cob3-3](https://github.com/ipa320/cob_navigation_tests/blob/groovy_dev/navigation_test_samples/config/prepare_robot_cob3-3.yaml))
+and two configuration files, one for the robot (e.g. [cob3-3](https://raw.github.com/ipa320/cob_navigation_tests/groovy_dev/navigation_test_samples/config/prepare_robot_cob3-3.yaml))
 ```
 gedit config/prepare_robot_cob3-3.yaml
 ```
