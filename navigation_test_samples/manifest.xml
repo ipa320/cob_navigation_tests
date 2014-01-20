@@ -11,6 +11,10 @@
 
   <depend package="navigation_test_skeleton" />
   <depend package="cob_navigation_global" />
+  <depend package="navigation_test_helper" />
+  <depend package="navigation_test_collision_detection" />
+  <depend package="navigation_test_prepare_robot" />
+  <depend package="navigation_test_samples_gazebo_objects" />
   <depend package="cob_bringup_sim" />
 
 </package>

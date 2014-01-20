@@ -23,8 +23,6 @@
 		<arg name="robot"     value="$( arg robot )" />
 		<arg name="robot_env" value="$( arg robot_env )" />
 	</include>
-	<!-- spawn obstacles in environment (optional) -->
-	<!--include file="$( find ipa_tests_sim )/launch/table.launch" /-->
 
 	<!-- ################ -->
 	<!-- start navigation -->
@@ -60,6 +58,6 @@
 	<!-- ####### -->
 	<!-- helpers -->
 	<!-- ####### -->
-	<node pkg="ipa_tests_sim" type="killGazeboOnHangup.py" name="killGazeboOnHangup"/>
+	<node pkg="navigation_test_helper" type="killGazeboOnHangup.py" name="killGazeboOnHangup"/>
 
 </launch>

@@ -1,0 +1,4 @@
+setupRobotService: /setup_robot
+robotConfig:
+  arm_left: folded
+  arm_right: folded
