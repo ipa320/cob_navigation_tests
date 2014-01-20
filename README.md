@@ -67,6 +67,9 @@ All analysis can be do ne by starting (asuming all your bag files are copied to 
 mkdir ~/videoFiles
 roslaunch navigation_test_analysis analyse_remaining_bag_files.launch bagPath:=~/bagFiles videoPath:=~/videoFiles keepalive:=False
 ```
+Now your bag Files in ```~/bagFiles``` should all be renamed into ```*_analyzed``` and in a corresponding video files in ```~/videoFiles```.
+
+
 Notes: 
 * As the video is rendered from the current screen, please keep the image view window maximised on a single screen. There is no dual monitor setup supported yet.
 * Make sure you have write permissions to the github repository listed in the ```scene1.yaml``` file (e.g. https://github.com/ipa320/cob_navigation_tests_results)
