@@ -1,5 +1,0 @@
-timeoutInS:        200
-repository:        git@github.com:SimonEbner/navigation_test_results_sim
-setupRobotService: setup_robot
-collisionsTopic:   collisions
-cameraTopics:      [ /topCamera/image_raw ]
