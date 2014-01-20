@@ -56,11 +56,10 @@ tbd
 
 # Analyse test results
 This step will analyse the data in the bag files generated above. We're using the following metrics
-* asd
-* asf
-* asdf
-* asdf
-* asdf
+* Travelled distrance in m
+* Amount of rotation in rad
+* Time to reach target
+* Amount of collisions (if ```bumperTopics``` topics are provided)
 If an image topic was recorded we'll render a video.
 
 All analysis can be do ne by starting (asuming all your bag files are copied to ```~/bagFiles```
@@ -84,21 +83,9 @@ Now you can have a look at the results at [http://localhost:9000](http://localho
 
 
 
+# Open issues
+Please report new issues at https://github.com/ipa320/cob_navigation_tests/issues.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Open isseues
 
 #### High Priority
 - Include ~~video and~~ map topics into bag file
