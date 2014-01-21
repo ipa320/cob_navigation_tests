@@ -23,7 +23,7 @@
 		<arg name="robot"     value="$( arg robot )" />
 		<arg name="robot_env" value="$( arg robot_env )" />
 	</include>
-	<include file="$( find ipa_tests_sim )/launch/table.launch" />
+	<!--include file="$( find ipa_tests_sim )/launch/table.launch" /-->
 
 	<!-- ################ -->
 	<!-- start navigation -->
