@@ -56,8 +56,42 @@ Now you should have a bag file in ```~/bagFiles```
 tbd
 
 ## Run tests on a jenkins continuous integration server
-tbd
 
+### Preparation of your test package
+Prepare your tests in a new test package as described in the section above and commit it to any github repository (as an example, we'll use https://github.com/ipa-fmw/cob_navigation_tests_fmw).
+Add your ```my_test.test``` file with the ```rosbuild_add_rostest``` macro to the ```CMakeLists.txt``` file of your package so that the tests get executed by running ```make test``` in your package. Example:
+```
+rosbuild_check_for_display(disp)
+if(disp)
+  rosbuild_add_rostest(launch/my_test.test)
+else(disp)
+  rosbuild_add_roslaunch_check(launch robot:=cob3-3)
+endif(disp)
+```
+Commit your changes and push it to github.
+Note:
+* The ```rosbuild_check_for_display``` checks if a graphical environment is available. We'll only run the simulation in a graphical environment.
+* You can check your configuration manually by running ```make test``` in your test package.
+
+### Configure your test pipeline on the jenkins server
+Login to the jenkins server (we'll use http://cob-jenkins-server:8080, you can login with your ipa-apartment pool login).
+
+Under "pipeline configuration" (http://cob-jenkins-server:8080/user/fmw/configure) you can configure your pipeline settings. 
+* Press "add repository" and fill in the details for your test repository
+* Press "more" and select "downstream build" and check the box for "Graphics Test"
+* Press "add dependency" and fill in the details for the `cob_navigation_tests` repository which is
+  * fork user: ipa320
+  * repository: cob_navigation_tests
+  * branch: groovy_dev
+* Press another "add dependency" and fill in the details for the `cob_navigation` repository which is
+  * fork user: ipa320
+  * repository: cob_navigation
+  * branch: groovy_dev
+* If the validation of your input is good, press "generate pipeline"
+
+### Start a build
+A new build will be started automatically (after around 10min) and after every source code change.
+You can also start a build manually with the "pipe_starter_manual" job by selecting your navigation test repository.
 
 # Analyse test results
 This step will analyse the data in the bag files generated above. We're using the following metrics
