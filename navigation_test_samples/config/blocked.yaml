@@ -4,7 +4,7 @@ collisionsTopic:   collisions
 cameraTopics:      [ /topCamera/image_raw ]
 
 route:
-    - [ 2.53,  0.0,    0 ]
+    - [ 7.53,  0.0,    0 ]
 #    - [ 1.80,   0.0,   -1.56   ]
 #    - [ -0.37, -2.64,  -1.56 ]
 #    - [ 0,      0,      3.14 ]
