@@ -3,6 +3,11 @@ There is three ways to use the navigation tests: (i) simulation on your local ma
 
 ## Run simulation tests on your local machine
 
+### Install dependencies
+```
+sudo apt-get install libavcodec-extra-53
+```
+
 ### Checkout the code
 Checkout https://github.com/ipa320/cob_navigation_tests into your ROS_PACKAGE_PATH, e.g. ```~/ros``` and build it.
 ```
