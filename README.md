@@ -12,7 +12,7 @@ sudo apt-get install libavcodec-extra-53
 Checkout https://github.com/ipa320/cob_navigation_tests into your ROS_PACKAGE_PATH, e.g. ```~/ros``` and build it.
 ```
 mkdir -p ~/ros
-git clone https://github.com/ipa320/cob_navigation_tests.git ~/ros
+git clone https://github.com/ipa320/cob_navigation_tests.git ~/ros/cob_navigation_tests
 rosmake cob_navigation_tests navigation_test_samples
 ```
 
