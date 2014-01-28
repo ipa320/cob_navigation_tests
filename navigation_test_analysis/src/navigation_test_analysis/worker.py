@@ -5,6 +5,7 @@ import rospy, os, re, subprocess, sys, time, datetime, traceback
 import navigation_test_helper.msg
 import subprocess, threading
 from navigation_test_helper.metricsObserverTF import MetricsObserverTF
+from navigation_test_helper.tfDiffObserver    import TFDiffObserver
 from navigation_test_helper.jsonFileHandler   import JsonFileHandler
 from navigation_test_helper.git               import Git
 from navigation_test_helper.bagInfo           import BagInfo
@@ -180,6 +181,7 @@ class BagAnalyzer( object ):
         print 'Initializing Analyzer'
         self._filename                = filename
         self._metricsObserver         = MetricsObserverTF()
+        self._tfDiffObserver          = TFDiffObserver( '/gazebo_gt', '/base_link' )
         self._metricsObserver.dT      = 0
         self._duration                = 'N/A'
         self._active                  = False
@@ -216,6 +218,7 @@ class BagAnalyzer( object ):
         print 'Starting Analyzer'
         self._active = True
         self._metricsObserver.start()
+        self._tfDiffObserver.start()
         self._startTime = None
         self._localtime = None
 
@@ -225,6 +228,7 @@ class BagAnalyzer( object ):
             self._active = False
             self._unregisterSubscribers()
             self._metricsObserver.stop()
+            self._tfDiffObserver.stop()
 
     def _unregisterSubscribers( self ):
         for subscriber in self._subscribers:
@@ -233,12 +237,13 @@ class BagAnalyzer( object ):
     def serialize( self ):
         self._assertNoUnrecoverableErrorOccured()
         data = self._metricsObserver.serialize()
-        data[ 'error'      ] = self._error
-        data[ 'duration'   ] = self._duration
-        data[ 'filename'   ] = self._filename
-        data[ 'localtime'  ] = self._localtime
-        data[ 'collisions' ] = self._collisions
+        data[ 'error'              ] = self._error
+        data[ 'duration'           ] = self._duration
+        data[ 'filename'           ] = self._filename
+        data[ 'localtime'          ] = self._localtime
+        data[ 'collisions'         ] = self._collisions
         data[ 'localtimeFormatted' ] = self._localtimeFormatted()
+        data[ 'deltas'             ] = self._tfDiffObserver.serialize()
         data = dict( data.items() + self._setting.items() )
         return data
 
