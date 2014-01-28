@@ -39,7 +39,10 @@ class TfPublisher:
         index    = data.name.index( self._modelName )
         pose     = data.pose[ index ]
         position = pose.position
-        self._broadcast( position.x, position.y, 0 )
+        orient   = pose.orientation
+        euler    = tf.transformations.euler_from_quaternion(
+                ( orient.x, orient.y, orient.z, orient.w ))
+        self._broadcast( position.x, position.y, euler[ 2 ])
 
 if __name__ == '__main__':
     rospy.init_node( 'gazebo_gt_tf_publisher' )
