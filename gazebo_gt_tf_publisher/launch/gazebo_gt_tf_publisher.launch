@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="topicName" default="gazebo_gt_tf" />
+    <arg name="topicName" default="gazebo_gt" />
     <arg name="modelName" default="robot" />
 
     <node name="gazebo_gt_tf_publisher" pkg="gazebo_gt_tf_publisher" type="gazebo_gt_tf_publisher.py" output="screen">
