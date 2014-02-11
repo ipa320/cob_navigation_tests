@@ -4,6 +4,7 @@
     <table class="display" cellspacing="0" cellpadding="0">
     <thead>
         <tr>
+            <th title="Select" class="checkbox">&nbsp;</th>
             <th title="Number">#</th>
             <% for columnKey, colData of @columns: %>
             <th title="<%- colData.title%>"><%- colData.label %></th>
@@ -12,7 +13,8 @@
     </thead>
     <tbody>
         <% for i, row of @data: %>
-        <tr id="<%=row.id%>" class="row">
+        <tr id="<%=row.id%>" class="row testDetail">
+            <td class="checkbox"><input type="checkbox" data-no="<%=i%>"/></td>
             <td><%=i%></td>
             <% for columnKey, columnData of@columns: %>
                 <td class="<%=columnKey%>"><%-helper.format row[ columnKey ], columnData.formatter%>&nbsp;</td>

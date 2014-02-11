@@ -5,11 +5,13 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
     tagName: 'div',
     events:
       #'click table tr': 'selectRow'
-      'click input':      'changeSelected'
-      'click tr':         'triggerInputClick'
-      'click td.zoom':    'toggleRow'
-      'click td.video a': 'playVideo'
-      'click a.back':     'backToGroups'
+      'click tr.row.test input':       'changeSelected'
+      'click tr.row.test':             'triggerInputClick'
+      'click td.zoom':                 'toggleRow'
+      'click td.video a':              'playVideo'
+      'click a.back':                  'backToGroups'
+      'click tr.row.testDetail':       'testDetailRowClicked'
+      'click tr.row.testDetail input': 'testDetailInputClicked'
 
     options:
       testGroups:    null
@@ -31,6 +33,7 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
     enhanceTable: _.debounce ( table, sorting=[] )=>
       height = table.find( 'table' ).parent().height() - 50
       table.find( 'table' ).dataTable
+        'aaSorting':       sorting
         'sScrollY':        "#{height}px"
         'bPaginate':       false
         'bScrollCollapse': true
@@ -87,11 +90,9 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
 
     selectFirstGroup: ->
       _.defer =>
-        console.log( 'select first', @options.testGroups.at( 0 ));
         group = @options.testGroups.at( 0 )
         group.set 'selected', true
         id = group.get 'id'
-        console.log( 'id', id )
         @$el.find( '#' + id + ' input:first' ).prop 'checked', true
 
 
@@ -117,8 +118,8 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
       row  = $( e.currentTarget ).closest '.row'
       id   = row.attr 'id'
       icon.toggleClass 'expanded contracted'
-      testGroup = @options.testGroups.get id
-      @expandTestGroup testGroup
+      @selectedTestGroup = @options.testGroups.get id
+      @expandTestGroup @selectedTestGroup
 
     expandTestGroup: ( testGroup )->
       row = @$ '#' + testGroup.id
@@ -128,9 +129,10 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
         title:         testGroup.get 'title'
         columns:       @options.columnsDetail
         columnsDetail: @options.columnsDetail
-        detail:  do testGroup.toJSON
-        data:    do testGroup.get( 'tests' ).toJSON
-      @enhanceTable detailTable, [[ 0, 'asc' ]]
+        detail:        do testGroup.toJSON
+        data:          do testGroup.get( 'tests' ).toJSON
+      @enhanceTable detailTable, [[ 1, 'asc' ]]
+      @trigger 'expandTestGroup', testGroup
       @$el.prepend detailTable
 
     playVideo: ( e )->
@@ -142,3 +144,27 @@ define [ 'backbone', 'jquery-tipTip', 'jquery.dataTables', 'templates/resultList
     backToGroups: ( e )->
       do @$( '.details' ).remove
       do @$el.children().show
+
+    testDetailRowClicked: ( e )->
+      row   = $ e.currentTarget
+      input = row.find 'input'
+      input.trigger 'click'
+
+    testDetailInputClicked: ( e )->
+      do e.stopImmediatePropagation if e
+      console.log 'okay clicked'
+      input         = $ e.currentTarget
+      row           = input.closest 'tr.row'
+      siblingRows   = do row.siblings
+      siblingInputs = siblingRows.find 'input'
+      
+      siblingInputs.prop 'checked', false
+      siblingRows.removeClass 'selected'
+
+      if input.prop 'checked'
+        row.addClass 'selected'
+        selectedTestNo = parseInt input.data 'no'
+        @selectedTestGroup.set 'selectedTest', selectedTestNo
+
+      else
+        @selectedTestGroup.set 'selectedTest', null

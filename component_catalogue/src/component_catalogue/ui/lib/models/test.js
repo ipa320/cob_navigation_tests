@@ -6,6 +6,7 @@
     return Test = Backbone.Model.extend({
       defaults: {
         active: true,
+        deltas: [],
         error: '',
         collisions: 0,
         date: 0,

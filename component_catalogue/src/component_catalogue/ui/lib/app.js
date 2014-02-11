@@ -2,7 +2,7 @@
 (function() {
   define(['collections/textFilter', 'collections/tests', 'views/resultList', 'views/devView', 'models/testGroup', 'collections/testGroups', 'models/dateFilter', 'models/numberFilter', 'models/erroneousFilter', 'views/filterView', 'views/videoPlayback', 'views/sortingOptions', 'models/sortingOptions'], function(TextFilter, Tests, ResultList, DevView, TestGroup, TestGroups, DateFilter, NumberFilter, ErroneousFilter, FilterView, VideoPlayback, SortingOptionsView, SortingOptions) {
     return function(options) {
-      var dateFilter, erroneousFilter, filters, groupedTests, numberFilter, renderDevView, renderFilterView, renderResultListView, renderSortingOptionsView, resultListView, sortingOptions, testCollection, testGroups, tests, textFilter;
+      var dateFilter, devView, erroneousFilter, filters, groupedTests, numberFilter, renderDevView, renderFilterView, renderResultListView, renderSortingOptionsView, resultListView, sortingOptions, testCollection, testGroups, tests, textFilter;
 
       testCollection = new Tests(options.testData);
       textFilter = new TextFilter;
@@ -22,6 +22,7 @@
       groupedTests = tests.groupBy(['robot', 'navigation', 'scenario']);
       testGroups = new TestGroups(groupedTests);
       resultListView = null;
+      devView = null;
       renderResultListView = function() {
         var videoOverlay;
 
@@ -31,11 +32,12 @@
           testGroups: testGroups,
           videoPlayback: videoOverlay
         });
+        resultListView.on('expandTestGroup', function(testGroup) {
+          return devView.activateTestDetailView(testGroup);
+        });
         return $('#resultListView').html(resultListView.render().el);
       };
       renderDevView = function() {
-        var devView;
-
         devView = new DevView({
           testGroups: testGroups,
           sortingOptions: sortingOptions

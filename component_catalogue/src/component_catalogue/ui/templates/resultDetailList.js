@@ -45,7 +45,7 @@ define( [ 'ecoHelper' ], function( helper ){(function() {
       
         __out.push(__sanitize(this.title));
       
-        __out.push('</div>\n  <div class="table-detail-container">\n    <table class="display" cellspacing="0" cellpadding="0">\n    <thead>\n        <tr>\n            <th title="Number">#</th>\n            ');
+        __out.push('</div>\n  <div class="table-detail-container">\n    <table class="display" cellspacing="0" cellpadding="0">\n    <thead>\n        <tr>\n            <th title="Select" class="checkbox">&nbsp;</th>\n            <th title="Number">#</th>\n            ');
       
         _ref = this.columns;
         for (columnKey in _ref) {
@@ -64,7 +64,9 @@ define( [ 'ecoHelper' ], function( helper ){(function() {
           row = _ref1[i];
           __out.push('\n        <tr id="');
           __out.push(__sanitize(row.id));
-          __out.push('" class="row">\n            <td>');
+          __out.push('" class="row testDetail">\n            <td class="checkbox"><input type="checkbox" data-no="');
+          __out.push(__sanitize(i));
+          __out.push('"/></td>\n            <td>');
           __out.push(__sanitize(i));
           __out.push('</td>\n            ');
           _ref2 = this.columns;

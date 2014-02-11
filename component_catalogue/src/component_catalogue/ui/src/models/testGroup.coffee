@@ -2,6 +2,7 @@ define [ 'backbone', 'underscore', 'collections/tests' ], ( Backbone, _, Tests )
   TestGroup = Backbone.Model.extend
     defaults:
       selected:          undefined
+      selectedTest:      null
       count:             0
       empty:             false
       robot:             'None'

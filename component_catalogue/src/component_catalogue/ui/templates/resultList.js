@@ -60,7 +60,7 @@ define( [ 'ecoHelper' ], function( helper ){(function() {
           row = _ref1[i];
           __out.push('\n      <tr id="');
           __out.push(__sanitize(row.id));
-          __out.push('" class="row ');
+          __out.push('" class="row test ');
           __out.push(__sanitize(i % 2 === 0 ? 'odd' : 'even'));
           __out.push('">\n          ');
           if (row.selected) {
