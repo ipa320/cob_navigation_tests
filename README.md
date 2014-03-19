@@ -28,7 +28,7 @@ roscd my_navigation_test
 mkdir launch
 mkdir config
 ```
-Create a rostest file in the launch directory and fill it with [this example code](https://raw.github.com/ipa320/cob_navigation_tests/groovy_dev/navigation_test_samples/launch/sample_test.testt)
+Create a rostest file in the launch directory and fill it with [this example code](https://raw.github.com/ipa320/cob_navigation_tests/groovy_dev/navigation_test_samples/launch/sample_test_cob3-3_dwa.test)
 ```
 gedit launch/my_test.test
 ```
