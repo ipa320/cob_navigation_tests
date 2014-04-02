@@ -8,11 +8,13 @@
       id: 'resultList',
       tagName: 'div',
       events: {
-        'click input': 'changeSelected',
-        'click tr': 'triggerInputClick',
+        'click tr.row.test input': 'changeSelected',
+        'click tr.row.test': 'triggerInputClick',
         'click td.zoom': 'toggleRow',
         'click td.video a': 'playVideo',
-        'click a.back': 'backToGroups'
+        'click a.back': 'backToGroups',
+        'click tr.row.testDetail': 'testDetailRowClicked',
+        'click tr.row.testDetail input': 'testDetailInputClicked'
       },
       options: {
         testGroups: null,
@@ -42,6 +44,7 @@
         }
         height = table.find('table').parent().height() - 50;
         table.find('table').dataTable({
+          'aaSorting': sorting,
           'sScrollY': "" + height + "px",
           'bPaginate': false,
           'bScrollCollapse': true,
@@ -119,11 +122,9 @@
         return _.defer(function() {
           var group, id;
 
-          console.log('select first', _this.options.testGroups.at(0));
           group = _this.options.testGroups.at(0);
           group.set('selected', true);
           id = group.get('id');
-          console.log('id', id);
           return _this.$el.find('#' + id + ' input:first').prop('checked', true);
         });
       },
@@ -152,7 +153,7 @@
         return target.parent().find('input').trigger('click');
       },
       toggleRow: function(e) {
-        var icon, id, row, testGroup;
+        var icon, id, row;
 
         e.preventDefault();
         e.stopImmediatePropagation();
@@ -160,8 +161,8 @@
         row = $(e.currentTarget).closest('.row');
         id = row.attr('id');
         icon.toggleClass('expanded contracted');
-        testGroup = this.options.testGroups.get(id);
-        return this.expandTestGroup(testGroup);
+        this.selectedTestGroup = this.options.testGroups.get(id);
+        return this.expandTestGroup(this.selectedTestGroup);
       },
       expandTestGroup: function(testGroup) {
         var detailTable, row;
@@ -175,7 +176,8 @@
           detail: testGroup.toJSON(),
           data: testGroup.get('tests').toJSON()
         }));
-        this.enhanceTable(detailTable, [[0, 'asc']]);
+        this.enhanceTable(detailTable, [[1, 'asc']]);
+        this.trigger('expandTestGroup', testGroup);
         return this.$el.prepend(detailTable);
       },
       playVideo: function(e) {
@@ -189,6 +191,34 @@
       backToGroups: function(e) {
         this.$('.details').remove();
         return this.$el.children().show();
+      },
+      testDetailRowClicked: function(e) {
+        var input, row;
+
+        row = $(e.currentTarget);
+        input = row.find('input');
+        return input.trigger('click');
+      },
+      testDetailInputClicked: function(e) {
+        var input, row, selectedTestNo, siblingInputs, siblingRows;
+
+        if (e) {
+          e.stopImmediatePropagation();
+        }
+        console.log('okay clicked');
+        input = $(e.currentTarget);
+        row = input.closest('tr.row');
+        siblingRows = row.siblings();
+        siblingInputs = siblingRows.find('input');
+        siblingInputs.prop('checked', false);
+        siblingRows.removeClass('selected');
+        if (input.prop('checked')) {
+          row.addClass('selected');
+          selectedTestNo = parseInt(input.data('no'));
+          return this.selectedTestGroup.set('selectedTest', selectedTestNo);
+        } else {
+          return this.selectedTestGroup.set('selectedTest', null);
+        }
       }
     });
   });

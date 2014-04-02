@@ -8,6 +8,7 @@
     return TestGroup = Backbone.Model.extend({
       defaults: {
         selected: void 0,
+        selectedTest: null,
         count: 0,
         empty: false,
         robot: 'None',

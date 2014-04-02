@@ -1,0 +1,17 @@
+<package>
+  <description brief="gazebo_gt_tf_publisher">
+
+     gazebo_gt_tf_publisher
+
+  </description>
+  <author>Simon Ebner</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/gazebo_gt_tf_publisher</url>
+
+  <depend package="rospy" />
+  <depend package="cv_bridge" />
+  <depend package="gazebo_msgs" />
+</package>
+
+

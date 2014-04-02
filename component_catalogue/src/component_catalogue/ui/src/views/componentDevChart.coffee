@@ -1,4 +1,4 @@
-define [ 'backbone', 'templates/componentDevChart', 'models/lineChart', 'views/lineChart' ], ( Backbone, chartTmpl, LineChart, LineChartView )->
+define [ 'backbone', 'templates/componentDevChart', 'models/componentDevLineChart', 'views/lineChart' ], ( Backbone, chartTmpl, LineChart, LineChartView )->
   Backbone.View.extend
     tagName:   'div'
     className: 'componentDevChart'

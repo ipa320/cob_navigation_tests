@@ -1,4 +1,4 @@
-define [ 'backbone', 'templates/devView', 'views/componentDevView', 'views/applicationDevView' ], ( Backbone, devViewTmpl, ComponentDevView, ApplicationDevView )->
+define [ 'backbone', 'templates/devView', 'views/componentDevView', 'views/applicationDevView', 'views/testDetailDevView' ], ( Backbone, devViewTmpl, ComponentDevView, ApplicationDevView, TestDetailDevView )->
   Backbone.View.extend
     tagName:   'div'
     className: 'developerView'
@@ -20,6 +20,9 @@ define [ 'backbone', 'templates/devView', 'views/componentDevView', 'views/appli
         testGroups:     @options.testGroups
         sortingOptions: @options.sortingOptions
 
+      @testDetailDevView = new TestDetailDevView
+        testGroups:     @options.testGroups
+
     renderComponentDevView: ( $el )->
       $el.html @componentDevView.render().el
       $( '#sortingOptionsContainer' ).show()
@@ -27,6 +30,15 @@ define [ 'backbone', 'templates/devView', 'views/componentDevView', 'views/appli
     renderApplicationDevView: ( $el )->
       $el.html @applicationDevView.render().el
       $( '#sortingOptionsContainer' ).hide()
+
+    renderTestDetailDevView: ( $el )->
+      $el.html @testDetailDevView.render().el
+      $( '#sortingOptionsContainer' ).hide()
+
+    activateTestDetailView: ( testGroup )->
+      @testDetailDevView.useTestGroup testGroup
+      @trigger 'changeView', 'testDetail'
+      @renderTestDetailDevView @$ '.tabContent'
 
     activateApplicationView: ->
       if @activeTab() != 'application'
