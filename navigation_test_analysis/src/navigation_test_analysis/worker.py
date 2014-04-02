@@ -6,6 +6,7 @@ import navigation_test_helper.msg
 import subprocess, threading
 from navigation_test_helper.metricsObserverTF import MetricsObserverTF
 from navigation_test_helper.tfDiffObserver    import TFDiffObserver
+from navigation_test_helper.tfPointsObserver  import TFPointsObserver
 from navigation_test_helper.jsonFileHandler   import JsonFileHandler
 from navigation_test_helper.git               import Git
 from navigation_test_helper.bagInfo           import BagInfo
@@ -181,7 +182,12 @@ class BagAnalyzer( object ):
         print 'Initializing Analyzer'
         self._filename                = filename
         self._metricsObserver         = MetricsObserverTF()
-        self._tfDiffObserver          = TFDiffObserver( '/gazebo_gt', '/base_link' )
+        self._tfDiffObserver          = TFDiffObserver(
+                '/gazebo_gt', '/base_link' )
+        self._tfObserver          = TFDiffObserver(
+                '/gazebo_gt', '/base_link' )
+        self._tfPointsObserver        = TFPointsObserver(
+                [ '/gazebo_gt', '/base_link' ], dt=2 )
         self._metricsObserver.dT      = 0
         self._duration                = 'N/A'
         self._active                  = False
