@@ -1,21 +1,21 @@
-define [ 'backbone', 'models/testDetailLineChart', 'views/lineChart' ], ( Backbone, LineChart, LineChartView )->
+define [ 'backbone', 'models/testDetailScatterChart', 'views/scatterChart' ], ( Backbone, ScatterChart, ScatterChartView )->
   Backbone.View.extend
     tagName:   'div'
     className: 'testDetailDevChart'
 
     initialize: ->
-      @lineChartModel = new LineChart
+      @chartModel = new ScatterChart
 
-      @lineChartView = new LineChartView
-        model: @lineChartModel
+      @chartView = new ScatterChartView
+        model: @chartModel
         label: @options.label
         unit:  @options.unit
 
     renderDeltas: ( t, deltas )->
-      @lineChartModel.updateDeltas t, deltas
+      @chartModel.updateDeltas t, deltas
 
     render: ->
-      @$el.html @lineChartView.render().el
+      @$el.html @chartView.render().el
       @
 
     renderDataset: ->
