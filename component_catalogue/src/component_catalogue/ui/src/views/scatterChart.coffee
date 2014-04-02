@@ -1,7 +1,7 @@
 define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
   Backbone.View.extend
     tagName:   'div'
-    className: 'lineChart'
+    className: 'scatterChart'
 
     initialize: ->
       @listenTo @model, 'change:hcSeries', _.debounce @resetSeries.bind( @ ), 20
@@ -46,7 +46,7 @@ define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
     highchartsConfig: ->
       self = @
       chart:
-        type: 'line'
+        type: 'scatter'
         animation: false
       title:
         text:        "#{@options.label} in #{@options.unit}"
