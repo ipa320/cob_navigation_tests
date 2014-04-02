@@ -4,6 +4,7 @@
     <arg name="robot" />
     <arg name="navigation" />
     <arg name="sim" default="false" />
+    <param name="bagPath"      value="$( optenv BAGPATH /tmp )" />
 
     <include file="$( find navigation_test_skeleton )/launch/bag_record.launch" />
 
