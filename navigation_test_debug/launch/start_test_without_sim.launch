@@ -12,13 +12,16 @@
         <include file="$( find navigation_test_prepare_robot )/launch/prepare_robot_simulation.launch">
             <arg name="robot"             value="$( arg robot )" />
         </include>
-        <include file="$( find navigation_test_skeleton )/launch/navigation.launch">
+        <include file="$( find navigation_test_collision_detection )/launch/collision_detection.launch">
+            <arg name="bumperTopics"     value="[/base_bumper/state]" />
+        </include>
+        <!-- gazebo ground-truth tf publisher -->
+        <include file="$( find gazebo_gt_tf_publisher )/launch/publisher.launch"/>
+
+        <include file="$( find navigation_test_skeleton )/launch/navigation.test">
             <arg name="scenarioName"      value="$( arg scenarioName )" />
             <arg name="robot"             value="$( arg robot )" />
             <arg name="navigation"        value="$( arg navigation )" />
-        </include>
-        <include file="$( find navigation_test_collision_detection )/launch/collision_detection.launch">
-            <arg name="bumperTopics"     value="[/base_bumper/state]" />
         </include>
     </group>
 </launch>
