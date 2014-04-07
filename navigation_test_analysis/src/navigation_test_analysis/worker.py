@@ -195,10 +195,8 @@ class BagAnalyzer( object ):
         self._metricsObserver         = MetricsObserverTF()
         self._tfDiffObserver          = TFDiffObserver(
                 '/gazebo_gt', '/base_link' )
-        self._tfObserver          = TFDiffObserver(
-                '/gazebo_gt', '/base_link' )
         self._tfPointsObserver        = TFPointsObserver(
-                [ '/gazebo_gt', '/base_link' ], dt=2 )
+                [ '/gazebo_gt', '/base_link' ], dT=2 )
         self._metricsObserver.dT      = 0
         self._duration                = 'N/A'
         self._active                  = False
@@ -236,6 +234,7 @@ class BagAnalyzer( object ):
         self._active = True
         self._metricsObserver.start()
         self._tfDiffObserver.start()
+        self._tfPointsObserver.start()
         self._startTime = None
         self._localtime = None
 
@@ -246,6 +245,7 @@ class BagAnalyzer( object ):
             self._unregisterSubscribers()
             self._metricsObserver.stop()
             self._tfDiffObserver.stop()
+            self._tfPointsObserver.stop()
 
     def _unregisterSubscribers( self ):
         for subscriber in self._subscribers:
@@ -261,6 +261,7 @@ class BagAnalyzer( object ):
         data[ 'collisions'         ] = self._collisions
         data[ 'localtimeFormatted' ] = self._localtimeFormatted()
         data[ 'deltas'             ] = self._tfDiffObserver.serialize()
+        data[ 'points'             ] = self._tfPointsObserver.serialize()
         data = dict( data.items() + self._setting.items() )
         return data
 

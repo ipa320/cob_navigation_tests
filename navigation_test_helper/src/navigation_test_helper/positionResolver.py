@@ -31,7 +31,7 @@ class PositionResolver( object ):
                 self._tfListener = tf.TransformListener()
                 self._tfListener.waitForTransform( '/map', '/base_link',
                         rospy.Time( 0 ), rospy.Duration( timeout ))
-                self._initialized = true
+                self._initialized = True
                 return True
             except tf.Exception,e:
                 print 'Could not get transformation from /map to /base_link within timeout'

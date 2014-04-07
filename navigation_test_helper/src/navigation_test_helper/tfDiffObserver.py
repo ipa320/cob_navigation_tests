@@ -27,7 +27,7 @@ class TFDiffObserver( Thread ):
 
     def isInitialized( self ):
         with self._lock:
-            return self._initialized != None
+            return self._initialized
 
     def _initializeOnce( self, timeout=5.0 ):
         with self._lock:

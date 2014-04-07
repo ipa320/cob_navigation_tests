@@ -3,9 +3,9 @@ roslib.load_manifest( 'navigation_test_helper' )
 
 import rospy, tf
 from threading import Thread, RLock
-import time
+import time, copy
 
-class TFDiffObserver( Thread ):
+class TFPointsObserver( Thread ):
     def __init__( self, topicNames, baseTopic='/map', dT=2 ):
         Thread.__init__( self )
         self._topicNames  = topicNames
@@ -15,7 +15,7 @@ class TFDiffObserver( Thread ):
         self._lock        = RLock()
         self._active      = True
         self._dT          = dT
-        self._values      = []
+        self._values      = {}
 
     def initialize( self, timeout=None ):
         if not timeout:
@@ -32,6 +32,7 @@ class TFDiffObserver( Thread ):
     def _initializeOnce( self, timeout=5.0 ):
         with self._lock:
             if self.isInitialized(): return True
+            topicName = 'n/a'
             try:
                 self._tfListeners = []
                 self._tfListener = tf.TransformListener()
@@ -42,8 +43,7 @@ class TFDiffObserver( Thread ):
                 self._initialized = True
                 return True
             except tf.Exception,e:
-                print 'Could not get transformation from %s to %s within timeout %s' % (
-                        self._topicNameA, self._topicNameB, timeout )
+                print 'Could not get transformation from %s to %s within timeout %s' % ( self._baseTopic, topicName, timeout )
                 return False
 
     def run( self ):
@@ -52,13 +52,15 @@ class TFDiffObserver( Thread ):
             for topicName in self._topicNames:
                 timestamp   = rospy.Time.now().to_sec()
                 dPos, dQuat = self._tfListener.lookupTransform(
-                    self._topicNameA, self._topicNameB, rospy.Time( 0 ))
+                    self._baseTopic, topicName, rospy.Time( 0 ))
                 self._storeValue( topicName, timestamp, dPos, dQuat )
                 time.sleep( self._dT )
 
     def _storeValue( self, topicName, timestamp, dPos, dQuat ):
         dEuler = tf.transformations.euler_from_quaternion( dQuat )
-        self._values.append( ( topicName, timestamp, dPos[ 0 ], dPos[ 1 ],
+        if not topicName in self._values:
+            self._values[ topicName ] = []
+        self._values[ topicName ].append( ( timestamp, dPos[ 0 ], dPos[ 1 ],
             dEuler[ 2 ]))
 
     def isActive( self ):
@@ -70,4 +72,4 @@ class TFDiffObserver( Thread ):
             self._active = False
 
     def serialize( self ):
-        return self._values[:]
+        return copy.copy( self._values )
