@@ -124,7 +124,7 @@ class Worker( object ):
 
     def saveResults( self, data ):
         filename       = self.bagInfo.rawFilename
-        repositoryName = self._getRepositoryNameFromData( data )
+        repositoryName = self._getRepositoryNameFromArgsOrData( data )
         subdirectories = ( data[ 'navigation' ], data[ 'robot' ], data[ 'scenario' ] )
 
         with Git( repositoryName )  as r:
@@ -136,6 +136,17 @@ class Worker( object ):
             r.commitAllChanges( 'Date: %s, Bag File %s' % (
                 data[ 'localtimeFormatted' ], filename ))
             r.pullAndPush()
+
+    def _getRepositoryNameFromArgsOrData( self, data ):
+        if self._getRepositoryNameFromArgs():
+            return self._getRepositoryNameFromArgs()
+        return self._getRepositoryNameFromData( data )
+
+    def _getRepositoryNameFromArgs( self ):
+        name = rospy.get_param( '~repository' )
+        if name and name != 'None' and name != 'fromBagfile':
+            return name
+        return None
 
     def _getRepositoryNameFromData( self, data ):
         repositoryName = data[ 'repository' ]
