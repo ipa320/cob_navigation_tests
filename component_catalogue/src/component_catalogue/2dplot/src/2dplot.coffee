@@ -20,6 +20,13 @@ class Plot2D
     circle.attr 'fill', color
     circle.attr 'stroke', 'transparent'
 
+  drawStartPoint: ( points )->
+    startPoint = points[ _.keys( points )[ 0 ]][ 0 ]
+    nx = @normalizedX startPoint[ 1 ]
+    ny = @normalizedY startPoint[ 2 ]
+    c  = @paper.circle nx, ny, 10
+    c.attr fill: 'orange', 'stroke-width': 0
+
   drawArrow: ( x, y, phi )->
     length = 15
     pathString = "M0,.5L#{length},.5"
@@ -60,6 +67,7 @@ class Plot2D
 
   plotPoints: ( points )->
     @adjustCanvasToPoints points
+    @drawStartPoint points
     i = 0
     for key, data of points
       color = @colors[ i++ ]
