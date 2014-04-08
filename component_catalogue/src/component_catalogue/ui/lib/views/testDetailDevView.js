@@ -11,15 +11,15 @@
         this.testGroup = null;
         this.deltaX = new TestDetailDevChart({
           label: 'x',
-          unit: ''
+          unit: 'm'
         });
         this.deltaY = new TestDetailDevChart({
           label: 'y',
-          unit: ''
+          unit: 'm'
         });
-        return this.deltaZ = new TestDetailDevChart({
-          label: 'z',
-          unit: ''
+        return this.deltaPhi = new TestDetailDevChart({
+          label: 'phi',
+          unit: 'rad'
         });
       },
       useTestGroup: function(testGroup) {
@@ -28,39 +28,39 @@
         return this.listenTo(this.testGroup, 'change:selectedTest', this.selectedTestChanged);
       },
       selectedTestChanged: function(testGroup, value) {
-        var deltas, t, test, tests, x, y, z, _ref;
+        var deltas, phi, t, test, tests, x, y, _ref;
 
         tests = testGroup.get('tests');
         test = tests.at(value);
         if (test) {
           deltas = test.get('deltas');
-          _ref = this.parseDeltas(deltas), t = _ref[0], x = _ref[1], y = _ref[2], z = _ref[3];
+          _ref = this.parseDeltas(deltas), t = _ref[0], x = _ref[1], y = _ref[2], phi = _ref[3];
           this.deltaX.renderDeltas(t, x);
           this.deltaY.renderDeltas(t, y);
-          return this.deltaZ.renderDeltas(t, z);
+          return this.deltaPhi.renderDeltas(t, phi);
         }
       },
       parseDeltas: function(deltas) {
-        var k, t, v, x, y, z;
+        var k, phi, t, v, x, y;
 
         t = [];
         x = [];
         y = [];
-        z = [];
+        phi = [];
         for (k in deltas) {
           v = deltas[k];
           t.push(v[0]);
           x.push(v[1]);
           y.push(v[2]);
-          z.push(v[3]);
+          phi.push(v[3]);
         }
-        return [t, x, y, z];
+        return [t, x, y, phi];
       },
       render: function() {
         this.$el.html(testDetailDevTmpl());
         this.$('.deltaX').html(this.deltaX.render().el);
         this.$('.deltaY').html(this.deltaY.render().el);
-        this.$('.deltaZ').html(this.deltaZ.render().el);
+        this.$('.deltaPhi').html(this.deltaPhi.render().el);
         return this;
       },
       renderNavigationChart: function() {

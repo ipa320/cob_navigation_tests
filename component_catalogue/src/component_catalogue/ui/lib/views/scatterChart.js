@@ -3,7 +3,7 @@
   define(['backbone', 'highcharts'], function(Backbone, Highcharts) {
     return Backbone.View.extend({
       tagName: 'div',
-      className: 'lineChart',
+      className: 'scatterChart',
       initialize: function() {
         var chartContainer,
           _this = this;
@@ -64,7 +64,7 @@
         self = this;
         return {
           chart: {
-            type: 'line',
+            type: 'scatter',
             animation: false
           },
           title: {

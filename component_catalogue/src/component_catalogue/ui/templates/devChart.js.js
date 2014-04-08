@@ -1,6 +1,6 @@
-define( [ 'ecoHelper' ], function( helper ){(function() {
+(function() {
   this.ecoTemplates || (this.ecoTemplates = {});
-  this.ecoTemplates["testDetailDev"] = function(__obj) {
+  this.ecoTemplates["devChart.js"] = function(__obj) {
     if (!__obj) __obj = {};
     var __out = [], __capture = function(callback) {
       var out = __out, result;
@@ -39,7 +39,7 @@ define( [ 'ecoHelper' ], function( helper ){(function() {
     }
     (function() {
       (function() {
-        __out.push('<div class="chartContainer deltaX"></div>\n<div class="chartContainer deltaY"></div>\n<div class="chartContainer deltaPhi"></div>\n');
+        __out.push('define( [ \'ecoHelper\' ], function( helper ){return this.ecoTemplates[ \'devChart\' ];});\n');
       
       }).call(this);
       
@@ -48,4 +48,3 @@ define( [ 'ecoHelper' ], function( helper ){(function() {
     return __out.join('');
   };
 }).call(this);
-return this.ecoTemplates[ 'testDetailDev' ];});
