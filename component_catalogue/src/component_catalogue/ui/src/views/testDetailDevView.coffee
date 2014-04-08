@@ -1,4 +1,4 @@
-define [ 'backbone', 'templates/testDetailDev', 'views/testDetailDevChart' ], ( Backbone, testDetailDevTmpl, TestDetailDevChart )->
+define [ 'backbone', 'templates/testDetailDev', 'views/testDetailDevChart', 'views/plot2d' ], ( Backbone, testDetailDevTmpl, TestDetailDevChart, Plot2d )->
   Backbone.View.extend
     tagName:   'div'
     className: 'testDetailDevView'
@@ -13,6 +13,7 @@ define [ 'backbone', 'templates/testDetailDev', 'views/testDetailDevChart' ], ( 
         label: 'y', unit: 'm'
       @deltaPhi = new TestDetailDevChart
         label: 'phi', unit: 'rad'
+      @plot2d   = new Plot2d
 
     useTestGroup: ( testGroup )->
       @stopListening @testGroup
@@ -24,10 +25,13 @@ define [ 'backbone', 'templates/testDetailDev', 'views/testDetailDevChart' ], ( 
       test  = tests.at value
       if test
         deltas = test.get 'deltas'
+        points = test.get 'points'
+        console.log 'test points: ', points
         [ t, x, y, phi ] = @parseDeltas deltas
         @deltaX.renderDeltas t, x
         @deltaY.renderDeltas t, y
         @deltaPhi.renderDeltas t, phi
+        @plot2d.renderPoints points
 
     parseDeltas: ( deltas )->
       t   = []
@@ -47,6 +51,7 @@ define [ 'backbone', 'templates/testDetailDev', 'views/testDetailDevChart' ], ( 
       @$( '.deltaX' ).html @deltaX.render().el
       @$( '.deltaY' ).html @deltaY.render().el
       @$( '.deltaPhi' ).html @deltaPhi.render().el
+      @$( '.plot2d' ).html @plot2d.render().el
       @
 
     renderNavigationChart: ->

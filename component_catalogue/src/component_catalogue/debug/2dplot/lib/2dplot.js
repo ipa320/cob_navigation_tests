@@ -101,6 +101,7 @@
     Plot2D.prototype.plotPoints = function(points) {
       var color, data, i, key, nx, ny, phi, point, x, y, _results;
 
+      this.paper.clear();
       this.adjustCanvasToPoints(points);
       this.drawStartPoint(points);
       i = 0;

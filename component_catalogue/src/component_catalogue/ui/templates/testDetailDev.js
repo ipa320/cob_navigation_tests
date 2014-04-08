@@ -39,7 +39,7 @@ define( [ 'ecoHelper' ], function( helper ){(function() {
     }
     (function() {
       (function() {
-        __out.push('<div class="chartContainer deltaX"></div>\n<div class="chartContainer deltaY"></div>\n<div class="chartContainer deltaPhi"></div>\n');
+        __out.push('<div class="chartContainer deltaX"></div>\n<div class="chartContainer deltaY"></div>\n<div class="chartContainer deltaPhi"></div>\n<div class="chartContainer plot2d"></div>\n');
       
       }).call(this);
       

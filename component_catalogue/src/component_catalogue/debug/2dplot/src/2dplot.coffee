@@ -66,6 +66,7 @@ class Plot2D
     @my*y+@cy
 
   plotPoints: ( points )->
+    @paper.clear()
     @adjustCanvasToPoints points
     @drawStartPoint points
     i = 0
