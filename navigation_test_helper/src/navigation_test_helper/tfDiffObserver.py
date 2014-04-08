@@ -41,7 +41,7 @@ class TFDiffObserver( Thread ):
                 self._initialized = True
                 return True
             except tf.Exception,e:
-                print 'Could not get transformation from %s to %s within timeout %s' % (
+                print 'TFDiffObserver: Could not get transformation from %s to %s within timeout %s' % (
                         self._topicNameA, self._topicNameB, timeout )
                 return False
 
