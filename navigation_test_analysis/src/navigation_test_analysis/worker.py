@@ -6,6 +6,7 @@ import navigation_test_helper.msg
 import subprocess, threading
 from navigation_test_helper.metricsObserverTF import MetricsObserverTF
 from navigation_test_helper.tfDiffObserver    import TFDiffObserver
+from navigation_test_helper.tfPointsObserver  import TFPointsObserver
 from navigation_test_helper.jsonFileHandler   import JsonFileHandler
 from navigation_test_helper.git               import Git
 from navigation_test_helper.bagInfo           import BagInfo
@@ -123,7 +124,7 @@ class Worker( object ):
 
     def saveResults( self, data ):
         filename       = self.bagInfo.rawFilename
-        repositoryName = self._getRepositoryNameFromData( data )
+        repositoryName = self._getRepositoryNameFromArgsOrData( data )
         subdirectories = ( data[ 'navigation' ], data[ 'robot' ], data[ 'scenario' ] )
 
         with Git( repositoryName )  as r:
@@ -135,6 +136,17 @@ class Worker( object ):
             r.commitAllChanges( 'Date: %s, Bag File %s' % (
                 data[ 'localtimeFormatted' ], filename ))
             r.pullAndPush()
+
+    def _getRepositoryNameFromArgsOrData( self, data ):
+        if self._getRepositoryNameFromArgs():
+            return self._getRepositoryNameFromArgs()
+        return self._getRepositoryNameFromData( data )
+
+    def _getRepositoryNameFromArgs( self ):
+        name = rospy.get_param( '~repository' )
+        if name and name != 'None' and name != 'fromBagfile':
+            return name
+        return None
 
     def _getRepositoryNameFromData( self, data ):
         repositoryName = data[ 'repository' ]
@@ -181,7 +193,10 @@ class BagAnalyzer( object ):
         print 'Initializing Analyzer'
         self._filename                = filename
         self._metricsObserver         = MetricsObserverTF()
-        self._tfDiffObserver          = TFDiffObserver( '/gazebo_gt', '/base_link' )
+        self._tfDiffObserver          = TFDiffObserver(
+                '/gazebo_gt', '/base_link' )
+        self._tfPointsObserver        = TFPointsObserver(
+                [ '/gazebo_gt', '/base_link' ], dT=2 )
         self._metricsObserver.dT      = 0
         self._duration                = 'N/A'
         self._active                  = False
@@ -219,6 +234,7 @@ class BagAnalyzer( object ):
         self._active = True
         self._metricsObserver.start()
         self._tfDiffObserver.start()
+        self._tfPointsObserver.start()
         self._startTime = None
         self._localtime = None
 
@@ -229,6 +245,7 @@ class BagAnalyzer( object ):
             self._unregisterSubscribers()
             self._metricsObserver.stop()
             self._tfDiffObserver.stop()
+            self._tfPointsObserver.stop()
 
     def _unregisterSubscribers( self ):
         for subscriber in self._subscribers:
@@ -244,6 +261,7 @@ class BagAnalyzer( object ):
         data[ 'collisions'         ] = self._collisions
         data[ 'localtimeFormatted' ] = self._localtimeFormatted()
         data[ 'deltas'             ] = self._tfDiffObserver.serialize()
+        data[ 'points'             ] = self._tfPointsObserver.serialize()
         data = dict( data.items() + self._setting.items() )
         return data
 
