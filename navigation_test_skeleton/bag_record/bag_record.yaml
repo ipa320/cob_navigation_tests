@@ -20,7 +20,3 @@ wanted_tfs:
    target_frame: /base_link
    trigger_record_translation: 0.5
    trigger_record_rotation: 0.1
- - reference_frame: /map
-   target_frame: /gazebo_gt
-   trigger_record_translation: 0.5
-   trigger_record_rotation: 0.1
