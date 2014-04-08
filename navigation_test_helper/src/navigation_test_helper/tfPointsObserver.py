@@ -35,7 +35,8 @@ class TFPointsObserver( Thread ):
             topicName = 'n/a'
             try:
                 self._tfListeners = []
-                self._tfListener = tf.TransformListener()
+                if not self._tfListener:
+                    self._tfListener = tf.TransformListener()
                 for topicName in self._topicNames:
                     self._tfListener.waitForTransform( self._baseTopic,
                             topicName, rospy.Time( 0 ),

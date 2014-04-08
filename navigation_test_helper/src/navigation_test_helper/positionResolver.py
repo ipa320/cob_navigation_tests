@@ -28,7 +28,8 @@ class PositionResolver( object ):
         with self._lock:
             if self.isInitialized(): return True
             try:
-                self._tfListener = tf.TransformListener()
+                if not self._tfListener:
+                    self._tfListener = tf.TransformListener()
                 self._tfListener.waitForTransform( '/map', '/base_link',
                         rospy.Time( 0 ), rospy.Duration( timeout ))
                 self._initialized = True
