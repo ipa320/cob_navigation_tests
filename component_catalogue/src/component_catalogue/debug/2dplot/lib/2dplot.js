@@ -35,6 +35,19 @@
       return circle.attr('stroke', 'transparent');
     };
 
+    Plot2D.prototype.drawStartPoint = function(points) {
+      var c, nx, ny, startPoint;
+
+      startPoint = points[_.keys(points)[0]][0];
+      nx = this.normalizedX(startPoint[1]);
+      ny = this.normalizedY(startPoint[2]);
+      c = this.paper.circle(nx, ny, 10);
+      return c.attr({
+        fill: 'orange',
+        'stroke-width': 0
+      });
+    };
+
     Plot2D.prototype.drawArrow = function(x, y, phi) {
       var head, length, line, pathString;
 
@@ -88,7 +101,9 @@
     Plot2D.prototype.plotPoints = function(points) {
       var color, data, i, key, nx, ny, phi, point, x, y, _results;
 
+      this.paper.clear();
       this.adjustCanvasToPoints(points);
+      this.drawStartPoint(points);
       i = 0;
       _results = [];
       for (key in points) {

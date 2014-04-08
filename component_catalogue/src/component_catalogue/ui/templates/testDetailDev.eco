@@ -1,3 +1,4 @@
 <div class="chartContainer deltaX"></div>
 <div class="chartContainer deltaY"></div>
-<div class="chartContainer deltaZ"></div>
+<div class="chartContainer deltaPhi"></div>
+<div class="chartContainer plot2d"></div>
