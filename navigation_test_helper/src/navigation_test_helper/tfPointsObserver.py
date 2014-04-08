@@ -19,7 +19,7 @@ class TFPointsObserver( Thread ):
 
     def initialize( self, timeout=None ):
         if not timeout:
-            while not rospy.is_shutdown() and not self.isInitialized():
+            while self.isActive() and not self.isInitialized():
                 self._initializeOnce( 5 )
         else:
             self._initializeOnce( timeout )
@@ -49,7 +49,7 @@ class TFPointsObserver( Thread ):
 
     def run( self ):
         self.initialize()
-        while not rospy.is_shutdown() and self.isActive():
+        while self.isActive():
             for topicName in self._topicNames:
                 timestamp   = rospy.Time.now().to_sec()
                 dPos, dQuat = self._tfListener.lookupTransform(
@@ -66,7 +66,7 @@ class TFPointsObserver( Thread ):
 
     def isActive( self ):
         with self._lock:
-            return self._active
+            return not rospy.is_shutdown() and self._active
 
     def stop( self ):
         with self._lock:
