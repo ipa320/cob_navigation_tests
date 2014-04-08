@@ -35,7 +35,10 @@ class PositionResolver( object ):
                 self._initialized = True
                 return True
             except tf.Exception,e:
-                print 'Could not get transformation from /map to /base_link within timeout'
+                print 'PositionResolver: Could not get transformation from /map to /base_link within timeout'
+                return False
+            except Exception,e:
+                print 'PositionResolver: TFPointsObserver: Exception occured: %s' % e
                 return False
 
     def isInitialized( self ):

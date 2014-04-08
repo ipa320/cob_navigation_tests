@@ -46,6 +46,9 @@ class TFPointsObserver( Thread ):
             except tf.Exception,e:
                 print 'TFPointsObserver: Could not get transformation from %s to %s within timeout %s' % ( self._baseTopic, topicName, timeout )
                 return False
+            except Exception,e:
+                print 'TFPointsObserver: Exception occured: %s' % e
+                return False
 
     def run( self ):
         self.initialize()

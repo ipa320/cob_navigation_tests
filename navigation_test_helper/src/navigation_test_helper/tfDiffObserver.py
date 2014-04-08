@@ -44,6 +44,9 @@ class TFDiffObserver( Thread ):
                 print 'TFDiffObserver: Could not get transformation from %s to %s within timeout %s' % (
                         self._topicNameA, self._topicNameB, timeout )
                 return False
+            except Exception,e:
+                print 'TFDiffObserver: Exception occured: %s' % e
+                return False
 
     def run( self ):
         self.initialize()
