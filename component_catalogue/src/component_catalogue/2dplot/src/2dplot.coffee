@@ -1,11 +1,16 @@
 class Plot2D
   constructor: ( el )->
-    $el    = $ el
-    width  = $el.width()
-    height = $el.height()
-    @paper = Raphael $el[ 0 ], width, height
+    $el      = $ el
+    @width   = $el.width()
+    @height  = $el.height()
+    @paper   = Raphael $el[ 0 ], @width, @height
+    @colors  = [ 'red', 'green' ]
+    @padding = x: 10, y: 10
 
-  drawCircleWithOrientation: ( x, y, phi, color )->
+  drawCircleWithOrientationInRad: ( x, y, phi, color )->
+    @drawCircleWithOrientationInDeg x, y, phi/2.0/Math.PI*360, color
+
+  drawCircleWithOrientationInDeg: ( x, y, phi, color )->
     @drawArrow x, y, phi
     @drawCircle x, y, color
 
@@ -34,6 +39,35 @@ class Plot2D
     path.attr 'fill', 'black'
     path
 
+  adjustCanvasToPoints: ( points )->
+    rawPoints = _( points ).chain().values().flatten( true ).value()
+    x         = _.map rawPoints, ( p )->p[ 1 ]
+    y         = _.map rawPoints, ( p )->p[ 2 ]
+
+    [ xMin, xMax ] = [ _.min( x ), _.max( x ) ]
+    @mx = ( @width - 2*@padding.x ) / ( xMax - xMin )
+    @cx = @padding.x - @mx*xMin
+
+    [ yMin, yMax ] = [ _.min( y ), _.max( y ) ]
+    @my = ( @height - 2*@padding.y ) / ( yMax - yMin )
+    @cy = @padding.y - @my*yMin
+
+  normalizedX: ( x )->
+    @mx*x+@cx
+
+  normalizedY: ( y )->
+    @my*y+@cy
+
+  plotPoints: ( points )->
+    @adjustCanvasToPoints points
+    i = 0
+    for key, data of points
+      color = @colors[ i++ ]
+      for point in data
+        [ x, y, phi ] = point[ 1..3 ]
+        [ nx, ny ] = [ @normalizedX( x ), @normalizedY( y )]
+        @drawCircleWithOrientationInRad nx, ny, phi, color
 
 element = $ '#plot'
 plot = new Plot2D element
+plot.plotPoints points

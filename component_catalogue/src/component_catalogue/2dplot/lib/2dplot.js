@@ -4,15 +4,24 @@
 
   Plot2D = (function() {
     function Plot2D(el) {
-      var $el, height, width;
+      var $el;
 
       $el = $(el);
-      width = $el.width();
-      height = $el.height();
-      this.paper = Raphael($el[0], width, height);
+      this.width = $el.width();
+      this.height = $el.height();
+      this.paper = Raphael($el[0], this.width, this.height);
+      this.colors = ['red', 'green'];
+      this.padding = {
+        x: 10,
+        y: 10
+      };
     }
 
-    Plot2D.prototype.drawCircleWithOrientation = function(x, y, phi, color) {
+    Plot2D.prototype.drawCircleWithOrientationInRad = function(x, y, phi, color) {
+      return this.drawCircleWithOrientationInDeg(x, y, phi / 2.0 / Math.PI * 360, color);
+    };
+
+    Plot2D.prototype.drawCircleWithOrientationInDeg = function(x, y, phi, color) {
       this.drawArrow(x, y, phi);
       return this.drawCircle(x, y, color);
     };
@@ -50,6 +59,57 @@
       return path;
     };
 
+    Plot2D.prototype.adjustCanvasToPoints = function(points) {
+      var rawPoints, x, xMax, xMin, y, yMax, yMin, _ref, _ref1;
+
+      rawPoints = _(points).chain().values().flatten(true).value();
+      x = _.map(rawPoints, function(p) {
+        return p[1];
+      });
+      y = _.map(rawPoints, function(p) {
+        return p[2];
+      });
+      _ref = [_.min(x), _.max(x)], xMin = _ref[0], xMax = _ref[1];
+      this.mx = (this.width - 2 * this.padding.x) / (xMax - xMin);
+      this.cx = this.padding.x - this.mx * xMin;
+      _ref1 = [_.min(y), _.max(y)], yMin = _ref1[0], yMax = _ref1[1];
+      this.my = (this.height - 2 * this.padding.y) / (yMax - yMin);
+      return this.cy = this.padding.y - this.my * yMin;
+    };
+
+    Plot2D.prototype.normalizedX = function(x) {
+      return this.mx * x + this.cx;
+    };
+
+    Plot2D.prototype.normalizedY = function(y) {
+      return this.my * y + this.cy;
+    };
+
+    Plot2D.prototype.plotPoints = function(points) {
+      var color, data, i, key, nx, ny, phi, point, x, y, _results;
+
+      this.adjustCanvasToPoints(points);
+      i = 0;
+      _results = [];
+      for (key in points) {
+        data = points[key];
+        color = this.colors[i++];
+        _results.push((function() {
+          var _i, _len, _ref, _ref1, _results1;
+
+          _results1 = [];
+          for (_i = 0, _len = data.length; _i < _len; _i++) {
+            point = data[_i];
+            _ref = point.slice(1, 4), x = _ref[0], y = _ref[1], phi = _ref[2];
+            _ref1 = [this.normalizedX(x), this.normalizedY(y)], nx = _ref1[0], ny = _ref1[1];
+            _results1.push(this.drawCircleWithOrientationInRad(nx, ny, phi, color));
+          }
+          return _results1;
+        }).call(this));
+      }
+      return _results;
+    };
+
     return Plot2D;
 
   })();
@@ -57,5 +117,7 @@
   element = $('#plot');
 
   plot = new Plot2D(element);
+
+  plot.plotPoints(points);
 
 }).call(this);
