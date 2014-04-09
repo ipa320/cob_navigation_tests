@@ -32,7 +32,7 @@ class Worker( object ):
             data = self._analyzer.serialize()
             self.saveResults( data )
             self.bagInfo.setAnalyzed()
-            self._stopScreenRecorder()
+            #self._stopScreenRecorder() (ignore to lighten code)
 
         except BagAnalyzer.NoStatusReceivedError:
             print "except BagAnalyzer.NoStatusReceivedError"
@@ -81,18 +81,18 @@ class Worker( object ):
 
 
         try:
-            print 'Terminating video converter'
-            s = rospy.ServiceProxy( 'screenRecorder/terminate', Empty )
-            s()
+            print '[NOT] Terminating video converter'
+            #s = rospy.ServiceProxy( 'screenRecorder/terminate', Empty )  (ignore to lighten code)
+            #s() (ignore to lighten code)
         except rospy.service.ServiceException, e:
             print 'Terminate Service could not be called: %s' % str( e )
 
 
     def _stopScreenRecorder( self ):
         try:
-            print 'Stopping video converter'
-            s = rospy.ServiceProxy( 'screenRecorder/stop', Empty )
-            s()
+            print '[NOT] Stopping video converter'
+            #s = rospy.ServiceProxy( 'screenRecorder/stop', Empty )  (ignore to lighten code)
+            #s()  (ignore to lighten code)
         except rospy.service.ServiceException, e:
             print 'Stop Service could not be called: %s' % str( e )
 
@@ -260,8 +260,8 @@ class BagAnalyzer( object ):
         data[ 'localtime'          ] = self._localtime
         data[ 'collisions'         ] = self._collisions
         data[ 'localtimeFormatted' ] = self._localtimeFormatted()
-        data[ 'deltas'             ] = self._tfDiffObserver.serialize()
-        data[ 'points'             ] = self._tfPointsObserver.serialize()
+        #data[ 'deltas'             ] = self._tfDiffObserver.serialize()      (ignore to lighten code)
+        #data[ 'points'             ] = self._tfPointsObserver.serialize()    (ignore to lighten code)
         data = dict( data.items() + self._setting.items() )
         return data
 

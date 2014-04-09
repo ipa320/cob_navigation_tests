@@ -1,16 +1,18 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="videoConfig" />
-    <arg name="filepath" />
-    <arg name="videofilepath" />
-    <arg name="speed"      default="1" />
+    <arg name="videoConfig" default="$( find navigation_test_analysis )/videoConfigExample.yaml" />
+    <arg name="filepath" default="/home/aub-ch/bagFiles/16e4937f-6fcd-483b-9018-1c813924e246.bag" />
+    <arg name="videofilepath" default="/home/aub-ch/videoFiles/" />
+    <arg name="speed"      default="8" />
     <arg name="repository" default="fromBagfile" />
 
+    <!--
     <include file="$( find navigation_test_analysis )/launch/displayCamerasAndRecordScreen.launch">
         <arg name="videoConfig" value="$( arg videoConfig )" />
         <arg name="bagFilepath" value="$( arg filepath )" />
         <arg name="videoFilepath" value="$( arg videofilepath )" />
     </include>
+    -->
 
     <node name="analyse_bag_file" pkg="navigation_test_analysis" type="worker.py" output="screen" required="true">
         <param name="~filepath"   value="$( arg filepath )" />
