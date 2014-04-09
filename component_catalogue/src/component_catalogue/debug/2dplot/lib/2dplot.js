@@ -31,8 +31,10 @@
 
       radius = 3.5;
       circle = this.paper.circle(x, y + .5, radius);
-      circle.attr('fill', color);
-      return circle.attr('stroke', 'transparent');
+      return circle.attr({
+        fill: color,
+        stroke: 'transparent'
+      });
     };
 
     Plot2D.prototype.drawStartPoint = function(points) {
@@ -98,6 +100,23 @@
       return this.my * y + this.cy;
     };
 
+    Plot2D.prototype.drawLine = function(linePoints, color) {
+      var linePath, nx, ny, obj, point, _i, _len;
+
+      linePath = ['M'];
+      for (_i = 0, _len = linePoints.length; _i < _len; _i++) {
+        point = linePoints[_i];
+        nx = Math.round(this.normalizedX(point[1])) + .5;
+        ny = Math.round(this.normalizedY(point[2])) + .5;
+        linePath.push(nx, ',', ny, 'L');
+      }
+      linePath.pop();
+      obj = this.paper.path(linePath.join(''));
+      return obj.attr({
+        stroke: color
+      });
+    };
+
     Plot2D.prototype.plotPoints = function(points) {
       var color, data, i, key, nx, ny, phi, point, x, y, _results;
 
@@ -109,6 +128,7 @@
       for (key in points) {
         data = points[key];
         color = this.colors[i++];
+        this.drawLine(data, color);
         _results.push((function() {
           var _i, _len, _ref, _ref1, _results1;
 
