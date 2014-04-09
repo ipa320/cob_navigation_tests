@@ -260,6 +260,8 @@ class BagAnalyzer( object ):
         data[ 'localtime'          ] = self._localtime
         data[ 'collisions'         ] = self._collisions
         data[ 'localtimeFormatted' ] = self._localtimeFormatted()
+        data[ 'mean_delta' 		   ] = self._tfDiffObserver.serialize()
+        
         #data[ 'deltas'             ] = self._tfDiffObserver.serialize()      (ignore to tighten code)
         #data[ 'points'             ] = self._tfPointsObserver.serialize()    (ignore to tighten code)
         data = dict( data.items() + self._setting.items() )

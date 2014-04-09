@@ -4,6 +4,7 @@ roslib.load_manifest( 'navigation_test_helper' )
 import rospy, tf
 from threading import Thread, RLock
 import time
+import numpy
 
 class TFDiffObserver( Thread ):
     def __init__( self, topicNameA, topicNameB, dT=1 ):
@@ -70,5 +71,11 @@ class TFDiffObserver( Thread ):
         with self._lock:
             self._active = False
 
-    def serialize( self ):
-        return self._deltas[:]
+    def serialize( self ):# CH EDIT
+        leng = len(self._deltas)
+        dsum = 0
+        for i in range(leng):
+            dsum += (self._deltas[i][1] ** 2 + self._deltas[i][2] ** 2) / leng
+        return dsum
+
+		
