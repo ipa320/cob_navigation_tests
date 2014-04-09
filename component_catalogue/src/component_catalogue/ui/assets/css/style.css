@@ -194,6 +194,10 @@ h1{
     width: 33%;
     height: 400px;
 }
+.plot2d{
+    height: 100%;
+    width: 100%;
+}
 
 /*
  * Application Dev View

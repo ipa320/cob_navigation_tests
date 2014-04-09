@@ -1,8 +1,9 @@
-define [ 'backbone' ], ( Backbone )->
+define [ 'backbone', 'raphael' ], ( Backbone, Raphael )->
   Test = Backbone.Model.extend
     defaults:
       active:      true
       deltas:      []
+      points:      []
       error:       ''
       collisions:  0
       date:        0

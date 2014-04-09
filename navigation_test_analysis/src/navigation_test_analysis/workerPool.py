@@ -115,14 +115,15 @@ def printInfoMessage( bagInfo ):
 
 
 class AnalyserDaemon( threading.Thread ):
-    def __init__( self, bagPath, videoConfig, speed ):
+    def __init__( self, bagPath, videoConfig, speed, repository ):
         threading.Thread.__init__( self )
         self._bagPath = bagPath
         self._active  = True
         self._directoryReader = BagDirectoryReader( self._bagPath )
         self._additionalRosArguments = {
             'videoConfig':  videoConfig,
-            'speed':        speed
+            'speed':        speed,
+            'repository':   repository
         }
 
     def stop( self ):
@@ -151,8 +152,9 @@ if __name__ == '__main__':
     bagPath     = os.path.expanduser( rospy.get_param( '~bagPath' ))
     videoConfig = rospy.get_param( '~videoConfig' )
     speed       = rospy.get_param( '~speed' )
+    repository  = rospy.get_param( '~repository' )
     keepalive   = str( rospy.get_param( '~keepalive' )).lower() == 'true'
-    daemon  = AnalyserDaemon( bagPath, videoConfig, speed )
+    daemon  = AnalyserDaemon( bagPath, videoConfig, speed, repository )
     if keepalive:
         daemon.start()
         rospy.spin()
