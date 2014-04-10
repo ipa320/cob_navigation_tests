@@ -4,7 +4,8 @@ roslib.load_manifest( 'navigation_test_helper' )
 import rospy, tf
 from threading import Thread, RLock
 import time
-import numpy
+
+import numpy, math
 
 class TFDiffObserver( Thread ):
     def __init__( self, topicNameA, topicNameB, dT=1 ):
@@ -34,11 +35,11 @@ class TFDiffObserver( Thread ):
         with self._lock:
             if self.isInitialized(): return True
             if not self._tfListener:
-                self._tfListener = tf.TransformListener()
+                self._tfListener = tf.TransformListener() # <- TF listenter is initialized here 
             try:
                 self._tfListener.waitForTransform( self._topicNameA,
                         self._topicNameB, rospy.Time( 0 ),
-                        rospy.Duration( timeout ))
+                        rospy.Duration( timeout )) # <- TF listenter waits here 
                 self._initialized = True
                 return True
             except tf.Exception,e:
@@ -54,7 +55,7 @@ class TFDiffObserver( Thread ):
         while self.isActive():
             timestamp   = rospy.Time.now().to_sec()
             dPos, dQuat = self._tfListener.lookupTransform(
-                self._topicNameA, self._topicNameB, rospy.Time( 0 ))
+                self._topicNameA, self._topicNameB, rospy.Time( 0 )) # <- TF listenter is setup here 
             self._storeDelta( timestamp, dPos, dQuat )
             time.sleep( self._dT )
 
@@ -73,9 +74,13 @@ class TFDiffObserver( Thread ):
 
     def serialize( self ):# CH EDIT
         leng = len(self._deltas)
-        dsum = 0
+        mean = 0
+        maxi = 0
         for i in range(leng):
-            dsum += (self._deltas[i][1] ** 2 + self._deltas[i][2] ** 2) / leng
-        return dsum
+            cart_d = math.sqrt(self._deltas[i][1] ** 2 + self._deltas[i][2] ** 2) # calculate cartesian distance
+            mean += cart_d / leng # build mean value
+            if cart_d > maxi:
+                maxi = cart_d # build max value
+        return (mean, maxi)
 
 		
