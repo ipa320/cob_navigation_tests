@@ -10,6 +10,7 @@ from navigation_test_helper.tfPointsObserver  import TFPointsObserver
 from navigation_test_helper.jsonFileHandler   import JsonFileHandler
 from navigation_test_helper.git               import Git
 from navigation_test_helper.bagInfo           import BagInfo
+from navigation_test_helper.videoCreator      import VideoCreator
 from rosbagPatcher.rosbagPatcher              import BagFilePatcher
 from std_srvs.srv                             import Empty
 import rospy.service
@@ -19,6 +20,7 @@ class Worker( object ):
     def __init__( self, bagInfo ):
         self.bagInfo = bagInfo
         self._analyzer = None
+        self._videoCreator            = VideoCreator()
 
     def start( self, speed=1 ):
         filename = self.bagInfo.filename
@@ -31,8 +33,8 @@ class Worker( object ):
             print '"%s" analyzed' % self.bagInfo.filepath
             data = self._analyzer.serialize()
             self.saveResults( data )
+            self._videoCreator.waitForEnd()
             self.bagInfo.setAnalyzed()
-            #self._stopScreenRecorder() (ignore to tighten code)
 
         except BagAnalyzer.NoStatusReceivedError:
             print "except BagAnalyzer.NoStatusReceivedError"

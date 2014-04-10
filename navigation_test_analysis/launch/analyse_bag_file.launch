@@ -6,13 +6,10 @@
     <arg name="speed"      default="8" />
     <arg name="repository" default="fromBagfile" />
 
-    <!--
-    <include file="$( find navigation_test_analysis )/launch/displayCamerasAndRecordScreen.launch">
-        <arg name="videoConfig" value="$( arg videoConfig )" />
-        <arg name="bagFilepath" value="$( arg filepath )" />
-        <arg name="videoFilepath" value="$( arg videofilepath )" />
-    </include>
-    -->
+    <node name="extract" pkg="image_view" type="extract_images" respawn="false" output="screen" cwd="ROS_HOME">
+        <remap from="/image" to="/topCamera/image_raw"/>
+        <param name="filename_format" value="$( arg videofilepath )/frame%06i.jpg"/>
+    </node>
 
     <node name="analyse_bag_file" pkg="navigation_test_analysis" type="worker.py" output="screen" required="true">
         <param name="~filepath"   value="$( arg filepath )" />
