@@ -17,8 +17,7 @@ class Plot2D
   drawCircle: ( x, y, color )->
     radius = 3.5
     circle = @paper.circle x, y+.5, radius
-    circle.attr 'fill', color
-    circle.attr 'stroke', 'transparent'
+    circle.attr fill: color, stroke: 'transparent'
 
   drawStartPoint: ( points )->
     startPoint = points[ _.keys( points )[ 0 ]][ 0 ]
@@ -65,6 +64,16 @@ class Plot2D
   normalizedY: ( y )->
     @my*y+@cy
 
+  drawLine: ( linePoints, color )->
+    linePath = [ 'M' ]
+    for point in linePoints
+      nx = Math.round( @normalizedX point[ 1 ]) + .5
+      ny = Math.round( @normalizedY point[ 2 ]) + .5
+      linePath.push nx, ',', ny, 'L'
+    linePath.pop() # remove trailing L
+    obj = @paper.path linePath.join ''
+    obj.attr stroke: color
+
   plotPoints: ( points )->
     @paper.clear()
     @adjustCanvasToPoints points
@@ -72,6 +81,8 @@ class Plot2D
     i = 0
     for key, data of points
       color = @colors[ i++ ]
+      @drawLine data, color
+
       for point in data
         [ x, y, phi ] = point[ 1..3 ]
         [ nx, ny ] = [ @normalizedX( x ), @normalizedY( y )]

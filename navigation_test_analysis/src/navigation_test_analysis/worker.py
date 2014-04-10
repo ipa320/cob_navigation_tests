@@ -194,9 +194,9 @@ class BagAnalyzer( object ):
         self._filename                = filename
         self._metricsObserver         = MetricsObserverTF()
         self._tfDiffObserver          = TFDiffObserver(
-                '/gazebo_gt', '/base_link' )
+                '/gazebo_gt', '/base_link', numPoints=300 )
         self._tfPointsObserver        = TFPointsObserver(
-                [ '/gazebo_gt', '/base_link' ], dT=2 )
+                [ '/gazebo_gt', '/base_link' ], numPoints=100 )
         self._metricsObserver.dT      = 0
         self._duration                = 'N/A'
         self._active                  = False

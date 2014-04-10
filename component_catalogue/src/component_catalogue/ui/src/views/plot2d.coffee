@@ -17,8 +17,7 @@ define [ 'backbone' ], ( Backbone )->
     drawCircle: ( x, y, color )->
       radius = 3.5
       circle = @paper.circle x, y+.5, radius
-      circle.attr 'fill', color
-      circle.attr 'stroke', 'transparent'
+      circle.attr fill: color, stroke: 'transparent'
 
     drawStartPoint: ( points )->
       startPoint = points[ _.keys( points )[ 0 ]][ 0 ]
@@ -65,6 +64,16 @@ define [ 'backbone' ], ( Backbone )->
     normalizedY: ( y )->
       @my*y+@cy
 
+    drawLine: ( linePoints, color )->
+      linePath = [ 'M' ]
+      for point in linePoints
+        nx = Math.round( @normalizedX point[ 1 ]) + .5
+        ny = Math.round( @normalizedY point[ 2 ]) + .5
+        linePath.push nx, ',', ny, 'L'
+      linePath.pop() # remove trailing L
+      obj = @paper.path linePath.join ''
+      obj.attr stroke: color
+
     renderPoints: ( points )->
       return if not points
       do @paper.remove if @paper
@@ -79,6 +88,7 @@ define [ 'backbone' ], ( Backbone )->
       @drawStartPoint points
       for key, data of points
         color = @colors[ i++ ]
+        @drawLine data, color
         for point in data
           [ x, y, phi ] = point[ 1..3 ]
           [ nx, ny ] = [ @normalizedX( x ), @normalizedY( y )]

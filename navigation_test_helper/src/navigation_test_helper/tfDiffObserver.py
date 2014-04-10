@@ -8,7 +8,7 @@ import time
 import numpy, math
 
 class TFDiffObserver( Thread ):
-    def __init__( self, topicNameA, topicNameB, dT=1 ):
+    def __init__( self, topicNameA, topicNameB, numPoints=300 ):
         Thread.__init__( self )
         self._topicNameA  = topicNameA
         self._topicNameB  = topicNameB
@@ -16,8 +16,9 @@ class TFDiffObserver( Thread ):
         self._initialized = None
         self._lock        = RLock()
         self._active      = True
-        self._dT          = dT
+        self._dT          = 0.01
         self._deltas      = []
+        self._numPoints   = numPoints
 
     def initialize( self, timeout=None ):
         if not timeout:
@@ -58,6 +59,11 @@ class TFDiffObserver( Thread ):
                 self._topicNameA, self._topicNameB, rospy.Time( 0 )) # <- TF listenter is setup here 
             self._storeDelta( timestamp, dPos, dQuat )
             time.sleep( self._dT )
+        self._thinPoints()
+
+    def _thinPoints( self ):
+        factor       = int( len( self._deltas ) / self._numPoints )
+        self._deltas = self._deltas[ ::factor ]
 
     def _storeDelta( self, timestamp, dPos, dQuat ):
         dEuler = tf.transformations.euler_from_quaternion( dQuat )
