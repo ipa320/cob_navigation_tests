@@ -260,7 +260,7 @@ class BagAnalyzer( object ):
         data[ 'localtime'          ] = self._localtime
         data[ 'collisions'         ] = self._collisions
         data[ 'localtimeFormatted' ] = self._localtimeFormatted()
-        data[ 'mean_max_delta'     ] = self._tfDiffObserver.serialize()
+        data[ 'mean_max_dt_poserror'     ] = self._tfDiffObserver.serialize()
         
         #data[ 'deltas'             ] = self._tfDiffObserver.serialize()      (ignore to tighten code)
         #data[ 'points'             ] = self._tfPointsObserver.serialize()    (ignore to tighten code)

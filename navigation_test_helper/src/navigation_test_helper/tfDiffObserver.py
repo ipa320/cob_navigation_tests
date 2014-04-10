@@ -76,11 +76,22 @@ class TFDiffObserver( Thread ):
         leng = len(self._deltas)
         mean = 0
         maxi = 0
+        maxi_dt = 0 
         for i in range(leng):
+            if i >= 1:
+                cart_d_old = cart_d # saving old cart_d for later
+                
             cart_d = math.sqrt(self._deltas[i][1] ** 2 + self._deltas[i][2] ** 2) # calculate cartesian distance
+           
             mean += cart_d / leng # build mean value
+            
             if cart_d > maxi:
                 maxi = cart_d # build max value
-        return (mean, maxi)
+            
+            if i >= 1:
+                current_dt = abs(cart_d - cart_d_old) # current change 
+                if current_dt > maxi_dt:
+                    maxi_dt = current_dt # build max change
+        return (mean, maxi, maxi_dt)
 
 		
