@@ -6,13 +6,14 @@
     <arg name="speed"      default="8" />
     <arg name="repository" default="fromBagfile" />
 
-    <node name="extract" pkg="image_view" type="extract_images" respawn="false" output="screen" cwd="ROS_HOME">
+    <node name="extract" pkg="image_view" type="extract_images" respawn="false" cwd="ROS_HOME">
         <remap from="/image" to="/topCamera/image_raw"/>
-        <param name="filename_format" value="$( arg videofilepath )/frame%06i.jpg"/>
+        <param name="filename_format" value="$( arg videofilepath )frame%06i.jpg"/>
     </node>
 
     <node name="analyse_bag_file" pkg="navigation_test_analysis" type="worker.py" output="screen" required="true">
         <param name="~filepath"   value="$( arg filepath )" />
+        <param name="~videofilepath"   value="$( arg videofilepath )" />
         <param name="~speed"      value="$( arg speed )" />
         <param name="~repository" value="$( arg repository )" />
     </node>

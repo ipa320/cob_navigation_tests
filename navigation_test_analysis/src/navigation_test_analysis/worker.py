@@ -17,23 +17,34 @@ import rospy.service
 
 
 class Worker( object ):
-    def __init__( self, bagInfo ):
+    def __init__( self, bagInfo, videofilepath ):
         self.bagInfo = bagInfo
         self._analyzer = None
-        self._videoCreator            = VideoCreator()
+        self._videoCreator = None
 
     def start( self, speed=1 ):
         filename = self.bagInfo.filename
         self._analyzer = BagAnalyzer( filename )
         self._analyzer.start()
+        
+        self._videoCreator = VideoCreator(videofilepath)
+        if self._videoCreator.hasFrameFiles(): # check for existing framefiles
+            self._videoCreator.deleteFrameFiles() # delete them
+        # now replayer can be started as it leads to the creation of framefiles
+        
         player   = BagReplayer( self.bagInfo.filepath )
         try:
-            player.play( speed )
+            player.play( speed ) # blocking -> wait for it ...
+            
+            ## create the video
+            self._videoCreator.createVideo( self.bagInfo.rawFilename )
+            if self._videoCreator.hasFrameFiles(): # check for existing framefiles
+                self._videoCreator.deleteFrameFiles() # delete them
+                
             self._analyzer.stop()
             print '"%s" analyzed' % self.bagInfo.filepath
             data = self._analyzer.serialize()
-            self.saveResults( data )
-            self._videoCreator.waitForEnd()
+            self.saveResults( data )            
             self.bagInfo.setAnalyzed()
 
         except BagAnalyzer.NoStatusReceivedError:
@@ -80,23 +91,6 @@ class Worker( object ):
             traceback.print_stack()
             print 'Could not stop the analyzer, an unexpected error occured:'
             print e
-
-
-        try:
-            print '[NOT] Terminating video converter'
-            #s = rospy.ServiceProxy( 'screenRecorder/terminate', Empty )  (ignore to tighten code)
-            #s() (ignore to tighten code)
-        except rospy.service.ServiceException, e:
-            print 'Terminate Service could not be called: %s' % str( e )
-
-
-    def _stopScreenRecorder( self ):
-        try:
-            print '[NOT] Stopping video converter'
-            #s = rospy.ServiceProxy( 'screenRecorder/stop', Empty )  (ignore to tighten code)
-            #s()  (ignore to tighten code)
-        except rospy.service.ServiceException, e:
-            print 'Stop Service could not be called: %s' % str( e )
 
     def _fixBagFileTCPROSHeader( self ):
         print
@@ -241,7 +235,7 @@ class BagAnalyzer( object ):
         self._localtime = None
 
     def stop( self ):
-        print 'Stopping MetricsObserver'
+        print 'Stopping Analyzer'
         if self._active:
             self._active = False
             self._unregisterSubscribers()
@@ -327,8 +321,9 @@ class BagAnalyzer( object ):
 if __name__ == '__main__':
     rospy.init_node( 'analyse_worker', anonymous=True )
     filepath = rospy.get_param( '~filepath' )
+    videofilepath = rospy.get_param( '~videofilepath' )
     speed    = rospy.get_param( '~speed' )
-    worker = Worker( BagInfo( filepath ))
+    worker = Worker( BagInfo( filepath ), videofilepath )
     worker.start( speed=speed )
     print 'Worker finished, all threads closed'
     print threading._active
