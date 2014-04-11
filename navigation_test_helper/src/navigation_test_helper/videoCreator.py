@@ -5,7 +5,6 @@ import rospy
 import navigation_test_helper.msg
 from sensor_msgs.msg import Image
 
-import os
 import commands
 
     
@@ -28,12 +27,13 @@ class VideoCreator( object ):
             s=commands.getstatusoutput(command)
         except:
             print ">> videoCreator Unexpected error: ", sys.exc_info()[0]
-        return s[0]   
+        print s[1]   
+        print s[0]   
 
     def hasFrameFiles( self ):
         s=commands.getstatusoutput('cd %s; ls | grep "frame"' % self._videofilepath)
         if s[1] == '':
-            print '>> videoCreator videofolder empty'
+            print '>> videoCreator videofolder empty (no frames*.jpg files)'
             return 0
         else:
             return 1
