@@ -10,15 +10,15 @@ import numpy, math
 class TFDiffObserver( Thread ):
     def __init__( self, topicNameA, topicNameB, numPoints=300 ):
         Thread.__init__( self )
-        self._topicNameA  = topicNameA
-        self._topicNameB  = topicNameB
-        self._tfListener  = None
+        self._topicNameA = topicNameA
+        self._topicNameB = topicNameB
+        self._tfListener = None
         self._initialized = None
-        self._lock        = RLock()
-        self._active      = True
-        self._dT          = 0.01
-        self._deltas      = []
-        self._numPoints   = numPoints
+        self._lock = RLock()
+        self._active = True
+        self._dT = 0.01
+        self._deltas = []
+        self._numPoints = numPoints
 
     def initialize( self, timeout=None ):
         if not timeout:
@@ -36,11 +36,11 @@ class TFDiffObserver( Thread ):
         with self._lock:
             if self.isInitialized(): return True
             if not self._tfListener:
-                self._tfListener = tf.TransformListener() # <- TF listenter is initialized here 
+                self._tfListener = tf.TransformListener() # <- TF listenter is initialized here
             try:
                 self._tfListener.waitForTransform( self._topicNameA,
                         self._topicNameB, rospy.Time( 0 ),
-                        rospy.Duration( timeout )) # <- TF listenter waits here 
+                        rospy.Duration( timeout )) # <- TF listenter waits here
                 self._initialized = True
                 return True
             except tf.Exception,e:
@@ -54,15 +54,15 @@ class TFDiffObserver( Thread ):
     def run( self ):
         self.initialize()
         while self.isActive():
-            timestamp   = rospy.Time.now().to_sec()
+            timestamp = rospy.Time.now().to_sec()
             dPos, dQuat = self._tfListener.lookupTransform(
-                self._topicNameA, self._topicNameB, rospy.Time( 0 )) # <- TF listenter is setup here 
+                self._topicNameA, self._topicNameB, rospy.Time( 0 )) # <- TF listenter is setup here
             self._storeDelta( timestamp, dPos, dQuat )
             time.sleep( self._dT )
         self._thinPoints()
 
     def _thinPoints( self ):
-        factor       = int( len( self._deltas ) / self._numPoints )
+        factor = int( len( self._deltas ) / self._numPoints )
         self._deltas = self._deltas[ ::factor ]
 
     def _storeDelta( self, timestamp, dPos, dQuat ):
@@ -78,26 +78,5 @@ class TFDiffObserver( Thread ):
         with self._lock:
             self._active = False
 
-    def serialize( self ):# CH EDIT
-        leng = len(self._deltas)
-        mean = 0
-        maxi = 0
-        maxi_dt = 0 
-        for i in range(leng):
-            if i >= 1:
-                cart_d_old = cart_d # saving old cart_d for later
-                
-            cart_d = math.sqrt(self._deltas[i][1] ** 2 + self._deltas[i][2] ** 2) # calculate cartesian distance
-           
-            mean += cart_d / leng # build mean value
-            
-            if cart_d > maxi:
-                maxi = cart_d # build max value
-            
-            if i >= 1:
-                current_dt = abs(cart_d - cart_d_old) # current change 
-                if current_dt > maxi_dt:
-                    maxi_dt = current_dt # build max change
-        return (mean, maxi, maxi_dt)
-
-		
+    def serialize( self ):
+        return self._deltas[:]
