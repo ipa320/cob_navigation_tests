@@ -20,9 +20,7 @@ class VideoCreator( object ):
     def createVideo( self, filename ):
         #filename = 'dateiname'
         print '>> videoCreator: CREATING'
-        command = 'cd %s; ' % self._videofilepath
-        command = command + 'avconv -r 1 -i frame%06d.jpg'
-        command = command + ' -r 20 %s.mp4' % filename
+        command = 'cd %s; avconv -r 1 -i frame%%06d.jpg -r 20 %s.mp4' % (self._videofilepath, filename)
         try:
             s=commands.getstatusoutput(command)
         except:
