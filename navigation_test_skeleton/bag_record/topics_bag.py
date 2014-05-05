@@ -135,6 +135,7 @@ class topics_bag():
         self.continuous_topics          = self.getRequiredParam("~continuous_topics")
         self.bag_target_path            = self.getRequiredParam("bagPath")
         self.bag_local_path             = tempfile.gettempdir()
+        print ":) logging bag files to: %s" % tempfile.gettempdir()
         self.bag_filename               = '%s.bag' % uuid.uuid4()
         self.bag_local_filepath         = self.bag_local_path + '/' + self.bag_filename
         self.addCameraTopics()
