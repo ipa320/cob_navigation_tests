@@ -134,9 +134,7 @@ class topics_bag():
         self.trigger_topics             = self.getRequiredParam("~trigger_topics")
         self.continuous_topics          = self.getRequiredParam("~continuous_topics")
         self.bag_target_path            = self.getRequiredParam("bagPath")
-        self.bag_local_path             = self.getRequiredParam("bagPath")
-        print ":) (topics_bag.py) logging bag files to: %s" % self.bag_local_path
-        print ":) (topics_bag.py) the envvar contains: %s (but isn't used so far)" % os.environ["BAGPATH"]
+        self.bag_local_path             = tempfile.gettempdir()
         self.bag_filename               = '%s.bag' % uuid.uuid4()
         self.bag_local_filepath         = self.bag_local_path + '/' + self.bag_filename
         self.addCameraTopics()
