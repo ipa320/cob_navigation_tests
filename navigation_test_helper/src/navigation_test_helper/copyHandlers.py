@@ -1,4 +1,4 @@
-import re, os, shutil, subprocess
+import re, os, shutil, subprocess, commands
 
 def getByUri( uri ):
     if SSHCopyHandler.matches( uri ):
