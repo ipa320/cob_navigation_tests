@@ -78,6 +78,8 @@ class LocalCopyHandler():
         self.path = os.path.expanduser( path )
 
     def assertWritable( self ):
+        s=commands.getstatusoutput("ls /home/jenkins/")
+        print ":) (copyHandlers.py) the content of /home/jenkins is:\n" + s[1]
         if not os.access( self.path, os.W_OK ):
             raise Exception( 'Cannot write to local file system on %s' %
                 self.path )
