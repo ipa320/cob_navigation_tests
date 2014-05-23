@@ -6,7 +6,7 @@ from threading import Thread, RLock
 import time, copy
 
 class TFPointsObserver( Thread ):
-    def __init__( self, topicNames, baseTopic='/map', dT=2 ):
+    def __init__( self, topicNames, baseTopic='/map', numPoints=100 ):
         Thread.__init__( self )
         self._topicNames  = topicNames
         self._baseTopic   = baseTopic
@@ -14,8 +14,9 @@ class TFPointsObserver( Thread ):
         self._initialized = False
         self._lock        = RLock()
         self._active      = True
-        self._dT          = dT
+        self._dT          = 0.1
         self._values      = {}
+        self._numPoints   = numPoints
 
     def initialize( self, timeout=None ):
         if not timeout:
@@ -59,6 +60,7 @@ class TFPointsObserver( Thread ):
                     self._baseTopic, topicName, rospy.Time( 0 ))
                 self._storeValue( topicName, timestamp, dPos, dQuat )
                 time.sleep( self._dT )
+        self._thinPoints()
 
     def _storeValue( self, topicName, timestamp, dPos, dQuat ):
         dEuler = tf.transformations.euler_from_quaternion( dQuat )
@@ -66,6 +68,11 @@ class TFPointsObserver( Thread ):
             self._values[ topicName ] = []
         self._values[ topicName ].append( ( timestamp, dPos[ 0 ], dPos[ 1 ],
             dEuler[ 2 ]))
+
+    def _thinPoints( self ):
+        for topicName, points in self._values.items():
+            factor = int( len( points ) / self._numPoints )
+            self._values[ topicName ] = points[ ::factor ]
 
     def isActive( self ):
         with self._lock:
