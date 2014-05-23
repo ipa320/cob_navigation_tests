@@ -9,7 +9,7 @@ from navigation_test_helper.jsonFileHandler  import JsonFileHandler
 from navigation_test_helper.resultRepository import ResultRepository
 from navigation_test_helper.bagInfo          import BagInfo
 from worker import Worker
-import videoEncoder
+#import videoEncoder
 
 
 class BagDirectoryReader( object ):
