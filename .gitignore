@@ -1,0 +1,5 @@
+build/
+*~
+*.pyc
+srv_gen
+msg_gen
