@@ -47,6 +47,8 @@
 		<include file="$( find navigation_test_collision_detection )/launch/collision_detection.launch">
 			<arg name="bumperTopics"      value="$(arg bumperTopics)" />
 		</include>
+        <!-- gazebo ground-truth tf publisher -->
+        <include file="$( find gazebo_gt_tf_publisher )/launch/publisher.launch"/>
 		<!-- start test skeleton -->
 		<include file="$( find navigation_test_skeleton )/launch/navigation.test">
 			<arg name="sim"               value="$( arg sim )" />

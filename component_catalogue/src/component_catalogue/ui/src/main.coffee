@@ -45,6 +45,7 @@ require.config
     'jquery-ui':         '../vendor/jquery-ui-1.10.2.custom',
     'jquery-numeric':    '../vendor/numeric'
     'jquery-tipTip':     '../vendor/jquery.tipTip.minified'
+    'raphael':           '../vendor/raphael-min'
     'flowplayer':        '../assets/flowplayer/flowplayer.min'
 
 define [ 'app', 'backbone' ], ( app, Backbone )->

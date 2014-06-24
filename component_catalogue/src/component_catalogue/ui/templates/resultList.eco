@@ -11,7 +11,7 @@
   </thead>
   <tbody>
       <% for i, row of @data: %>
-      <tr id="<%=row.id%>" class="row <%= if i % 2==0 then 'odd' else 'even' %>">
+      <tr id="<%=row.id%>" class="row test <%= if i % 2==0 then 'odd' else 'even' %>">
           <% if row.selected: %>
               <td class="checkbox"><input type="checkbox" class=="selected" checked="checked"/></td>
           <% else: %>

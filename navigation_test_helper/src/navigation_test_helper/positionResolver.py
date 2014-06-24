@@ -11,10 +11,11 @@ class PositionMissedException( Exception ):
         Exception.__init__( self, msg )
 
 class PositionResolver( object ):
-    _tfListener = None
 
     def __init__( self ):
-        self._lock = RLock()
+        self._lock        = RLock()
+        self._tfListener  = None
+        self._initialized = False
 
     def initialize( self, timeout=None ):
         if not timeout:
@@ -27,21 +28,25 @@ class PositionResolver( object ):
         with self._lock:
             if self.isInitialized(): return True
             try:
-                tfListener = tf.TransformListener()
-                tfListener.waitForTransform( '/map', '/base_link',
+                if not self._tfListener:
+                    self._tfListener = tf.TransformListener() # <- TF listenter is initialized here !
+                self._tfListener.waitForTransform( '/map', '/base_link',
                         rospy.Time( 0 ), rospy.Duration( timeout ))
-                PositionResolver._tfListener = tfListener
+                self._initialized = True
                 return True
             except tf.Exception,e:
-                print 'Could not get transformation from /map to /base_link within timeout'
+                print 'PositionResolver: Could not get transformation from /map to /base_link within timeout'
+                return False
+            except Exception,e:
+                print 'PositionResolver: TFPointsObserver: Exception occured: %s' % e
                 return False
 
     def isInitialized( self ):
         with self._lock:
-            return PositionResolver._tfListener != None
+            return self._initialized
 
     def getPosition( self ):
-        pos, rot = PositionResolver._tfListener.lookupTransform(
+        pos, rot = self._tfListener.lookupTransform(
             '/map', '/base_link', rospy.Time( 0 ))
         return self._rawToPositionObject( pos, rot )
 

@@ -5,32 +5,47 @@ import rospy, os, re, subprocess, sys, time, datetime, traceback
 import navigation_test_helper.msg
 import subprocess, threading
 from navigation_test_helper.metricsObserverTF import MetricsObserverTF
+from navigation_test_helper.tfDiffObserver    import TFDiffObserver
+from navigation_test_helper.tfPointsObserver  import TFPointsObserver
 from navigation_test_helper.jsonFileHandler   import JsonFileHandler
 from navigation_test_helper.git               import Git
 from navigation_test_helper.bagInfo           import BagInfo
+from navigation_test_helper.videoCreator      import VideoCreator
 from rosbagPatcher.rosbagPatcher              import BagFilePatcher
 from std_srvs.srv                             import Empty
 import rospy.service
 
 
 class Worker( object ):
-    def __init__( self, bagInfo ):
+    def __init__( self, bagInfo, videofilepath ):
         self.bagInfo = bagInfo
         self._analyzer = None
+        self._videoCreator = None
 
     def start( self, speed=1 ):
         filename = self.bagInfo.filename
         self._analyzer = BagAnalyzer( filename )
         self._analyzer.start()
+        
+        self._videoCreator = VideoCreator(videofilepath)
+        if self._videoCreator.hasFrameFiles(): # check for existing framefiles
+            self._videoCreator.deleteFrameFiles() # delete them
+        # now replayer can be started as it leads to the creation of framefiles
+        
         player   = BagReplayer( self.bagInfo.filepath )
         try:
-            player.play( speed )
+            player.play( speed ) # blocking -> wait for it ...
+            
+            ## create the video
+            self._videoCreator.createVideo( self.bagInfo.rawFilename )
+            if self._videoCreator.hasFrameFiles(): # check for existing framefiles
+                self._videoCreator.deleteFrameFiles() # delete them
+                
             self._analyzer.stop()
             print '"%s" analyzed' % self.bagInfo.filepath
             data = self._analyzer.serialize()
-            self.saveResults( data )
+            self.saveResults( data )            
             self.bagInfo.setAnalyzed()
-            self._stopScreenRecorder()
 
         except BagAnalyzer.NoStatusReceivedError:
             print "except BagAnalyzer.NoStatusReceivedError"
@@ -77,23 +92,6 @@ class Worker( object ):
             print 'Could not stop the analyzer, an unexpected error occured:'
             print e
 
-
-        try:
-            print 'Terminating video converter'
-            s = rospy.ServiceProxy( 'screenRecorder/terminate', Empty )
-            s()
-        except rospy.service.ServiceException, e:
-            print 'Terminate Service could not be called: %s' % str( e )
-
-
-    def _stopScreenRecorder( self ):
-        try:
-            print 'Stopping video converter'
-            s = rospy.ServiceProxy( 'screenRecorder/stop', Empty )
-            s()
-        except rospy.service.ServiceException, e:
-            print 'Stop Service could not be called: %s' % str( e )
-
     def _fixBagFileTCPROSHeader( self ):
         print
         print 'BAG-FILE TCPROS-HEADER-ERROR OCCURED. TRYING TO RECOVER'
@@ -122,7 +120,7 @@ class Worker( object ):
 
     def saveResults( self, data ):
         filename       = self.bagInfo.rawFilename
-        repositoryName = self._getRepositoryNameFromData( data )
+        repositoryName = self._getRepositoryNameFromArgsOrData( data )
         subdirectories = ( data[ 'navigation' ], data[ 'robot' ], data[ 'scenario' ] )
 
         with Git( repositoryName )  as r:
@@ -134,6 +132,17 @@ class Worker( object ):
             r.commitAllChanges( 'Date: %s, Bag File %s' % (
                 data[ 'localtimeFormatted' ], filename ))
             r.pullAndPush()
+
+    def _getRepositoryNameFromArgsOrData( self, data ):
+        if self._getRepositoryNameFromArgs():
+            return self._getRepositoryNameFromArgs()
+        return self._getRepositoryNameFromData( data )
+
+    def _getRepositoryNameFromArgs( self ):
+        name = rospy.get_param( '~repository' )
+        if name and name != 'None' and name != 'fromBagfile':
+            return name
+        return None
 
     def _getRepositoryNameFromData( self, data ):
         repositoryName = data[ 'repository' ]
@@ -180,6 +189,10 @@ class BagAnalyzer( object ):
         print 'Initializing Analyzer'
         self._filename                = filename
         self._metricsObserver         = MetricsObserverTF()
+        self._tfDiffObserver          = TFDiffObserver(
+                '/gazebo_gt', '/base_link', numPoints=300 )
+        self._tfPointsObserver        = TFPointsObserver(
+                [ '/gazebo_gt', '/base_link' ], numPoints=100 )
         self._metricsObserver.dT      = 0
         self._duration                = 'N/A'
         self._active                  = False
@@ -216,15 +229,19 @@ class BagAnalyzer( object ):
         print 'Starting Analyzer'
         self._active = True
         self._metricsObserver.start()
+        self._tfDiffObserver.start()
+        self._tfPointsObserver.start()
         self._startTime = None
         self._localtime = None
 
     def stop( self ):
-        print 'Stopping MetricsObserver'
+        print 'Stopping Analyzer'
         if self._active:
             self._active = False
             self._unregisterSubscribers()
             self._metricsObserver.stop()
+            self._tfDiffObserver.stop()
+            self._tfPointsObserver.stop()
 
     def _unregisterSubscribers( self ):
         for subscriber in self._subscribers:
@@ -233,12 +250,14 @@ class BagAnalyzer( object ):
     def serialize( self ):
         self._assertNoUnrecoverableErrorOccured()
         data = self._metricsObserver.serialize()
-        data[ 'error'      ] = self._error
-        data[ 'duration'   ] = self._duration
-        data[ 'filename'   ] = self._filename
-        data[ 'localtime'  ] = self._localtime
-        data[ 'collisions' ] = self._collisions
+        data[ 'error'              ] = self._error
+        data[ 'duration'           ] = self._duration
+        data[ 'filename'           ] = self._filename
+        data[ 'localtime'          ] = self._localtime
+        data[ 'collisions'         ] = self._collisions
         data[ 'localtimeFormatted' ] = self._localtimeFormatted()
+        data[ 'deltas'             ] = self._tfDiffObserver.serialize()
+        data[ 'points'             ] = self._tfPointsObserver.serialize()
         data = dict( data.items() + self._setting.items() )
         return data
 
@@ -300,8 +319,9 @@ class BagAnalyzer( object ):
 if __name__ == '__main__':
     rospy.init_node( 'analyse_worker', anonymous=True )
     filepath = rospy.get_param( '~filepath' )
+    videofilepath = rospy.get_param( '~videofilepath' )
     speed    = rospy.get_param( '~speed' )
-    worker = Worker( BagInfo( filepath ))
+    worker = Worker( BagInfo( filepath ), videofilepath )
     worker.start( speed=speed )
     print 'Worker finished, all threads closed'
     print threading._active

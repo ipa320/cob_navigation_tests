@@ -17,6 +17,7 @@ define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'vie
     testGroups   = new TestGroups groupedTests
 
     resultListView = null
+    devView        = null
 
     renderResultListView = ->
       videoOverlay   = new VideoPlayback
@@ -24,6 +25,9 @@ define [ 'collections/textFilter', 'collections/tests', 'views/resultList', 'vie
       resultListView = new ResultList
         testGroups:    testGroups
         videoPlayback: videoOverlay
+      resultListView.on 'expandTestGroup', ( testGroup )->
+        devView.activateTestDetailView testGroup
+
       $( '#resultListView' ).html resultListView.render().el
 
     renderDevView = ->

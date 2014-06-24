@@ -1,4 +1,4 @@
-import re, os, shutil, subprocess
+import re, os, shutil, subprocess, commands
 
 def getByUri( uri ):
     if SSHCopyHandler.matches( uri ):
@@ -79,7 +79,7 @@ class LocalCopyHandler():
 
     def assertWritable( self ):
         if not os.access( self.path, os.W_OK ):
-            raise Exception( 'Cannot write to local filesystem on %s' %
+            raise Exception( 'Cannot write to local file system on %s' %
                 self.path )
         return True
 

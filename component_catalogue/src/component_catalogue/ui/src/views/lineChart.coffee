@@ -12,11 +12,13 @@ define [ 'backbone', 'highcharts' ], ( Backbone, Highcharts )->
         @chart = chart
 
     resetSeries: ( model, series )->
+      console.log 'okay changed'
       return if not @chart
       do @chart.series[ 0 ]?.remove
       @chart.counters.color  = 0
       @chart.counters.symbol = 0
       @chart.addSeries series, redraw: true, animation: false
+      console.log 'series added'
 
     render: ->
       @$el.html @chartContainer

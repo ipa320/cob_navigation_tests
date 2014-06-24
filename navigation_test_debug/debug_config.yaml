@@ -1,10 +1,17 @@
 timeoutInS:        300
 repository:        git@github.com:SimonEbner/navigation_test_results
-bagPath:           /share/uhr-se/bagrecord
+bagPath:           ~/bagFiles
 setupRobotService: setup_robot
 collisionsTopic:   collisions
 cameraTopics:      [ /topCamera ]
 moveBaseAction:    /move_base
 route: 
-    - [ 1.53, -1.385, 0 ]
-    - [ 0, 0, 0 ]
+    - [ -1, -1, 3.14 ]
+    - [ 0.1, 0.1, 0.1 ]
+
+## for cob3-6
+setupRobotService: /setup_robot
+robotConfig:
+  arm: folded
+  tray: storetray
+

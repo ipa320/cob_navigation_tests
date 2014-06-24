@@ -1,16 +1,31 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="setupRobotService" />
-    <arg name="timeoutInS" default="300" />
+   <arg name="moveBaseAction" default="/move_base" />
+   <arg name="bumperTopics" default="[]" />
+   <arg name="timeoutInS" default="300" />
 
-    <include file="$( find navigation_test_skeleton )/launch/navigation.launch">
-        <arg name="scenarioName" value="debugScenario" />
-        <arg name="timeoutInS"   value="$( arg timeoutInS )" />
-        <arg name="robot"        value="cob3-3" />
-        <arg name="repository"   value="git@github.com:SimonEbner/navigation_test_results.git" />
-        <arg name="bagPath"      value="/share/uhr-se/bagrecord/" />
-        <arg name="navigation"   value="2dros_nav_tr" />
-        <arg name="scenarioFile" value="$( find navigation_test_samples )/routes/1.yaml" />
-        <arg name="setupRobotService" value="$( arg setupRobotService )" />
-    </include>
+   <group ns="/navigation_test" >
+       <rosparam file="$( arg paramFile )" command="load" />
+
+       <param name="moveBaseAction"      value="$(arg moveBaseAction)" />
+       <!-- prepare robot service server -->
+       <node name="navigation_test_prepare_robot_simulation" pkg="navigation_test_prepare_robot" type="prepareRobot.py" output="screen"/>
+       <!-- start collision detection -->
+       <include file="$( find navigation_test_collision_detection )/launch/collision_detection.launch">
+           <arg name="bumperTopics"      value="$(arg bumperTopics)" />
+       </include>
+
+       <include file="$( find navigation_test_prepare_robot )/launch/prepare_robot_simulation.launch">
+           <arg name="robot" value="cob3-3" />
+       </include>
+
+<!-- gazebo ground-truth tf publisher -->
+<include file="$( find gazebo_gt_tf_publisher )/launch/publisher.launch"/>
+<include file="$( find navigation_test_skeleton )/launch/navigation.launch">
+    <arg name="sim"               value="true" />
+    <arg name="scenarioName"      value="debug" />
+    <arg name="robot"             value="cob3-3" />
+    <arg name="navigation"        value="custom-navigation" />
+</include>
+</group>
 </launch>

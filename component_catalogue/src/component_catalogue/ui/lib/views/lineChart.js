@@ -18,6 +18,7 @@
       resetSeries: function(model, series) {
         var _ref;
 
+        console.log('okay changed');
         if (!this.chart) {
           return;
         }
@@ -26,10 +27,11 @@
         }
         this.chart.counters.color = 0;
         this.chart.counters.symbol = 0;
-        return this.chart.addSeries(series, {
+        this.chart.addSeries(series, {
           redraw: true,
           animation: false
         });
+        return console.log('series added');
       },
       render: function() {
         this.$el.html(this.chartContainer);
